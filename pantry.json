@@ -1,0 +1,50 @@
+[
+  {
+    "canonical_name": "kirkland signature paper towels 2-ply 12 rolls",
+    "category": "household",
+    "quantity": 1,
+    "unit": "pack",
+    "price": 22.87,
+    "purchased_at": "2026-04-22T03:46:54.933573+00:00",
+    "est_expiry": "2036-04-19T03:46:54.933573+00:00",
+    "shelf_life_days": 3650,
+    "source_receipt": "instacart_receipt.png",
+    "status": "active"
+  },
+  {
+    "canonical_name": "plums",
+    "category": "produce",
+    "quantity": 3,
+    "unit": "lb",
+    "price": 5.49,
+    "purchased_at": "2026-04-22T03:46:54.933573+00:00",
+    "est_expiry": "2026-05-06T03:46:54.933573+00:00",
+    "shelf_life_days": 14,
+    "source_receipt": "instacart_receipt.png",
+    "status": "active"
+  },
+  {
+    "canonical_name": "gold potatoes",
+    "category": "produce",
+    "quantity": 10,
+    "unit": "lb",
+    "price": 5.49,
+    "purchased_at": "2026-04-22T03:46:54.933573+00:00",
+    "est_expiry": "2026-05-22T03:46:54.933573+00:00",
+    "shelf_life_days": 30,
+    "source_receipt": "instacart_receipt.png",
+    "status": "active"
+  },
+  {
+    "canonical_name": "golden pineapple",
+    "category": "produce",
+    "quantity": 1,
+    "unit": "each",
+    "price": 3.29,
+    "purchased_at": "2026-04-22T03:46:54.933573+00:00",
+    "est_expiry": "2026-04-29T03:46:54.933573+00:00",
+    "shelf_life_days": 7,
+    "source_receipt": "instacart_receipt.png",
+    "status": "active"
+  }
+]
