@@ -12,7 +12,7 @@
 | Backend | FastAPI (Python) | latest | Async, fast, Python AI ecosystem |
 | Database | Supabase (Postgres) | managed | Managed DB + auth + storage, free tier |
 | AI / Vision | Claude claude-sonnet-4-6 | latest | Vision API: receipt parsing + normalization in one call |
-| Hosting (backend) | Railway | — | Simple container deploy, free tier |
+| Hosting (backend) | Render | — | Persistent server — no serverless timeout. Claude Vision needs 5-15s |
 | Hosting (web) | Vercel | — | Zero-config Next.js deploy |
 | CI/CD + Cron | GitHub Actions | — | Auto-deploy on push + nightly depletion job |
 | Payments | Stripe | — | V2 — not in scope yet |
@@ -210,18 +210,31 @@ special case:
 
 ---
 
+## Live URLs
+
+| Service | URL |
+|---------|-----|
+| Backend (Render) | https://larder.onrender.com |
+| Web app (Vercel) | https://larder-theta.vercel.app |
+| Health check | https://larder.onrender.com/health |
+
+---
+
 ## Environment Variables
 
 ```bash
-# backend/.env (gitignored)
+# backend/.env (gitignored) — also set in Render dashboard
 ANTHROPIC_API_KEY=sk-ant-...
 SUPABASE_URL=https://hvkkaggvlpbmkgyyxcaa.supabase.co
 SUPABASE_SERVICE_KEY=eyJ...
 SUPABASE_ANON_KEY=eyJ...
+FRONTEND_URL=https://larder-theta.vercel.app
 
-# web/.env.local (gitignored)
-NEXT_PUBLIC_API_URL=http://localhost:8000
+# web/.env.local (gitignored) — also set in Vercel dashboard
+NEXT_PUBLIC_API_URL=https://larder.onrender.com
 ```
+
+> Note: `NEXT_PUBLIC_API_URL` must be set BEFORE the Vercel build — it gets baked into the JS bundle at build time.
 
 ---
 
@@ -260,21 +273,8 @@ jobs:
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
 ```
 
-### deploy.yml — auto-deploy backend on push
-```yaml
-on:
-  push:
-    branches: [main]
-    paths: ['backend/**']
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: railway up
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-```
+### deploy.yml — auto-deploy backend on push (via Render webhook)
+Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for this.
 
 ---
 
@@ -298,21 +298,30 @@ jobs:
 - Fixed: expiry calculation (floor not ceil), expired items in alert strip, full red bar for expired items
 - Added `.gitignore` to protect secrets
 
+### Day 3 — Production Deploy
+- Deployed backend to **Render** at `https://larder.onrender.com`
+  - Chose Render over Vercel serverless: Claude Vision takes 5-15s, Vercel free tier times out at 10s
+  - `render.yaml` committed — Render reads it directly for build + start commands
+  - CORS locked: `localhost:3000` + `FRONTEND_URL` env var (Vercel URL)
+- Deployed web app to **Vercel** at `https://larder-theta.vercel.app`
+  - Root directory set to `web/` — Vercel only sees the Next.js app
+  - `NEXT_PUBLIC_API_URL=https://larder.onrender.com` set in Vercel dashboard
+  - Redeploy needed after env var set (env vars baked into JS bundle at build time)
+- Fixed Supabase schema: removed FK to `auth.users` (no auth in V1), used plain UUID
+
 ### Known Issues (open)
 | Issue | Priority |
 |-------|----------|
 | No auth — single hardcoded user | V2 |
 | No way to edit/delete a wrong item | V2 |
-| CORS open to all origins | Fix before deploy |
-| No file size limit on uploads | Fix before deploy |
+| No file size limit on uploads | V2 |
 | Quantity doesn't decrement on use | V2 |
 
 ---
 
-## Next Steps (Day 3)
+## Next Steps (Day 4)
 
-- [ ] Commit + push all Day 2 work to GitHub
-- [ ] Deploy backend to Railway
-- [ ] Deploy web to Vercel
+- [ ] Test full scan flow on mobile browser (larder-theta.vercel.app)
 - [ ] Build React Native mobile app (Expo)
-- [ ] Wire mobile camera → backend → pantry view
+- [ ] Wire mobile camera → Render backend → pantry view
+- [ ] GitHub Actions: nightly cron to flag expired items in Supabase

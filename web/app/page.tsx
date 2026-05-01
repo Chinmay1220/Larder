@@ -143,8 +143,9 @@ export default function Home() {
 
       {/* Error state */}
       {error && !loading && (
-        <div className="mx-4 md:mx-8 mt-4 rounded-xl bg-(--color-urgent-bg) border border-red-200 px-4 py-3 text-sm text-(--color-urgent-text) font-medium">
-          ⚠️ Could not reach the backend. Make sure the server is running on port 8000.
+        <div className="mx-4 md:mx-8 mt-4 rounded-xl bg-(--color-urgent-bg) border border-red-200 px-4 py-3 text-sm text-(--color-urgent-text) font-medium space-y-1">
+          <p>⚠️ Could not reach the backend.</p>
+          <p className="text-xs font-normal opacity-70">API: {API ?? "(not configured)"}</p>
         </div>
       )}
 

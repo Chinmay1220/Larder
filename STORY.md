@@ -145,9 +145,10 @@ A full web app at `localhost:3000` with:
 |------|-------------------------------|
 | **Supabase** | Our database — stores your pantry, receipts, and account info |
 | **FastAPI** | The backend brain — handles all the logic between UI and database |
-| **Next.js** | The website version (running now) |
+| **Next.js** | The website version |
 | **React Native** | The mobile app — coming next |
-| **Vercel** | Will host the website for free |
+| **Render** | Hosts the backend API as a persistent server (no timeouts) |
+| **Vercel** | Hosts the website — free, zero-config |
 | **GitHub** | Stores all our code at github.com/Chinmay1220/Larder |
 | **GitHub Actions** | Will run automatic tasks (nightly expiry checks, auto-deploy) |
 | **Claude AI (Anthropic)** | Reads receipt photos and understands what was bought |
@@ -155,12 +156,29 @@ A full web app at `localhost:3000` with:
 
 ---
 
-## What's Next (Day 3)
+## Day 3 — Going Live
 
-- Push all Day 2 changes to GitHub
-- Build the React Native mobile app (camera screen → upload → pantry view)
-- Deploy the backend to Railway so it runs in the cloud
-- Deploy the web app to Vercel
+**What we shipped:**
+
+### Backend: Live on Render
+- Deployed the FastAPI backend at **https://larder.onrender.com**
+- Why Render instead of Railway: persistent server (no 10-second timeout like Vercel serverless). Claude Vision takes 5-15 seconds per receipt — serverless would always time out.
+- `render.yaml` committed to repo — Render auto-reads it to know how to build and start the server
+- CORS locked to specific origins: `localhost:3000` + the Vercel URL
+
+### Web App: Live on Vercel
+- Deployed the Next.js web app at **https://larder-theta.vercel.app**
+- Set `NEXT_PUBLIC_API_URL=https://larder.onrender.com` in Vercel dashboard
+- Root directory set to `web/` so Vercel only deploys the frontend, not the backend
+
+### Architecture in production
+```
+Your phone → larder-theta.vercel.app (Vercel)
+                    ↓ API calls
+           larder.onrender.com (Render)
+                    ↓ Claude Vision + DB
+     Anthropic API + Supabase Postgres
+```
 
 ---
 
@@ -172,6 +190,19 @@ A full web app at `localhost:3000` with:
 | Expired items missing from alert | ✅ Fixed |
 | "1d left" shown for items expiring today | ✅ Fixed |
 | API keys could leak to GitHub | ✅ Fixed — .gitignore added |
+| CORS open to all origins | ✅ Fixed — locked to Vercel URL + localhost |
+| Backend timing out on Vercel (10s serverless limit) | ✅ Fixed — moved backend to Render |
 | No auth / multi-user support | 🔜 V2 |
 | No quantity tracking | 🔜 V2 |
 | No edit/delete for wrong items | 🔜 V2 |
+| No file size limit on uploads | 🔜 V2 |
+
+---
+
+## What's Next (Day 4)
+
+- Test the full scan flow on mobile phone
+- Build the React Native mobile app (Expo) with native camera
+- Wire mobile camera → Render backend → pantry view
+- GitHub Actions: nightly cron to flag expired items
+- Vercel redeploy (pending) to pick up NEXT_PUBLIC_API_URL env var
