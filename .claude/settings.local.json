@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -s http://localhost:8000/pantry)",
+      "Bash(python -m json.tool)"
+    ]
+  }
+}

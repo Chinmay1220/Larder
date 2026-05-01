@@ -1,4 +1,4 @@
-# Pantry App — The Story So Far
+# Larder — The Story So Far
 ### A non-technical log of how this product is being built
 
 ---
@@ -15,11 +15,12 @@ The app we're building fixes this. It watches what you buy, remembers what you h
 
 ## What We're Building
 
-A smart pantry tracker that:
-- Reads your grocery receipts (photo, email, or online order)
+A smart pantry tracker called **Larder** (a larder is an old English word for a food storage room — fitting) that:
+- Reads your grocery receipts via photo
 - Builds a live inventory of what's in your kitchen
-- Tells you what's about to expire
+- Shows what's about to expire with a visual freshness bar
 - Warns you before you shop: "you already have blueberries"
+- Lets you mark items as used when you finish them
 
 Available as both a **mobile app** (iPhone + Android) and a **website**.
 
@@ -31,25 +32,29 @@ The average American household throws away about $1,500 worth of food every year
 
 Once enough people use it, the data becomes incredibly valuable — big food brands pay millions to understand what people actually buy, eat, and waste. That's the second business on top of the first.
 
+**The path:** Single user (you) → Households → Thousands of users → Data product sold to food brands → Unicorn.
+
 ---
 
 ## The Decisions We Made
 
 **What version 1 does:**
-- You take a photo of your grocery receipt
-- The app reads it and updates your pantry
-- You get a warning before you shop about what you already have
+- Take a photo of your grocery receipt
+- AI reads it and updates your pantry automatically
+- See what's expiring with color-coded urgency bars
+- Get warned when something is about to go bad
+- Mark items as "used" when you finish them
 
 **What version 1 does NOT do** (saved for later):
-- Gmail or email reading
+- Gmail or email receipt reading
 - Instacart / online order sync
 - Voice input
 - Household sharing with roommates / family
 - Meal suggestions
-- Payments
+- Payments / subscriptions
 
 **How you'll eventually be able to add items:**
-1. Photo of receipt (v1 — done)
+1. Photo of receipt (v1 — ✅ done)
 2. Automatic email receipt reading (v2)
 3. Instacart / online grocery sync (v2)
 4. Voice: "I just bought milk" (v3)
@@ -59,24 +64,78 @@ Once enough people use it, the data becomes incredibly valuable — big food bra
 
 ## Day 1 — Proof of Concept
 
-**What we built:** A single Python script that proves the core idea works.
+**What we built:** A single Python script (`poc.py`) that proves the core idea works.
 
 **How it works:**
 1. Drop a receipt photo into a folder
 2. Run the script
-3. It reads the receipt using AI
-4. It prints your pantry and what's about to expire
+3. Claude AI reads the receipt image directly (no Tesseract OCR needed)
+4. Prints your pantry and what's about to expire
 
 **What we tested it on:** A real Instacart receipt (Plums, Gold Potatoes, Golden Pineapple, Paper Towels — $37.57 total).
 
 **What the app correctly figured out:**
-- Golden Pineapple expires April 29
-- Plums expire May 6
-- Gold Potatoes last until May 22
-- Paper Towels are a household item, not food
-- Pre-shop alert: "you already have potatoes, pineapple, plums"
+- Golden Pineapple expires in 5 days
+- Plums expire in 5 days
+- Gold Potatoes last 30 days
+- Paper Towels are a household item, not food (shelf life 10 years)
+- Pre-shop alert showed all items correctly
 
-**Verdict: The core idea works.** The AI can read a receipt and turn it into a smart pantry list.
+**Verdict: The core idea works.** The AI can read a receipt and turn it into a smart pantry list. Cost: ~1-2 cents per receipt.
+
+---
+
+## Day 2 — Building the Real App
+
+**What we shipped:**
+
+### GitHub
+- Created repo: `github.com/Chinmay1220/Larder`
+- All code pushed and version controlled
+
+### Database (Supabase)
+- Live Postgres database running in the cloud
+- Two tables: `receipts` (every scan logged) and `pantry_items` (live pantry state)
+- Data persists between sessions — not just a local file anymore
+
+### Backend API (FastAPI)
+- Real server running at `localhost:8000`
+- `/receipts` — upload a receipt photo, get items back
+- `/pantry` — see everything in your pantry
+- `/pantry/expiring` — see what's going bad soon
+- `/pantry/{id}/consumed` — mark an item as used
+
+**Tested end-to-end:** Uploaded the real Instacart receipt → Claude Vision extracted 4 items → all 4 stored in Supabase → `/pantry` returned them correctly.
+
+### Website (Next.js)
+A full web app at `localhost:3000` with:
+
+**Pantry Dashboard:**
+- 4 stat cards: Total Items, Expiring Soon, Categories, Est. Value
+- Red alert strip when items are expiring or already expired (shows up to 4 names, then "+X more")
+- Category filter pills to narrow down the list
+- Each item row has a color-coded freshness bar (green → amber → red as it ages)
+- **"Used" button** appears on hover — click it to instantly remove the item from your pantry
+- Skeleton loading state while data fetches
+- Error message if backend is unreachable
+
+**Scan Page:**
+- 3-step progress indicator (Upload → Reading → Done)
+- Drag-and-drop receipt upload with visual feedback
+- Preview of your receipt image before processing
+- Step-by-step feedback while Claude reads the receipt
+- Results panel showing every extracted item with price
+- "Scan another" and "View Pantry" buttons after success
+
+**Layout:**
+- Desktop: left sidebar with logo and navigation
+- Mobile: bottom tab bar + floating 📸 scan button
+
+### Bug fixes applied on Day 2:
+- Expiry calculation fixed: items expiring today now correctly show "Today" not "1d left"
+- Expired items now included in the alert strip (not just upcoming ones)
+- Expired items show a full red freshness bar instead of empty
+- `.gitignore` added — API keys won't accidentally get pushed to GitHub
 
 ---
 
@@ -85,30 +144,34 @@ Once enough people use it, the data becomes incredibly valuable — big food bra
 | Tool | What it does in plain English |
 |------|-------------------------------|
 | **Supabase** | Our database — stores your pantry, receipts, and account info |
-| **FastAPI** | The brain of the app — handles all the logic |
-| **React Native** | The mobile app (works on iPhone and Android) |
-| **Next.js** | The website version |
-| **Vercel** | Hosts the website (free) |
-| **GitHub** | Stores all our code |
-| **GitHub Actions** | Runs automatic tasks (like checking for expired items every night) |
+| **FastAPI** | The backend brain — handles all the logic between UI and database |
+| **Next.js** | The website version (running now) |
+| **React Native** | The mobile app — coming next |
+| **Vercel** | Will host the website for free |
+| **GitHub** | Stores all our code at github.com/Chinmay1220/Larder |
+| **GitHub Actions** | Will run automatic tasks (nightly expiry checks, auto-deploy) |
 | **Claude AI (Anthropic)** | Reads receipt photos and understands what was bought |
-| **Stripe** | Payments — added later when we have real users |
+| **Stripe** | Payments — added when we have real users |
 
 ---
 
-## What's Next (Day 2)
+## What's Next (Day 3)
 
-Start building the real app:
-1. Set up the database (Supabase)
-2. Build the backend (FastAPI)
-3. Build the mobile app camera screen (React Native)
-4. Build the website (Next.js)
-5. Connect everything together
+- Push all Day 2 changes to GitHub
+- Build the React Native mobile app (camera screen → upload → pantry view)
+- Deploy the backend to Railway so it runs in the cloud
+- Deploy the web app to Vercel
 
 ---
 
-## The Bigger Vision
+## Issues Known & Fixed
 
-Single user (you) → Households → Thousands of users → Data product sold to food brands → Unicorn
-
-The path is clear. We're on step 1.
+| Issue | Status |
+|-------|--------|
+| No way to mark items as used | ✅ Fixed — "Used" button on hover |
+| Expired items missing from alert | ✅ Fixed |
+| "1d left" shown for items expiring today | ✅ Fixed |
+| API keys could leak to GitHub | ✅ Fixed — .gitignore added |
+| No auth / multi-user support | 🔜 V2 |
+| No quantity tracking | 🔜 V2 |
+| No edit/delete for wrong items | 🔜 V2 |
