@@ -38,7 +38,7 @@ def get_pantry(user_id: str) -> list[dict]:
     res = supabase.table("pantry_items") \
         .select("*") \
         .eq("user_id", user_id) \
-        .eq("status", "active") \
+        .in_("status", ["active", "expired"]) \
         .order("est_expiry") \
         .execute()
     return res.data
@@ -60,5 +60,5 @@ def mark_consumed(user_id: str, item_id: str) -> bool:
     res = supabase.table("pantry_items").update({
         "status": "consumed_manual",
         "consumed_at": datetime.now(timezone.utc).isoformat(),
-    }).eq("id", item_id).eq("user_id", user_id).eq("status", "active").execute()
+    }).eq("id", item_id).eq("user_id", user_id).in_("status", ["active", "expired"]).execute()
     return len(res.data) > 0
