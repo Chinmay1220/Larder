@@ -364,6 +364,14 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - Frontend `page.tsx` + `scan/page.tsx`: send `Authorization: Bearer <session.access_token>` instead of `X-User-Id`
 - New env var required: `SUPABASE_JWT_SECRET` (Supabase dashboard → Settings → API → JWT Secret) — must be set in Render dashboard
 
+### Day 9 — Security Polish
+- `backend/app/auth.py`: DEV_MODE explicit flag — fallback to DEV_USER_ID only when `DEV_MODE=true` env var is set; otherwise returns HTTP 500 with clear message
+- `backend/app/main.py`: lifespan startup check — raises `RuntimeError` if `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, or `ANTHROPIC_API_KEY` are missing; server won't start
+- `backend/app/main.py`: removed `X-User-Id` from CORS allowed headers (no longer needed)
+- `backend/app/api/pantry.py`: `ItemUpdate` now validates — `quantity > 0`, `category` from whitelist, `est_expiry` as ISO date, `canonical_name` stripped + length limited
+- `web/next.config.ts`: added `Strict-Transport-Security` header (HSTS, 1-year max-age)
+- `backend/.env`: added `DEV_MODE=true` for local development
+
 ### Known Issues (open)
 | Issue | Priority |
 |-------|----------|

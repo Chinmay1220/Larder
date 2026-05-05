@@ -1,18 +1,47 @@
+from datetime import datetime
 from fastapi import APIRouter, Query, HTTPException, Depends
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from app.auth import get_user_id
 from app.services.pantry_state import get_pantry, get_expiring, mark_consumed, update_item, delete_item, decrement_item
 
 router = APIRouter()
 
+VALID_CATEGORIES = {
+    "produce", "dairy", "meat", "seafood", "bakery",
+    "pantry", "frozen", "beverage", "snack", "household", "other",
+}
+VALID_UNITS = {"oz", "lb", "g", "kg", "ct", "pack", "bottle", "can", "each", "ml", "l", "item"}
+
 
 class ItemUpdate(BaseModel):
-    canonical_name: Optional[str] = None
+    canonical_name: Optional[str] = Field(None, min_length=1, max_length=200)
     category: Optional[str] = None
-    quantity: Optional[float] = None
-    unit: Optional[str] = None
+    quantity: Optional[float] = Field(None, gt=0, le=9999)
+    unit: Optional[str] = Field(None, max_length=50)
     est_expiry: Optional[str] = None
+
+    @field_validator("canonical_name")
+    @classmethod
+    def strip_name(cls, v: Optional[str]) -> Optional[str]:
+        return v.strip() if v else v
+
+    @field_validator("category")
+    @classmethod
+    def validate_category(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None and v not in VALID_CATEGORIES:
+            raise ValueError(f"Must be one of: {', '.join(sorted(VALID_CATEGORIES))}")
+        return v
+
+    @field_validator("est_expiry")
+    @classmethod
+    def validate_expiry(cls, v: Optional[str]) -> Optional[str]:
+        if v is not None:
+            try:
+                datetime.fromisoformat(v.replace("Z", "+00:00"))
+            except ValueError:
+                raise ValueError("Must be a valid ISO date string (e.g. 2026-05-10T00:00:00Z)")
+        return v
 
 
 @router.get("/pantry")

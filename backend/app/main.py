@@ -1,4 +1,6 @@
 import os
+import logging
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
@@ -6,7 +8,22 @@ from slowapi.errors import RateLimitExceeded
 from app.api import receipts, pantry
 from app.limiter import limiter
 
-app = FastAPI(title="Larder API")
+REQUIRED_VARS = ["SUPABASE_URL", "SUPABASE_SERVICE_KEY", "ANTHROPIC_API_KEY"]
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    missing = [v for v in REQUIRED_VARS if not os.environ.get(v)]
+    if missing:
+        raise RuntimeError(
+            f"Missing required environment variables: {', '.join(missing)}. "
+            "Check your .env file or hosting dashboard."
+        )
+    logging.info("All required environment variables present.")
+    yield
+
+
+app = FastAPI(title="Larder API", lifespan=lifespan)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -23,7 +40,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_methods=["GET", "POST", "PATCH", "DELETE"],
-    allow_headers=["Content-Type", "X-User-Id", "Authorization"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 app.include_router(receipts.router)
