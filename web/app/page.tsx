@@ -89,6 +89,14 @@ function Skeleton() {
   );
 }
 
+function Toast({ message }: { message: string }) {
+  return (
+    <div className="fixed bottom-28 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-800 text-white text-sm px-4 py-2 rounded-full shadow-lg whitespace-nowrap pointer-events-none animate-fade-in">
+      {message}
+    </div>
+  );
+}
+
 function EditModal({ item, onSave, onClose }: {
   item: PantryItem;
   onSave: (id: string, fields: Partial<PantryItem>) => Promise<void>;
@@ -159,6 +167,7 @@ export default function Home() {
   const [consuming, setConsuming] = useState<string | null>(null);
   const [decrementing, setDecrementing] = useState<string | null>(null);
   const [editing, setEditing] = useState<PantryItem | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -173,6 +182,11 @@ export default function Home() {
     });
   }, []);
 
+  function showToast(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 2500);
+  }
+
   async function markUsed(item: PantryItem) {
     setConsuming(item.id);
     const { data: { session } } = await supabase.auth.getSession();
@@ -183,6 +197,7 @@ export default function Home() {
         headers: { "X-User-Id": userId },
       });
       setItems(prev => prev.filter(i => i.id !== item.id));
+      showToast("Marked as used");
     } finally {
       setConsuming(null);
     }
@@ -201,8 +216,10 @@ export default function Home() {
       const data = await res.json();
       if (data.consumed) {
         setItems(prev => prev.filter(i => i.id !== item.id));
+        showToast("Item finished");
       } else {
         setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: data.quantity } : i));
+        showToast("Quantity updated");
       }
     } finally {
       setDecrementing(null);
@@ -220,6 +237,7 @@ export default function Home() {
     if (!res.ok) throw new Error("Failed to update item");
     const updated = await res.json();
     setItems(prev => prev.map(i => i.id === id ? { ...i, ...updated } : i));
+    showToast("Item updated");
   }
 
   async function deleteItem(item: PantryItem) {
@@ -230,6 +248,7 @@ export default function Home() {
       headers: { "X-User-Id": userId },
     });
     setItems(prev => prev.filter(i => i.id !== item.id));
+    showToast("Item removed");
   }
 
   const byCategory = items.reduce<Record<string, PantryItem[]>>((acc, item) => {
@@ -407,6 +426,8 @@ export default function Home() {
           onClose={() => setEditing(null)}
         />
       )}
+
+      {toast && <Toast message={toast} />}
     </main>
   );
 }

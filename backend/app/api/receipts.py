@@ -15,9 +15,13 @@ async def upload_receipt(
     x_user_id: str = Header(default=DEV_USER_ID),
 ):
     if file.content_type not in {"image/jpeg", "image/png", "image/webp", "image/gif"}:
-        raise HTTPException(400, "Supported formats: JPEG, PNG, WebP, GIF")
+        raise HTTPException(400, "Unsupported file type. Please upload a JPEG, PNG, or WebP image.")
 
     image_bytes = await file.read()
+
+    if len(image_bytes) > 10 * 1024 * 1024:
+        raise HTTPException(413, "Image is too large. Please use a file under 10 MB.")
+
     media_type = file.content_type
 
     receipt = supabase.table("receipts").insert({
@@ -28,7 +32,7 @@ async def upload_receipt(
 
     items = parse_receipt(image_bytes, media_type)
     if not items:
-        raise HTTPException(422, "Could not extract items from receipt")
+        raise HTTPException(422, "No items found. Make sure the photo shows a grocery receipt clearly.")
 
     ingest_items(x_user_id, items, receipt_id)
 

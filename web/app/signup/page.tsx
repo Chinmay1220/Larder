@@ -11,18 +11,40 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [confirmSent, setConfirmSent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) {
       setError(error.message);
       setLoading(false);
-    } else {
+    } else if (data.session) {
       router.push("/");
+    } else {
+      setConfirmSent(true);
+      setLoading(false);
     }
+  }
+
+  if (confirmSent) {
+    return (
+      <div className="min-h-dvh bg-(--color-surface) flex items-center justify-center px-4">
+        <div className="w-full max-w-sm text-center">
+          <div className="text-5xl mb-5">📬</div>
+          <h2 className="text-xl font-semibold text-(--color-text-primary) mb-2">Check your email</h2>
+          <p className="text-sm text-(--color-text-muted)">
+            We sent a confirmation link to <strong className="text-(--color-text-primary)">{email}</strong>.
+            Click it to activate your account, then come back to sign in.
+          </p>
+          <Link href="/login" className="inline-block mt-6 text-sm text-(--color-brand) font-medium hover:underline">
+            Back to sign in
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (

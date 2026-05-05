@@ -341,10 +341,16 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
   - Redeploy needed after env var set (env vars baked into JS bundle at build time)
 - Fixed Supabase schema: removed FK to `auth.users` (no auth in V1), used plain UUID
 
+### Day 6 — Polish & Reliability
+- `keepalive.yml`: GitHub Actions cron every 14 min pings `/health` to prevent Render free-tier sleep
+- Backend `receipts.py`: 10 MB file size guard (HTTP 413); friendlier error messages throughout
+- Frontend `scan/page.tsx`: client-side 10 MB check before upload; JSON error parsing (shows `detail` field, not raw JSON)
+- Frontend `page.tsx`: Toast component — brief pill notification after edit / delete / decrement / mark-used
+- Frontend `signup/page.tsx`: handles email confirmation — shows "Check your email" screen when `data.session` is null after signUp
+
 ### Known Issues (open)
 | Issue | Priority |
 |-------|----------|
-| No file size limit on uploads | V2 |
 | No React Native mobile app | Next |
 
 ---

@@ -57,6 +57,10 @@ export default function ScanPage() {
   const [isDraggingOver, setIsDragging] = useState(false);
 
   function handleFile(f: File) {
+    if (f.size > 10 * 1024 * 1024) {
+      setError("Image is too large — please use a file under 10 MB.");
+      return;
+    }
     setFile(f);
     setPreview(URL.createObjectURL(f));
     setResult(null);
@@ -99,7 +103,10 @@ export default function ScanPage() {
         body: form,
         headers: { "X-User-Id": userId },
       });
-      if (!res.ok) throw new Error(await res.text());
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.detail ?? "Something went wrong. Please try again.");
+      }
       const data = await res.json();
       setResult(data.items);
       setStep("done");
