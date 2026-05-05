@@ -62,3 +62,33 @@ def mark_consumed(user_id: str, item_id: str) -> bool:
         "consumed_at": datetime.now(timezone.utc).isoformat(),
     }).eq("id", item_id).eq("user_id", user_id).in_("status", ["active", "expired"]).execute()
     return len(res.data) > 0
+
+
+def update_item(user_id: str, item_id: str, fields: dict) -> dict | None:
+    res = supabase.table("pantry_items").update(fields) \
+        .eq("id", item_id).eq("user_id", user_id) \
+        .in_("status", ["active", "expired"]).execute()
+    return res.data[0] if res.data else None
+
+
+def delete_item(user_id: str, item_id: str) -> bool:
+    res = supabase.table("pantry_items").update({"status": "deleted"}) \
+        .eq("id", item_id).eq("user_id", user_id) \
+        .in_("status", ["active", "expired"]).execute()
+    return len(res.data) > 0
+
+
+def decrement_item(user_id: str, item_id: str) -> dict | None:
+    res = supabase.table("pantry_items").select("quantity") \
+        .eq("id", item_id).eq("user_id", user_id) \
+        .in_("status", ["active", "expired"]).execute()
+    if not res.data:
+        return None
+    current_qty = float(res.data[0]["quantity"] or 1)
+    if current_qty <= 1:
+        mark_consumed(user_id, item_id)
+        return {"consumed": True}
+    new_qty = current_qty - 1
+    supabase.table("pantry_items").update({"quantity": new_qty}) \
+        .eq("id", item_id).eq("user_id", user_id).execute()
+    return {"consumed": False, "quantity": new_qty}

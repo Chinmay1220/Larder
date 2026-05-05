@@ -97,13 +97,16 @@ CREATE INDEX idx_pantry_expiry ON pantry_items(est_expiry) WHERE status = 'activ
 
 ```
 POST   /receipts                   Upload receipt image → Claude Vision → Supabase
-GET    /pantry                     List all active pantry items for DEV_USER_ID
-GET    /pantry/expiring?days=3     Items expiring within N days (includes already expired)
-PATCH  /pantry/{id}/consumed       Mark item as manually consumed → removes from pantry view
+GET    /pantry                     List active + expired pantry items (X-User-Id header)
+GET    /pantry/expiring?days=3     Items expiring within N days
+PATCH  /pantry/{id}/consumed       Mark item as fully used → removes from pantry view
+PATCH  /pantry/{id}/decrement      Subtract 1 unit; removes item when quantity reaches 0
+PATCH  /pantry/{id}                Update fields: canonical_name, category, quantity, unit, est_expiry
+DELETE /pantry/{id}                Soft delete (status → "deleted")
 GET    /health                     Health check
 ```
 
-**DEV_USER_ID** = `00000000-0000-0000-0000-000000000001` (hardcoded for V1 single-user)
+**DEV_USER_ID** = `00000000-0000-0000-0000-000000000001` (fallback when no X-User-Id header)
 
 ---
 
@@ -307,6 +310,13 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - Frontend: all API calls pass `X-User-Id` from active Supabase session
 - New env vars required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
+### Day 5 (continued) — Edit, Delete, Quantity
+- `PATCH /pantry/{id}` — update any subset of fields (name, category, quantity, unit, est_expiry)
+- `DELETE /pantry/{id}` — soft delete (status → "deleted"); item hidden from pantry, history kept
+- `PATCH /pantry/{id}/decrement` — subtract 1 from quantity; if qty ≤ 1, marks consumed_manual
+- `pantry_state.py`: added `update_item`, `delete_item`, `decrement_item`
+- Frontend `page.tsx`: edit modal (pre-filled form, PATCH on save), delete button (single click), quantity controls (`[ − ] qty unit [ Used ]` per row)
+
 ### Day 4 — CI/CD Pipeline
 - Added `.github/workflows/ci.yml`: runs on every PR targeting `main`
   - Job 1: `ruff check backend/app backend/scripts` — Python linter
@@ -334,10 +344,8 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 ### Known Issues (open)
 | Issue | Priority |
 |-------|----------|
-| No auth — single hardcoded user | V2 |
-| No way to edit/delete a wrong item | V2 |
 | No file size limit on uploads | V2 |
-| Quantity doesn't decrement on use | V2 |
+| No React Native mobile app | Next |
 
 ---
 
