@@ -1,5 +1,8 @@
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
+import AnimatedSection from "@/components/AnimatedSection";
+import CounterStats from "@/components/CounterStats";
+import TestimonialRotator from "@/components/TestimonialRotator";
 
 // ── Inline mock UI components (replace with real screenshots later) ──────────
 
@@ -169,7 +172,7 @@ export default function Home() {
       <main>
         {/* ── Hero ── */}
         <section className="pt-20 pb-0 px-6 text-center bg-(--color-surface) overflow-hidden">
-          <div className="max-w-3xl mx-auto">
+          <AnimatedSection className="max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-(--color-brand-xlight) text-(--color-brand) text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-(--color-brand-xlight)">
               <span>🧺</span>
               <span>Free pantry tracker</span>
@@ -200,45 +203,31 @@ export default function Home() {
                 See how it works ↓
               </a>
             </div>
-          </div>
+          </AnimatedSection>
 
           {/* Hero mockup */}
-          <div className="max-w-3xl mx-auto">
+          <AnimatedSection delay={200} className="max-w-3xl mx-auto">
             <MockBrowser>
               <MockPantryDashboard />
             </MockBrowser>
-          </div>
+          </AnimatedSection>
         </section>
 
         {/* ── Stats bar ── */}
         <section className="py-8 px-6 border-y border-(--color-border) bg-(--color-card)">
-          <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0 text-sm text-(--color-text-muted) text-center">
-            <span className="sm:px-8">
-              <strong className="text-(--color-text-primary) font-semibold">~2 min</strong> to set up
-            </span>
-            <span className="hidden sm:block text-(--color-border)">·</span>
-            <span className="sm:px-8">
-              <strong className="text-(--color-text-primary) font-semibold">$1,500</strong> saved per
-              year on average
-            </span>
-            <span className="hidden sm:block text-(--color-border)">·</span>
-            <span className="sm:px-8">
-              <strong className="text-(--color-text-primary) font-semibold">Free</strong> to start,
-              no card needed
-            </span>
-          </div>
+          <CounterStats />
         </section>
 
         {/* ── Feature rows ── */}
         <section id="features" className="py-6">
           {/* Row 1 — mockup left, text right */}
           <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <div className="order-1">
+            <AnimatedSection direction="left" className="order-1">
               <MockBrowser>
                 <MockPantryDashboard />
               </MockBrowser>
-            </div>
-            <div className="order-2">
+            </AnimatedSection>
+            <AnimatedSection direction="right" delay={100} className="order-2">
               <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">
                 Pantry
               </p>
@@ -261,13 +250,13 @@ export default function Home() {
                   )
                 )}
               </ul>
-            </div>
+            </AnimatedSection>
           </div>
 
           {/* Row 2 — text left, mockup right */}
           <div className="bg-(--color-card-warm)">
             <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-              <div className="order-2 md:order-1">
+              <AnimatedSection direction="left" className="order-2 md:order-1">
                 <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">
                   Scanning
                 </p>
@@ -290,23 +279,23 @@ export default function Home() {
                     )
                   )}
                 </ul>
-              </div>
-              <div className="order-1 md:order-2">
+              </AnimatedSection>
+              <AnimatedSection direction="right" delay={100} className="order-1 md:order-2">
                 <MockBrowser>
                   <MockScanPage />
                 </MockBrowser>
-              </div>
+              </AnimatedSection>
             </div>
           </div>
 
           {/* Row 3 — mockup left, text right */}
           <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <div className="order-1">
+            <AnimatedSection direction="left" className="order-1">
               <MockBrowser>
                 <MockAlertsPage />
               </MockBrowser>
-            </div>
-            <div className="order-2">
+            </AnimatedSection>
+            <AnimatedSection direction="right" delay={100} className="order-2">
               <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">
                 Alerts
               </p>
@@ -329,21 +318,23 @@ export default function Home() {
                   )
                 )}
               </ul>
-            </div>
+            </AnimatedSection>
           </div>
         </section>
 
         {/* ── How it works ── */}
         <section id="how-it-works" className="py-24 px-6 bg-(--color-card) border-y border-(--color-border)">
           <div className="max-w-5xl mx-auto">
-            <h2 className="font-[family-name:--font-display] text-4xl text-center text-(--color-text-primary) mb-16">
-              How it works
-            </h2>
+            <AnimatedSection>
+              <h2 className="font-[family-name:--font-display] text-4xl text-center text-(--color-text-primary) mb-16">
+                How it works
+              </h2>
+            </AnimatedSection>
             <div className="grid md:grid-cols-3 gap-8 relative">
               {/* Connecting line on desktop */}
               <div className="hidden md:block absolute top-9 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-(--color-border)" />
               {steps.map((step, i) => (
-                <div key={i} className="flex flex-col items-center text-center relative">
+                <AnimatedSection key={i} delay={i * 150} className="flex flex-col items-center text-center relative">
                   <div className="w-12 h-12 rounded-full bg-(--color-brand) text-white font-bold flex items-center justify-center mb-5 shrink-0 z-10 shadow-sm text-lg">
                     {i + 1}
                   </div>
@@ -352,7 +343,7 @@ export default function Home() {
                     {step.title}
                   </h3>
                   <p className="text-sm text-(--color-text-muted) leading-relaxed">{step.body}</p>
-                </div>
+                </AnimatedSection>
               ))}
             </div>
           </div>
@@ -361,15 +352,17 @@ export default function Home() {
         {/* ── Pricing ── */}
         <section id="pricing" className="py-24 px-6 bg-(--color-surface)">
           <div className="max-w-3xl mx-auto">
-            <h2 className="font-[family-name:--font-display] text-4xl text-center text-(--color-text-primary) mb-4">
-              Simple, honest pricing
-            </h2>
-            <p className="text-center text-(--color-text-muted) mb-14">
-              Start free. Upgrade when your household grows.
-            </p>
+            <AnimatedSection>
+              <h2 className="font-[family-name:--font-display] text-4xl text-center text-(--color-text-primary) mb-4">
+                Simple, honest pricing
+              </h2>
+              <p className="text-center text-(--color-text-muted) mb-14">
+                Start free. Upgrade when your household grows.
+              </p>
+            </AnimatedSection>
             <div className="grid md:grid-cols-2 gap-6">
               {/* Free */}
-              <div className="bg-(--color-card) rounded-2xl border-2 border-(--color-brand) shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 flex flex-col relative">
+              <AnimatedSection delay={100} className="bg-(--color-card) rounded-2xl border-2 border-(--color-brand) shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 flex flex-col relative">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                   <span className="bg-(--color-brand) text-white text-xs font-bold px-3 py-1 rounded-full">
                     MOST POPULAR
@@ -398,10 +391,10 @@ export default function Home() {
                 >
                   Get started free →
                 </a>
-              </div>
+              </AnimatedSection>
 
               {/* Pro */}
-              <div className="bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.06)] p-8 flex flex-col opacity-60">
+              <AnimatedSection delay={200} className="bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.06)] p-8 flex flex-col opacity-60">
                 <div className="inline-block bg-stone-100 text-stone-400 text-xs font-bold px-3 py-1 rounded-full mb-4 self-start tracking-wide">
                   COMING SOON
                 </div>
@@ -428,7 +421,7 @@ export default function Home() {
                 >
                   Coming soon
                 </button>
-              </div>
+              </AnimatedSection>
             </div>
           </div>
         </section>
@@ -436,52 +429,25 @@ export default function Home() {
         {/* ── Bottom CTA ── */}
         <section className="py-24 px-6 bg-(--color-brand-xlight) border-t border-(--color-border)">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="font-[family-name:--font-display] text-4xl md:text-5xl text-(--color-text-primary) mb-4 leading-snug">
-              The average US household wastes{" "}
-              <span className="text-(--color-brand)">$1,500 of food</span> every year.
-            </p>
-            <p className="text-(--color-text-muted) text-lg mb-10 max-w-md mx-auto">
-              Larder helps you fix that — free.
-            </p>
-            <a
-              href="https://larder-theta.vercel.app"
-              className="inline-block bg-(--color-brand) text-white px-10 py-4 rounded-xl font-semibold text-base hover:bg-(--color-brand-dark) transition-colors shadow-sm mb-14"
-            >
-              Start saving food — it&apos;s free →
-            </a>
+            <AnimatedSection>
+              <p className="font-[family-name:--font-display] text-4xl md:text-5xl text-(--color-text-primary) mb-4 leading-snug">
+                The average US household wastes{" "}
+                <span className="text-(--color-brand)">$1,500 of food</span> every year.
+              </p>
+              <p className="text-(--color-text-muted) text-lg mb-10 max-w-md mx-auto">
+                Larder helps you fix that — free.
+              </p>
+              <a
+                href="https://larder-theta.vercel.app"
+                className="inline-block bg-(--color-brand) text-white px-10 py-4 rounded-xl font-semibold text-base hover:bg-(--color-brand-dark) transition-colors shadow-sm mb-14"
+              >
+                Start saving food — it&apos;s free →
+              </a>
+            </AnimatedSection>
 
-            <div className="grid md:grid-cols-2 gap-5 text-left">
-              <div className="bg-(--color-card) rounded-2xl border border-(--color-border) p-6 shadow-sm">
-                <p className="text-(--color-text-muted) text-sm leading-relaxed mb-4">
-                  &ldquo;I used to throw away vegetables every week. Now I actually check Larder before I
-                  shop. Game changer.&rdquo;
-                </p>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-(--color-brand-xlight) border border-(--color-border) flex items-center justify-center text-sm">
-                    👩
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-(--color-text-primary)">Sarah K.</div>
-                    <div className="text-xs text-(--color-text-faint)">Home cook, Chicago</div>
-                  </div>
-                </div>
-              </div>
-              <div className="bg-(--color-card) rounded-2xl border border-(--color-border) p-6 shadow-sm">
-                <p className="text-(--color-text-muted) text-sm leading-relaxed mb-4">
-                  &ldquo;Bought blueberries three weeks in a row before I started using this. Not
-                  anymore.&rdquo;
-                </p>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-(--color-brand-xlight) border border-(--color-border) flex items-center justify-center text-sm">
-                    👨
-                  </div>
-                  <div>
-                    <div className="text-xs font-semibold text-(--color-text-primary)">Marcus T.</div>
-                    <div className="text-xs text-(--color-text-faint)">Busy parent, Austin</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <AnimatedSection delay={200}>
+              <TestimonialRotator />
+            </AnimatedSection>
           </div>
         </section>
       </main>
