@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -94,17 +95,27 @@ export default function Home() {
   const [consuming, setConsuming] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch(`${API}/pantry`)
-      .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(setItems)
-      .catch(() => setError(true))
-      .finally(() => setLoading(false));
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const userId = session?.user?.id ?? "";
+      fetch(`${API}/pantry`, {
+        headers: { "X-User-Id": userId },
+      })
+        .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
+        .then(setItems)
+        .catch(() => setError(true))
+        .finally(() => setLoading(false));
+    });
   }, []);
 
   async function markUsed(item: PantryItem) {
     setConsuming(item.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id ?? "";
     try {
-      await fetch(`${API}/pantry/${item.id}/consumed`, { method: "PATCH" });
+      await fetch(`${API}/pantry/${item.id}/consumed`, {
+        method: "PATCH",
+        headers: { "X-User-Id": userId },
+      });
       setItems(prev => prev.filter(i => i.id !== item.id));
     } finally {
       setConsuming(null);
