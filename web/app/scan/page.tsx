@@ -50,7 +50,7 @@ export default function ScanPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview]           = useState<string | null>(null);
   const [file, setFile]                 = useState<File | null>(null);
-  const [isPdf, setIsPdf]               = useState(false);
+  const [isDoc, setIsDoc]               = useState(false);
   const [loading, setLoading]           = useState(false);
   const [result, setResult]             = useState<Item[] | null>(null);
   const [error, setError]               = useState<string | null>(null);
@@ -62,10 +62,10 @@ export default function ScanPage() {
       setError("File is too large — please use a file under 10 MB.");
       return;
     }
-    const pdf = f.type === "application/pdf";
+    const isImage = f.type.startsWith("image/");
     setFile(f);
-    setIsPdf(pdf);
-    setPreview(pdf ? null : URL.createObjectURL(f));
+    setIsDoc(!isImage);
+    setPreview(isImage ? URL.createObjectURL(f) : null);
     setResult(null);
     setError(null);
     setStep("upload");
@@ -87,7 +87,7 @@ export default function ScanPage() {
     setResult(null);
     setFile(null);
     setPreview(null);
-    setIsPdf(false);
+    setIsDoc(false);
     setStep("upload");
     setError(null);
   }
@@ -177,18 +177,20 @@ export default function ScanPage() {
                   📸
                 </div>
                 <p className="font-semibold text-(--color-text-primary) text-base mb-1">Drop your receipt here</p>
-                <p className="text-sm text-(--color-text-muted)">or click to browse · JPG, PNG, WebP, GIF or PDF</p>
-                <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" className="hidden" onChange={onFileChange} />
+                <p className="text-sm text-(--color-text-muted)">or click to browse · Image, PDF, Excel, Word, CSV or TXT</p>
+                <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.xlsx,.xls,.docx,.doc,.csv,.txt" className="hidden" onChange={onFileChange} />
               </div>
-            ) : isPdf ? (
+            ) : isDoc ? (
               <div
                 className="relative rounded-3xl border border-(--color-border) shadow-sm cursor-pointer group bg-stone-50 p-10 text-center"
                 onClick={() => inputRef.current?.click()}
               >
-                <div className="text-5xl mb-3">📄</div>
+                <div className="text-5xl mb-3">
+                  {file?.name.endsWith(".pdf") ? "📄" : file?.name.match(/\.xlsx?$/) ? "📊" : file?.name.match(/\.docx?$/) ? "📝" : "📃"}
+                </div>
                 <p className="font-medium text-(--color-text-primary) text-sm">{file?.name}</p>
-                <p className="text-xs text-(--color-text-faint) mt-1">PDF receipt · click to change</p>
-                <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" className="hidden" onChange={onFileChange} />
+                <p className="text-xs text-(--color-text-faint) mt-1">click to change</p>
+                <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.xlsx,.xls,.docx,.doc,.csv,.txt" className="hidden" onChange={onFileChange} />
               </div>
             ) : (
               <div
@@ -199,7 +201,7 @@ export default function ScanPage() {
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-full">📎 Change file</span>
                 </div>
-                <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif,application/pdf" className="hidden" onChange={onFileChange} />
+                <input ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.webp,.gif,.pdf,.xlsx,.xls,.docx,.doc,.csv,.txt" className="hidden" onChange={onFileChange} />
               </div>
             )}
 
