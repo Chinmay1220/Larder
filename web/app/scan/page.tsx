@@ -166,8 +166,8 @@ export default function ScanPage() {
                   📸
                 </div>
                 <p className="font-semibold text-(--color-text-primary) text-base mb-1">Drop your receipt here</p>
-                <p className="text-sm text-(--color-text-muted)">or click to browse · JPG or PNG</p>
-                <input ref={inputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={onFileChange} />
+                <p className="text-sm text-(--color-text-muted)">or click to browse · JPG, PNG or WebP</p>
+                <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={onFileChange} />
               </div>
             ) : (
               <div
@@ -178,7 +178,7 @@ export default function ScanPage() {
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-full">📎 Change photo</span>
                 </div>
-                <input ref={inputRef} type="file" accept="image/jpeg,image/png" className="hidden" onChange={onFileChange} />
+                <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/gif" className="hidden" onChange={onFileChange} />
               </div>
             )}
 
