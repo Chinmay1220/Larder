@@ -367,6 +367,43 @@ Four small but important security improvements:
 
 ---
 
+---
+
+## Day 10 — Marketing Website
+
+**What we shipped:**
+
+### Standalone marketing site in `website/`
+- New Next.js app at `website/` (sibling to `web/` and `backend/`) — completely separate from the product app
+- Deploys as its own Vercel project (separate URL)
+- Same design tokens as the app: DM Serif Display + Inter fonts, warm earthy color palette
+- Purely static — no backend, no auth, no API calls. Builds to flat HTML files.
+
+### Pages
+
+**Landing page (`/`)**:
+- **Hero** — big DM Serif headline, subhead, two CTAs: "Get started free →" (links to app) and "See how it works ↓" (smooth scrolls)
+- **How it works** — three numbered steps: Snap receipt → Pantry updates → Shop smarter
+- **Features** — six-card grid: AI reading, freshness bars, expiry alerts, item controls, privacy, free tier
+- **Pricing** — Free (highlighted, live) vs Pro (dimmed, coming soon at $5/month)
+- **Why it matters** — "$1,500 wasted per year" stat + two testimonials + final CTA
+
+**Docs page (`/docs`)**:
+- Left sidebar with anchor navigation (desktop), stacked sections (mobile)
+- Quick start, Scanning receipts, Pantry management, Expiry alerts, FAQ (8 questions with `<details>`/`<summary>` accordion)
+- Full supported formats table, freshness bar color key, step-by-step guides
+
+### CI updated
+- Added a third CI job: `website-build` — runs `npm ci + npm run build` in `website/` on every PR
+- Auto-merge now requires all three jobs green (backend-lint + frontend-build + website-build)
+
+### Deploy
+- Go to vercel.com → Add project → import same GitHub repo → Root Directory: `website` → Deploy
+- No env vars needed (fully static)
+
+---
+
 ## What's Next
 
+- Deploy marketing website to Vercel (manual step — new project from same repo)
 - React Native mobile app (Expo) with native camera
