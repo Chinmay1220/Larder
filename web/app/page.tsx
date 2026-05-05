@@ -23,6 +23,8 @@ const CATEGORY_EMOJI: Record<string, string> = {
   snack: "🍿", household: "🧻", other: "📦",
 };
 
+const CATEGORIES = ["produce","dairy","meat","seafood","bakery","pantry","frozen","beverage","snack","household","other"] as const;
+
 function daysLeft(expiry: string) {
   return Math.floor((new Date(expiry).getTime() - Date.now()) / 86400000);
 }
@@ -45,7 +47,7 @@ function urgencyBarColor(expiry: string) {
 
 function urgencyBarWidth(item: PantryItem) {
   const d = daysLeft(item.est_expiry);
-  if (d < 0) return 100; // expired — show full red bar
+  if (d < 0) return 100;
   const shelf = item.shelf_life_days || 14;
   return Math.min(100, (d / shelf) * 100);
 }
@@ -87,12 +89,76 @@ function Skeleton() {
   );
 }
 
+function EditModal({ item, onSave, onClose }: {
+  item: PantryItem;
+  onSave: (id: string, fields: Partial<PantryItem>) => Promise<void>;
+  onClose: () => void;
+}) {
+  const [name, setName] = useState(item.canonical_name);
+  const [qty, setQty] = useState(item.quantity);
+  const [unit, setUnit] = useState(item.unit);
+  const [category, setCategory] = useState(item.category);
+  const [saving, setSaving] = useState(false);
+
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await onSave(item.id, { canonical_name: name, quantity: qty, unit, category });
+      onClose();
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const inputCls = "w-full px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition";
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-(--color-card) rounded-2xl w-full max-w-sm p-5 shadow-xl" onClick={e => e.stopPropagation()}>
+        <h3 className="font-semibold text-(--color-text-primary) mb-4">Edit item</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Name</label>
+            <input value={name} onChange={e => setName(e.target.value)} className={inputCls} />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Quantity</label>
+              <input type="number" min={0} step={0.5} value={qty} onChange={e => setQty(Number(e.target.value))} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Unit</label>
+              <input value={unit} onChange={e => setUnit(e.target.value)} className={inputCls} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Category</label>
+            <select value={category} onChange={e => setCategory(e.target.value)} className={inputCls}>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+        </div>
+        <div className="flex gap-2 mt-5">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors">
+            Cancel
+          </button>
+          <button onClick={handleSave} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm disabled:opacity-50">
+            {saving ? "Saving…" : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [items, setItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
   const [consuming, setConsuming] = useState<string | null>(null);
+  const [decrementing, setDecrementing] = useState<string | null>(null);
+  const [editing, setEditing] = useState<PantryItem | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -122,6 +188,50 @@ export default function Home() {
     }
   }
 
+  async function decrementItem(item: PantryItem) {
+    setDecrementing(item.id);
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id ?? "";
+    try {
+      const res = await fetch(`${API}/pantry/${item.id}/decrement`, {
+        method: "PATCH",
+        headers: { "X-User-Id": userId },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.consumed) {
+        setItems(prev => prev.filter(i => i.id !== item.id));
+      } else {
+        setItems(prev => prev.map(i => i.id === item.id ? { ...i, quantity: data.quantity } : i));
+      }
+    } finally {
+      setDecrementing(null);
+    }
+  }
+
+  async function editItem(id: string, fields: Partial<PantryItem>) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id ?? "";
+    const res = await fetch(`${API}/pantry/${id}`, {
+      method: "PATCH",
+      headers: { "X-User-Id": userId, "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+    });
+    if (!res.ok) throw new Error("Failed to update item");
+    const updated = await res.json();
+    setItems(prev => prev.map(i => i.id === id ? { ...i, ...updated } : i));
+  }
+
+  async function deleteItem(item: PantryItem) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const userId = session?.user?.id ?? "";
+    await fetch(`${API}/pantry/${item.id}`, {
+      method: "DELETE",
+      headers: { "X-User-Id": userId },
+    });
+    setItems(prev => prev.filter(i => i.id !== item.id));
+  }
+
   const byCategory = items.reduce<Record<string, PantryItem[]>>((acc, item) => {
     (acc[item.category] = acc[item.category] || []).push(item);
     return acc;
@@ -131,12 +241,10 @@ export default function Home() {
     ? byCategory
     : byCategory[activeFilter] ? { [activeFilter]: byCategory[activeFilter] } : {};
 
-  // Include already-expired items in the alert strip
   const urgentItems  = items.filter(i => daysLeft(i.est_expiry) <= 3);
   const expiredCount = items.filter(i => daysLeft(i.est_expiry) < 0).length;
   const totalValue   = items.reduce((s, i) => s + (i.price ?? 0), 0);
 
-  // Truncate alert names to avoid wall of text
   const urgentNames = urgentItems.slice(0, 4).map(i => i.canonical_name);
   const urgentExtra = urgentItems.length > 4 ? ` +${urgentItems.length - 4} more` : "";
 
@@ -232,30 +340,50 @@ export default function Home() {
               <div className="mx-4 md:mx-8 bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.04)] divide-y divide-(--color-border) overflow-hidden">
                 {catItems.map((item) => (
                   <div key={item.id} className="px-4 py-3 group hover:bg-(--color-card-warm) transition-colors duration-100">
+                    {/* Top row: name + expiry badge + edit/delete */}
                     <div className="flex items-center justify-between mb-1.5">
                       <p className="font-medium text-(--color-text-primary) capitalize text-sm leading-snug">
                         {item.canonical_name}
                       </p>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <ExpiryBadge expiry={item.est_expiry} />
                         <button
-                          onClick={() => markUsed(item)}
-                          disabled={consuming === item.id}
-                          title="Mark as used"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-xs px-2 py-0.5 rounded-full border border-(--color-border) text-(--color-text-faint) hover:border-red-200 hover:text-red-500 hover:bg-(--color-urgent-bg) disabled:opacity-30"
-                        >
-                          {consuming === item.id ? "…" : "Used"}
-                        </button>
+                          onClick={() => setEditing(item)}
+                          title="Edit"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-sm w-6 h-6 rounded-full flex items-center justify-center text-(--color-text-faint) hover:text-(--color-brand)"
+                        >✏️</button>
+                        <button
+                          onClick={() => deleteItem(item)}
+                          title="Delete"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity text-sm w-6 h-6 rounded-full flex items-center justify-center text-(--color-text-faint) hover:text-(--color-urgent-text)"
+                        >🗑</button>
                       </div>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <p className="text-xs text-(--color-text-faint)">{item.quantity} {item.unit}</p>
+                    {/* Bottom row: decrement + qty + freshness bar + used */}
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => decrementItem(item)}
+                        disabled={decrementing === item.id || consuming === item.id}
+                        title="Use one"
+                        className="shrink-0 text-xs w-5 h-5 rounded-full border border-(--color-border) flex items-center justify-center text-(--color-text-faint) hover:border-(--color-brand) hover:text-(--color-brand) disabled:opacity-30 transition-colors"
+                      >−</button>
+                      <p className="text-xs text-(--color-text-faint) shrink-0">
+                        {decrementing === item.id ? "…" : `${item.quantity} ${item.unit}`}
+                      </p>
                       <div className="flex-1 h-1 rounded-full bg-stone-100 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${urgencyBarColor(item.est_expiry)}`}
                           style={{ width: `${urgencyBarWidth(item)}%` }}
                         />
                       </div>
+                      <button
+                        onClick={() => markUsed(item)}
+                        disabled={consuming === item.id || decrementing === item.id}
+                        title="Mark all used"
+                        className="shrink-0 text-xs px-2 py-0.5 rounded-full border border-(--color-border) text-(--color-text-faint) hover:border-red-200 hover:text-red-500 hover:bg-(--color-urgent-bg) disabled:opacity-30 transition-colors"
+                      >
+                        {consuming === item.id ? "…" : "Used"}
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -270,6 +398,15 @@ export default function Home() {
         className="md:hidden fixed bottom-20 right-5 z-50 w-14 h-14 rounded-full bg-(--color-brand) text-white flex items-center justify-center text-2xl shadow-lg hover:bg-(--color-brand-light) transition-all active:scale-95">
         📸
       </Link>
+
+      {/* Edit modal */}
+      {editing && (
+        <EditModal
+          item={editing}
+          onSave={editItem}
+          onClose={() => setEditing(null)}
+        />
+      )}
     </main>
   );
 }

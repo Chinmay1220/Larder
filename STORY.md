@@ -253,10 +253,42 @@ Your phone → larder-theta.vercel.app (Vercel)
 
 ---
 
-## What's Next (Day 5)
+## Day 5 — Auth + Item Controls
 
-- Clean up debug error message in pantry dashboard
-- Test full scan flow on mobile phone (larder-theta.vercel.app)
-- Build React Native mobile app (Expo) with native camera
+**What we shipped:**
+
+### Auth (Supabase)
+- Added email + password login and signup pages (`/login`, `/signup`)
+- The app now redirects you to `/login` if you're not signed in
+- Logout button in the nav — your email shows in the sidebar on desktop
+- Each user's pantry is completely separate — your data is yours
+
+### Edit items
+- Hover any pantry item → ✏️ button appears
+- Click it → a modal opens with the item's details pre-filled
+- Change the name, quantity, unit, or category → Save → list updates instantly
+
+### Delete items
+- Hover any pantry item → 🗑 button appears
+- Click it → item is removed immediately (soft delete in the database — history is kept)
+
+### Quantity tracking
+- Every item row now shows a **[ − ]** button on the left
+- Click **−** to use one unit: "3 each" becomes "2 each"
+- When quantity hits 1 and you click **−**, the item is fully removed (same as "Used")
+- **Used** button still removes everything at once
+
+### How it all fits together
+```
+Before:  [ Blueberries ]  [ Expired ]  [ Used ]
+After:   [ Blueberries ]  [ Expired ]  [ ✏️ ] [ 🗑 ]
+         [ − ] 2 pints [ ——bar—— ] [ Used ]
+```
+
+---
+
+## What's Next
+
+- React Native mobile app (Expo) with native camera
 - Wire mobile camera → Render backend → pantry view
-- Add auth (Supabase Auth) for multi-user support
+- Email receipt reading (Gmail sync)
