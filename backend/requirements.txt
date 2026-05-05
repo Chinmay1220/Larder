@@ -8,3 +8,4 @@ Pillow
 slowapi
 openpyxl
 python-docx
+PyJWT

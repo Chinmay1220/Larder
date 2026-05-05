@@ -357,10 +357,16 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - `web/app/scan/page.tsx`: `isPdf` state; PDF shows filename+icon preview instead of `<img>`; file input accepts `application/pdf`
 - `web/next.config.ts`: security headers on all routes — `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`
 
+### Day 8 — JWT Auth
+- `backend/app/auth.py`: `get_user_id()` FastAPI dependency — reads `Authorization: Bearer <token>`, verifies with PyJWT + `SUPABASE_JWT_SECRET`, returns `sub` claim (user UUID); falls back to DEV_USER_ID if secret not configured (local dev)
+- `backend/app/api/receipts.py` + `pantry.py`: replaced `Header(default=DEV_USER_ID)` with `Depends(get_user_id)` on all endpoints
+- `backend/requirements.txt`: added `PyJWT`
+- Frontend `page.tsx` + `scan/page.tsx`: send `Authorization: Bearer <session.access_token>` instead of `X-User-Id`
+- New env var required: `SUPABASE_JWT_SECRET` (Supabase dashboard → Settings → API → JWT Secret) — must be set in Render dashboard
+
 ### Known Issues (open)
 | Issue | Priority |
 |-------|----------|
-| User ID spoofing via X-User-Id header (no JWT verification) | High |
 | No React Native mobile app | Next |
 
 ---

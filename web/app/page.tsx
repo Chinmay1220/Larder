@@ -171,9 +171,9 @@ export default function Home() {
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      const userId = session?.user?.id ?? "";
+      const token = session?.access_token ?? "";
       fetch(`${API}/pantry`, {
-        headers: { "X-User-Id": userId },
+        headers: { "Authorization": `Bearer ${token}` },
       })
         .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
         .then(setItems)
@@ -190,11 +190,11 @@ export default function Home() {
   async function markUsed(item: PantryItem) {
     setConsuming(item.id);
     const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id ?? "";
+    const token = session?.access_token ?? "";
     try {
       await fetch(`${API}/pantry/${item.id}/consumed`, {
         method: "PATCH",
-        headers: { "X-User-Id": userId },
+        headers: { "Authorization": `Bearer ${token}` },
       });
       setItems(prev => prev.filter(i => i.id !== item.id));
       showToast("Marked as used");
@@ -206,11 +206,11 @@ export default function Home() {
   async function decrementItem(item: PantryItem) {
     setDecrementing(item.id);
     const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id ?? "";
+    const token = session?.access_token ?? "";
     try {
       const res = await fetch(`${API}/pantry/${item.id}/decrement`, {
         method: "PATCH",
-        headers: { "X-User-Id": userId },
+        headers: { "Authorization": `Bearer ${token}` },
       });
       if (!res.ok) return;
       const data = await res.json();
@@ -228,10 +228,10 @@ export default function Home() {
 
   async function editItem(id: string, fields: Partial<PantryItem>) {
     const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id ?? "";
+    const token = session?.access_token ?? "";
     const res = await fetch(`${API}/pantry/${id}`, {
       method: "PATCH",
-      headers: { "X-User-Id": userId, "Content-Type": "application/json" },
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(fields),
     });
     if (!res.ok) throw new Error("Failed to update item");
@@ -242,10 +242,10 @@ export default function Home() {
 
   async function deleteItem(item: PantryItem) {
     const { data: { session } } = await supabase.auth.getSession();
-    const userId = session?.user?.id ?? "";
+    const token = session?.access_token ?? "";
     await fetch(`${API}/pantry/${item.id}`, {
       method: "DELETE",
-      headers: { "X-User-Id": userId },
+      headers: { "Authorization": `Bearer ${token}` },
     });
     setItems(prev => prev.filter(i => i.id !== item.id));
     showToast("Item removed");

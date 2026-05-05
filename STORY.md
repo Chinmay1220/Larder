@@ -339,7 +339,23 @@ PDFs needed a different code path — Claude reads them as a document rather tha
 
 ---
 
+## Day 8 — JWT Authentication (User ID Spoofing Fixed)
+
+**The problem we fixed:**
+Before this, the frontend sent a header `X-User-Id: <uuid>` and the backend just trusted it. Anyone could change that header to another user's UUID in DevTools and read or delete their pantry. A serious flaw for a multi-user app.
+
+**How it works now:**
+- Frontend sends `Authorization: Bearer <token>` — the actual Supabase session token
+- Backend verifies the token using the Supabase JWT secret
+- The real user ID is extracted from inside the verified token — no header the client can fake
+- If the token is missing, expired, or tampered with → 401 Unauthorized
+- Local development still works without a JWT secret (falls back to dev user)
+
+**What this means:**
+User A literally cannot see or touch User B's pantry, even if they know User B's UUID.
+
+---
+
 ## What's Next
 
-- JWT auth verification on the backend (user ID spoofing fix)
 - React Native mobile app (Expo) with native camera
