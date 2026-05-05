@@ -13,7 +13,8 @@
 | Database | Supabase (Postgres) | managed | Managed DB + auth + storage, free tier |
 | AI / Vision | Claude claude-sonnet-4-6 | latest | Vision API: receipt parsing + normalization in one call |
 | Hosting (backend) | Render | — | Persistent server — no serverless timeout. Claude Vision needs 5-15s |
-| Hosting (web) | Vercel | — | Zero-config Next.js deploy |
+| Hosting (web app) | Vercel | — | larder-theta.vercel.app |
+| Hosting (marketing site) | Vercel | — | larder-website.vercel.app |
 | CI/CD + Cron | GitHub Actions | — | Auto-deploy on push + nightly depletion job |
 | Payments | Stripe | — | V2 — not in scope yet |
 

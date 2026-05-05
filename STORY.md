@@ -398,12 +398,11 @@ Four small but important security improvements:
 - Auto-merge now requires all three jobs green (backend-lint + frontend-build + website-build)
 
 ### Deploy
-- Go to vercel.com → Add project → import same GitHub repo → Root Directory: `website` → Deploy
-- No env vars needed (fully static)
+- Deployed as a separate Vercel project at **https://larder-website.vercel.app**
+- Root Directory set to `website` — no env vars needed (fully static)
 
 ---
 
 ## What's Next
 
-- Deploy marketing website to Vercel (manual step — new project from same repo)
 - React Native mobile app (Expo) with native camera
