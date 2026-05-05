@@ -1,15 +1,56 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
 const NAV = [
-  { href: "/",     icon: "🧺", label: "Pantry"  },
-  { href: "/scan", icon: "📸", label: "Scan"    },
+  { href: "/",     icon: "🧺", label: "Pantry" },
+  { href: "/scan", icon: "📸", label: "Scan"   },
 ];
+
+const AUTH_ROUTES = ["/login", "/signup"];
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const [user, setUser] = useState<User | null>(null);
+  const [checking, setChecking] = useState(true);
+
+  const isAuthPage = AUTH_ROUTES.includes(pathname);
+
+  useEffect(() => {
+    if (isAuthPage) { setChecking(false); return; }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        router.push("/login");
+      } else {
+        setUser(session.user);
+        setChecking(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) router.push("/login");
+      else setUser(session.user);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [isAuthPage, router]);
+
+  async function logout() {
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
+
+  // Auth pages: render without shell
+  if (isAuthPage) return <>{children}</>;
+
+  // Still checking session: blank screen (avoids flash)
+  if (checking) return null;
 
   return (
     <div className="flex flex-col h-dvh md:flex-row">
@@ -21,6 +62,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </h1>
           <p className="text-xs text-(--color-text-faint) mt-0.5">Pantry tracker</p>
         </div>
+
         {NAV.map(({ href, icon, label }) => {
           const active = pathname === href;
           return (
@@ -38,6 +80,17 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           );
         })}
+
+        {/* User + logout at bottom */}
+        <div className="mt-auto pt-4 border-t border-(--color-border)">
+          <p className="text-xs text-(--color-text-faint) px-3 truncate mb-2">{user?.email}</p>
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-urgent-text) transition-colors"
+          >
+            <span>🚪</span> Sign out
+          </button>
+        </div>
       </aside>
 
       {/* Main content */}
@@ -61,6 +114,13 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
             </Link>
           );
         })}
+        <button
+          onClick={logout}
+          className="flex-1 flex flex-col items-center justify-center gap-0.5 text-xs font-medium text-(--color-text-faint) hover:text-(--color-urgent-text) transition-colors"
+        >
+          <span className="text-xl">🚪</span>
+          Sign out
+        </button>
       </nav>
     </div>
   );

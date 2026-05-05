@@ -3,6 +3,7 @@
 import { useState, useRef, Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const API = process.env.NEXT_PUBLIC_API_URL;
 
@@ -89,9 +90,15 @@ export default function ScanPage() {
     setError(null);
     setStep("processing");
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user?.id ?? "";
       const form = new FormData();
       form.append("file", file);
-      const res = await fetch(`${API}/receipts`, { method: "POST", body: form });
+      const res = await fetch(`${API}/receipts`, {
+        method: "POST",
+        body: form,
+        headers: { "X-User-Id": userId },
+      });
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json();
       setResult(data.items);

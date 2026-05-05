@@ -298,6 +298,15 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - Fixed: expiry calculation (floor not ceil), expired items in alert strip, full red bar for expired items
 - Added `.gitignore` to protect secrets
 
+### Day 5 — Auth + Item Management
+- Added Supabase Auth (email + password)
+- New pages: `/login` and `/signup` (styled to match app, no nav)
+- `AppShell.tsx`: session check on mount → redirect to `/login` if unauthenticated; logout button in sidebar + mobile nav; user email shown in sidebar
+- `web/lib/supabase.ts`: browser Supabase client singleton
+- Backend: all endpoints now read `X-User-Id` header (falls back to DEV_USER_ID for backward compat)
+- Frontend: all API calls pass `X-User-Id` from active Supabase session
+- New env vars required: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
 ### Day 4 — CI/CD Pipeline
 - Added `.github/workflows/ci.yml`: runs on every PR targeting `main`
   - Job 1: `ruff check backend/app backend/scripts` — Python linter
