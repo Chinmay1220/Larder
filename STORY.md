@@ -287,6 +287,34 @@ After:   [ Blueberries ]  [ Expired ]  [ ✏️ ] [ 🗑 ]
 
 ---
 
+## Day 6 — Polish & Reliability
+
+**What we fixed:**
+
+### No more 30-second loading on first open
+- Added a keep-alive ping that hits the backend every 14 minutes
+- Render was putting the server to sleep after 15 minutes of no traffic — that caused the long "Loading…" hang
+- Now the server stays warm and the pantry loads instantly
+
+### Friendlier error messages
+- Before: `{"detail":"Could not extract items from receipt"}` — raw JSON shown to user
+- After: plain English like "No items found. Make sure the photo shows a grocery receipt clearly."
+- All error messages across the app now read like they were written for a human
+
+### File size limit
+- Uploads are now capped at 10 MB on both the frontend and backend
+- Before: no limit — a large photo could silently fail or time out
+
+### Action feedback (toast notifications)
+- Editing, deleting, decrementing, and marking as used now all show a brief confirmation pill
+- Before: actions happened silently with no visual confirmation
+
+### Email confirmation on signup
+- Signup now handles the email confirmation flow properly
+- If Supabase requires email verification, users see a "Check your email" screen instead of being redirected to a blank pantry
+
+---
+
 ## What's Next
 
 - React Native mobile app (Expo) with native camera
