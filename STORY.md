@@ -356,6 +356,17 @@ User A literally cannot see or touch User B's pantry, even if they know User B's
 
 ---
 
+## Day 9 — Security Polish
+
+Four small but important security improvements:
+
+- **DEV_MODE flag** — local dev now requires `DEV_MODE=true` explicitly. If `SUPABASE_JWT_SECRET` is missing in production without this flag, the server returns a 500 instead of silently bypassing auth.
+- **HSTS header** — browsers are now told to always use HTTPS for this domain, even on first visit. Prevents downgrade attacks.
+- **Input validation** — item edits now validate: quantity must be > 0, category must be from the known list, expiry must be a real date, name can't be blank or over 200 chars.
+- **Startup env check** — the server now refuses to start if `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, or `ANTHROPIC_API_KEY` are missing, instead of crashing silently at first request.
+
+---
+
 ## What's Next
 
 - React Native mobile app (Expo) with native camera
