@@ -315,8 +315,31 @@ After:   [ Blueberries ]  [ Expired ]  [ ✏️ ] [ 🗑 ]
 
 ---
 
+## Day 7 — File Types + Security Hardening
+
+**What we shipped:**
+
+### All receipt formats now supported
+| Format | Works? |
+|--------|--------|
+| JPEG photo | ✅ |
+| PNG screenshot | ✅ |
+| WebP (from Google Images, web) | ✅ |
+| GIF | ✅ |
+| PDF (email receipts, digital receipts) | ✅ NEW |
+
+PDFs needed a different code path — Claude reads them as a document rather than an image. Everything else is automatic.
+
+### Security hardening
+- **Rate limiting** — receipt uploads are now capped at 10 per minute per IP. Prevents someone from spamming the API and running up the Anthropic bill.
+- **Real file validation** — we now actually open image files with Pillow to confirm they're real images, not just check the label. A fake `.jpg` that's actually a zip file gets rejected properly.
+- **Smarter memory handling** — large file uploads no longer load fully into memory before being rejected. We stop reading after 10 MB.
+- **CORS locked down** — backend now only allows the specific HTTP methods and headers the app actually uses.
+- **Security headers** — frontend now sends `X-Frame-Options`, `X-Content-Type-Options`, and `Referrer-Policy` headers on every page.
+
+---
+
 ## What's Next
 
+- JWT auth verification on the backend (user ID spoofing fix)
 - React Native mobile app (Expo) with native camera
-- Wire mobile camera → Render backend → pantry view
-- Email receipt reading (Gmail sync)

@@ -4,3 +4,7 @@ python-multipart
 anthropic
 supabase
 python-dotenv
+Pillow
+slowapi
+openpyxl
+python-docx
