@@ -348,9 +348,19 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - Frontend `page.tsx`: Toast component — brief pill notification after edit / delete / decrement / mark-used
 - Frontend `signup/page.tsx`: handles email confirmation — shows "Check your email" screen when `data.session` is null after signUp
 
+### Day 7 — File Types + Security Hardening
+- `backend/app/limiter.py`: shared `slowapi` Limiter instance (key: remote IP)
+- `backend/app/main.py`: registered limiter + exception handler; CORS locked to specific methods (`GET POST PATCH DELETE`) and headers (`Content-Type X-User-Id Authorization`)
+- `backend/app/api/receipts.py`: `@limiter.limit("10/minute")`; `file.read(MAX+1)` pattern to cap memory; Pillow `img.verify()` for images; `%PDF` magic bytes check for PDFs; accept `application/pdf`
+- `backend/app/services/vision.py`: PDF uses `{"type":"document"}` content block; images use `{"type":"image"}` — different Claude API paths
+- `backend/requirements.txt`: added `Pillow`, `slowapi`
+- `web/app/scan/page.tsx`: `isPdf` state; PDF shows filename+icon preview instead of `<img>`; file input accepts `application/pdf`
+- `web/next.config.ts`: security headers on all routes — `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`
+
 ### Known Issues (open)
 | Issue | Priority |
 |-------|----------|
+| User ID spoofing via X-User-Id header (no JWT verification) | High |
 | No React Native mobile app | Next |
 
 ---

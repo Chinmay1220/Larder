@@ -1,5 +1,8 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Header
+from fastapi import APIRouter, UploadFile, File, HTTPException, Header, Request
+from PIL import Image
+import io
 from app.db import supabase
+from app.limiter import limiter
 from app.services.vision import parse_receipt
 from app.services.pantry_state import ingest_items
 from datetime import datetime, timezone
@@ -8,19 +11,37 @@ router = APIRouter()
 
 DEV_USER_ID = "00000000-0000-0000-0000-000000000001"
 
+ALLOWED_TYPES = {
+    "image/jpeg", "image/png", "image/webp", "image/gif", "application/pdf"
+}
+MAX_BYTES = 10 * 1024 * 1024  # 10 MB
+
 
 @router.post("/receipts")
+@limiter.limit("10/minute")
 async def upload_receipt(
+    request: Request,
     file: UploadFile = File(...),
     x_user_id: str = Header(default=DEV_USER_ID),
 ):
-    if file.content_type not in {"image/jpeg", "image/png", "image/webp", "image/gif"}:
-        raise HTTPException(400, "Unsupported file type. Please upload a JPEG, PNG, or WebP image.")
+    if file.content_type not in ALLOWED_TYPES:
+        raise HTTPException(400, "Unsupported file type. Please upload a JPEG, PNG, WebP, GIF, or PDF.")
 
-    image_bytes = await file.read()
+    # Read up to MAX_BYTES + 1 so we never load more than the limit into memory
+    file_bytes = await file.read(MAX_BYTES + 1)
+    if len(file_bytes) > MAX_BYTES:
+        raise HTTPException(413, "File is too large. Please use a file under 10 MB.")
 
-    if len(image_bytes) > 10 * 1024 * 1024:
-        raise HTTPException(413, "Image is too large. Please use a file under 10 MB.")
+    # Validate the file is actually what it claims to be
+    if file.content_type == "application/pdf":
+        if not file_bytes.startswith(b"%PDF"):
+            raise HTTPException(400, "File is not a valid PDF.")
+    else:
+        try:
+            img = Image.open(io.BytesIO(file_bytes))
+            img.verify()
+        except Exception:
+            raise HTTPException(400, "File is not a valid image.")
 
     media_type = file.content_type
 
@@ -30,7 +51,7 @@ async def upload_receipt(
     }).execute()
     receipt_id = receipt.data[0]["id"]
 
-    items = parse_receipt(image_bytes, media_type)
+    items = parse_receipt(file_bytes, media_type)
     if not items:
         raise HTTPException(422, "No items found. Make sure the photo shows a grocery receipt clearly.")
 

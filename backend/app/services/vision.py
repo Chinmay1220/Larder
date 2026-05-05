@@ -29,21 +29,26 @@ def _strip_fences(text: str) -> str:
     return text.strip()
 
 
-def parse_receipt(image_bytes: bytes, media_type: str = "image/jpeg") -> list[dict]:
-    image_data = base64.standard_b64encode(image_bytes).decode("utf-8")
+def parse_receipt(file_bytes: bytes, media_type: str = "image/jpeg") -> list[dict]:
+    file_data = base64.standard_b64encode(file_bytes).decode("utf-8")
+
+    if media_type == "application/pdf":
+        file_block = {
+            "type": "document",
+            "source": {"type": "base64", "media_type": "application/pdf", "data": file_data},
+        }
+    else:
+        file_block = {
+            "type": "image",
+            "source": {"type": "base64", "media_type": media_type, "data": file_data},
+        }
 
     resp = client.messages.create(
         model=MODEL,
         max_tokens=2000,
         messages=[{
             "role": "user",
-            "content": [
-                {
-                    "type": "image",
-                    "source": {"type": "base64", "media_type": media_type, "data": image_data},
-                },
-                {"type": "text", "text": PROMPT},
-            ],
+            "content": [file_block, {"type": "text", "text": PROMPT}],
         }],
     )
 
