@@ -13,6 +13,7 @@
   --color-text-faint:   #a8a29e;
   --color-safe-bg:      #f0fdf4;
   --color-safe-text:    #166534;
+  --color-brand-dark:   #6b2d0a;
   --font-sans:          var(--font-inter);
   --font-display:       var(--font-dm-serif);
 }
