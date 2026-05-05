@@ -99,13 +99,13 @@ export default function ScanPage() {
     setStep("processing");
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const userId = session?.user?.id ?? "";
+      const token = session?.access_token ?? "";
       const form = new FormData();
       form.append("file", file);
       const res = await fetch(`${API}/receipts`, {
         method: "POST",
         body: form,
-        headers: { "X-User-Id": userId },
+        headers: { "Authorization": `Bearer ${token}` },
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));

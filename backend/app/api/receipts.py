@@ -1,15 +1,14 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException, Header, Request
+from fastapi import APIRouter, UploadFile, File, HTTPException, Request, Depends
 from PIL import Image
 import io
 from app.db import supabase
 from app.limiter import limiter
+from app.auth import get_user_id
 from app.services.vision import parse_receipt
 from app.services.pantry_state import ingest_items
 from datetime import datetime, timezone
 
 router = APIRouter()
-
-DEV_USER_ID = "00000000-0000-0000-0000-000000000001"
 
 IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 TEXT_TYPES  = {
@@ -28,17 +27,15 @@ MAX_BYTES = 10 * 1024 * 1024  # 10 MB
 async def upload_receipt(
     request: Request,
     file: UploadFile = File(...),
-    x_user_id: str = Header(default=DEV_USER_ID),
+    user_id: str = Depends(get_user_id),
 ):
     if file.content_type not in ALLOWED_TYPES:
-        raise HTTPException(400, "Unsupported file type. Please upload a JPEG, PNG, WebP, GIF, or PDF.")
+        raise HTTPException(400, "Unsupported file type. Please upload a JPEG, PNG, WebP, GIF, PDF, Excel, Word, CSV, or TXT file.")
 
-    # Read up to MAX_BYTES + 1 so we never load more than the limit into memory
     file_bytes = await file.read(MAX_BYTES + 1)
     if len(file_bytes) > MAX_BYTES:
         raise HTTPException(413, "File is too large. Please use a file under 10 MB.")
 
-    # Validate file content matches its claimed type
     if file.content_type == "application/pdf":
         if not file_bytes.startswith(b"%PDF"):
             raise HTTPException(400, "File is not a valid PDF.")
@@ -48,20 +45,17 @@ async def upload_receipt(
             img.verify()
         except Exception:
             raise HTTPException(400, "File is not a valid image.")
-    # Text-based files (Excel, Word, CSV, TXT) are validated during extraction in vision.py
-
-    media_type = file.content_type
 
     receipt = supabase.table("receipts").insert({
-        "user_id": x_user_id,
+        "user_id": user_id,
         "purchased_at": datetime.now(timezone.utc).isoformat(),
     }).execute()
     receipt_id = receipt.data[0]["id"]
 
-    items = parse_receipt(file_bytes, media_type)
+    items = parse_receipt(file_bytes, file.content_type)
     if not items:
-        raise HTTPException(422, "No items found. Make sure the photo shows a grocery receipt clearly.")
+        raise HTTPException(422, "No items found. Make sure the file contains a grocery receipt.")
 
-    ingest_items(x_user_id, items, receipt_id)
+    ingest_items(user_id, items, receipt_id)
 
     return {"receipt_id": receipt_id, "items_found": len(items), "items": items}
