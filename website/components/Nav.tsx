@@ -1,15 +1,15 @@
 export default function Nav() {
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur-sm bg-white/80 border-b border-(--color-border)">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
+    <nav className="sticky top-0 z-40 backdrop-blur-sm bg-white/85 border-b border-(--color-border)">
+      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
         <a
           href="/"
-          className="font-[family-name:--font-display] text-xl text-(--color-text-primary) hover:opacity-80 transition-opacity"
+          className="font-[family-name:--font-display] text-2xl text-(--color-text-primary) hover:opacity-80 transition-opacity"
         >
           🧺 Larder
         </a>
 
-        <div className="hidden md:flex items-center gap-7 text-sm text-(--color-text-muted)">
+        <div className="hidden md:flex items-center gap-8 text-sm text-(--color-text-muted)">
           <a href="#how-it-works" className="hover:text-(--color-text-primary) transition-colors">
             How it works
           </a>
@@ -26,9 +26,9 @@ export default function Nav() {
 
         <a
           href="https://larder-theta.vercel.app"
-          className="bg-(--color-brand) text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-(--color-brand-light) transition-colors shadow-sm"
+          className="bg-(--color-brand) text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-(--color-brand-dark) transition-colors shadow-sm"
         >
-          Open app →
+          Get started free →
         </a>
       </div>
     </nav>
