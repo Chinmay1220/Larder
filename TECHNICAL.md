@@ -298,6 +298,19 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - Fixed: expiry calculation (floor not ceil), expired items in alert strip, full red bar for expired items
 - Added `.gitignore` to protect secrets
 
+### Day 4 — CI/CD Pipeline
+- Added `.github/workflows/ci.yml`: runs on every PR targeting `main`
+  - Job 1: `ruff check backend/app backend/scripts` — Python linter
+  - Job 2: `npm ci && npm run build` in `web/` — TypeScript + Next.js build
+  - Job 3: `gh pr merge --auto --squash` — auto-merges when both pass
+- Added `.github/workflows/nightly.yml`: runs at 2am EST daily
+  - Flags `active` items past `est_expiry` as `expired` in Supabase
+  - Uses `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` from GitHub repo secrets
+- Branch protection on `main`: require PR + require CI checks to pass
+- `GET /pantry` updated to return `active` AND `expired` items (expired stay visible)
+- `PATCH /pantry/{id}/consumed` updated to work on expired items too
+- Repo made public to unlock GitHub free-tier auto-merge
+
 ### Day 3 — Production Deploy
 - Deployed backend to **Render** at `https://larder.onrender.com`
   - Chose Render over Vercel serverless: Claude Vision takes 5-15s, Vercel free tier times out at 10s

@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Query, HTTPException
 from app.services.pantry_state import get_pantry, get_expiring, mark_consumed
 from app.api.receipts import DEV_USER_ID
-from datetime import datetime, timezone
 
 router = APIRouter()
 

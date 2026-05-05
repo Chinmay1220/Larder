@@ -199,10 +199,64 @@ Your phone → larder-theta.vercel.app (Vercel)
 
 ---
 
-## What's Next (Day 4)
+## Day 4 — CI/CD Pipeline + Proper Git Workflow
 
-- Test the full scan flow on mobile phone
-- Build the React Native mobile app (Expo) with native camera
+**What we shipped:**
+
+### Professional Git workflow
+- Switched from committing directly to `main` to a branch → PR → merge flow
+- Every change now lives on a feature branch, gets reviewed as a PR, then merges
+- Branch protection on `main`: direct pushes blocked, PRs required
+
+### CI Pipeline (GitHub Actions)
+- Every PR now automatically runs two checks:
+  - **Backend lint** — `ruff` checks Python code for errors
+  - **Frontend build** — Next.js full TypeScript build to catch type errors
+- If both pass → PR **auto-merges** automatically (no manual click needed)
+- If either fails → merge is blocked
+
+### Nightly expiry cron (live)
+- Runs every night at 2am EST on GitHub's servers
+- Flags any `active` pantry items past their `est_expiry` as `expired` in Supabase
+- Expired items stay visible in the pantry (red badge) — they only disappear when you click "Used"
+- Tested manually via Actions tab — ran in 24 seconds, all green
+
+### UX decision: keep expired items visible
+- Previously expired items would disappear from the pantry
+- Changed to keep them visible with a red "Expired" badge
+- Items only leave the pantry when YOU remove them, never automatically
+- "Used" button now works on expired items too
+
+### Repo made public
+- Switched from private to public repo to unlock GitHub's free auto-merge feature
+- All secrets are in `.env` files (gitignored), nothing sensitive in the code
+
+---
+
+## Issues Known & Fixed
+
+| Issue | Status |
+|-------|--------|
+| No way to mark items as used | ✅ Fixed — "Used" button on hover |
+| Expired items missing from alert | ✅ Fixed |
+| "1d left" shown for items expiring today | ✅ Fixed |
+| API keys could leak to GitHub | ✅ Fixed — .gitignore added |
+| CORS open to all origins | ✅ Fixed — locked to Vercel URL + localhost |
+| Backend timing out on Vercel (10s serverless limit) | ✅ Fixed — moved backend to Render |
+| Expired items disappearing from pantry | ✅ Fixed — now stay visible with red badge |
+| No CI — broken code could merge | ✅ Fixed — CI pipeline blocks bad PRs |
+| No auth / multi-user support | 🔜 V2 |
+| No quantity tracking | 🔜 V2 |
+| No edit/delete for wrong items | 🔜 V2 |
+| No file size limit on uploads | 🔜 V2 |
+| Debug API URL shown in error message | 🔜 Clean up |
+
+---
+
+## What's Next (Day 5)
+
+- Clean up debug error message in pantry dashboard
+- Test full scan flow on mobile phone (larder-theta.vercel.app)
+- Build React Native mobile app (Expo) with native camera
 - Wire mobile camera → Render backend → pantry view
-- GitHub Actions: nightly cron to flag expired items
-- Vercel redeploy (pending) to pick up NEXT_PUBLIC_API_URL env var
+- Add auth (Supabase Auth) for multi-user support

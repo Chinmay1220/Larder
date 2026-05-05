@@ -1,7 +1,6 @@
 import base64
 import json
 import re
-from pathlib import Path
 
 from anthropic import Anthropic
 
