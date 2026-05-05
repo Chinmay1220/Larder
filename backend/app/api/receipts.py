@@ -14,8 +14,8 @@ async def upload_receipt(
     file: UploadFile = File(...),
     x_user_id: str = Header(default=DEV_USER_ID),
 ):
-    if file.content_type not in {"image/jpeg", "image/png"}:
-        raise HTTPException(400, "Only JPEG and PNG receipts supported")
+    if file.content_type not in {"image/jpeg", "image/png", "image/webp", "image/gif"}:
+        raise HTTPException(400, "Supported formats: JPEG, PNG, WebP, GIF")
 
     image_bytes = await file.read()
     media_type = file.content_type
