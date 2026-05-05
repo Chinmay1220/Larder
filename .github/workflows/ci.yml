@@ -39,9 +39,24 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
 
+  website-build:
+    name: Website build (Next.js)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+        working-directory: website
+      - run: npm run build
+        working-directory: website
+
   auto-merge:
     name: Auto-merge
-    needs: [backend-lint, frontend-build]
+    needs: [backend-lint, frontend-build, website-build]
     runs-on: ubuntu-latest
     if: success()
     steps:

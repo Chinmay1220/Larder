@@ -19,36 +19,56 @@
 
 ---
 
-## Repo Structure (actual, as of Day 2)
+## Repo Structure (as of Day 10)
 
 ```
 pantry-poc/                        ← root (will rename to larder/)
 ├── backend/
 │   ├── app/
-│   │   ├── main.py                # FastAPI app + CORS
+│   │   ├── main.py                # FastAPI app + CORS + startup env check
+│   │   ├── auth.py                # JWT verification via PyJWT (get_user_id dependency)
+│   │   ├── limiter.py             # slowapi rate limiter instance
 │   │   ├── db.py                  # Supabase client init
 │   │   ├── api/
-│   │   │   ├── receipts.py        # POST /receipts
-│   │   │   └── pantry.py          # GET /pantry, GET /pantry/expiring, PATCH /pantry/{id}/consumed
+│   │   │   ├── receipts.py        # POST /receipts (rate-limited, file validation)
+│   │   │   └── pantry.py          # GET/PATCH/DELETE pantry endpoints + ItemUpdate validation
 │   │   └── services/
-│   │       ├── vision.py          # Claude Vision receipt parser
-│   │       └── pantry_state.py    # ingest_items, get_pantry, get_expiring, mark_consumed
+│   │       ├── vision.py          # Claude Vision: 3-path dispatch (image/PDF/text)
+│   │       └── pantry_state.py    # ingest_items, get/update/delete/decrement items
+│   ├── scripts/
+│   │   └── expire_items.py        # Nightly expiry cron script
 │   ├── .env                       # secrets (gitignored)
 │   └── requirements.txt
-├── web/
+├── web/                           # Product app — deployed to larder-theta.vercel.app
 │   ├── app/
 │   │   ├── layout.tsx             # Fonts (DM Serif Display + Inter) + AppShell wrapper
 │   │   ├── AppShell.tsx           # Sidebar (desktop) + bottom nav (mobile)
 │   │   ├── globals.css            # Tailwind v4 design tokens (@theme inline)
-│   │   ├── page.tsx               # Pantry dashboard
-│   │   └── scan/
-│   │       └── page.tsx           # Receipt upload + results
-│   ├── .env.local                 # NEXT_PUBLIC_API_URL (gitignored)
+│   │   ├── page.tsx               # Pantry dashboard (auth, edit, delete, quantity)
+│   │   ├── scan/page.tsx          # Receipt upload (all file types, JWT auth)
+│   │   ├── login/page.tsx         # Email + password login
+│   │   └── signup/page.tsx        # Signup + email confirmation handling
+│   ├── lib/supabase.ts            # Browser Supabase client
+│   ├── next.config.ts             # Security headers (HSTS, CSP, X-Frame-Options)
+│   ├── .env.local                 # NEXT_PUBLIC_* vars (gitignored)
 │   └── package.json
-├── poc.py                         # Original proof-of-concept script (keep for reference)
-├── receipts/                      # Receipt photos for POC testing
-├── pantry.json                    # POC pantry state (gitignored)
-├── .gitignore
+├── website/                       # Marketing site — deployed as separate Vercel project
+│   ├── app/
+│   │   ├── layout.tsx             # Same fonts + metadata
+│   │   ├── globals.css            # Same Tailwind v4 design tokens
+│   │   ├── page.tsx               # Landing page (Hero, How it works, Features, Pricing, Why)
+│   │   └── docs/page.tsx          # Docs + FAQ (fully static)
+│   ├── components/
+│   │   ├── Nav.tsx                # Sticky nav: logo + links + "Open app →" CTA
+│   │   └── Footer.tsx             # App, Docs, GitHub links + copyright
+│   ├── next.config.ts             # Same security headers
+│   └── package.json
+├── .github/workflows/
+│   ├── ci.yml                     # backend-lint + frontend-build + website-build + auto-merge
+│   ├── expire.yml                 # Nightly expiry cron (2am EST)
+│   └── keepalive.yml              # Ping /health every 14 min (prevent Render cold start)
+├── poc.py                         # Original proof-of-concept script
+├── render.yaml                    # Render deployment config for backend
 ├── STORY.md
 └── TECHNICAL.md
 ```
