@@ -3,24 +3,11 @@ import Footer from "@/components/Footer";
 import AnimatedSection from "@/components/AnimatedSection";
 import CounterStats from "@/components/CounterStats";
 import TestimonialRotator from "@/components/TestimonialRotator";
+import TabbedFeatures from "@/components/TabbedFeatures";
+import FaqAccordion from "@/components/FaqAccordion";
+import EmailSubscribe from "@/components/EmailSubscribe";
 
-// ── Inline mock UI components (replace with real screenshots later) ──────────
-
-function MockBrowser({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-(--color-border) shadow-[0_8px_40px_rgba(0,0,0,0.10),0_2px_8px_rgba(0,0,0,0.06)] overflow-hidden bg-(--color-card)">
-      <div className="bg-stone-50 border-b border-(--color-border) px-4 py-3 flex items-center gap-3">
-        <div className="flex gap-1.5">
-          <div className="w-3 h-3 rounded-full bg-red-300" />
-          <div className="w-3 h-3 rounded-full bg-amber-300" />
-          <div className="w-3 h-3 rounded-full bg-green-300" />
-        </div>
-        <div className="flex-1 bg-stone-200/60 rounded-md h-4 max-w-[200px]" />
-      </div>
-      {children}
-    </div>
-  );
-}
+// ── Mock UIs for hero cards ───────────────────────────────────────────────────
 
 function MockPantryDashboard() {
   const items = [
@@ -34,21 +21,13 @@ function MockPantryDashboard() {
       <div className="bg-red-50 border border-red-200 rounded-lg px-3 py-2 text-xs text-red-700 font-medium">
         ⚠ Blueberries expiring today
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-wrap">
         {["All", "Produce", "Dairy", "Pantry"].map((c) => (
-          <span
-            key={c}
-            className="text-xs px-2.5 py-1 rounded-full border border-(--color-border) text-(--color-text-muted) bg-(--color-card)"
-          >
-            {c}
-          </span>
+          <span key={c} className="text-xs px-2.5 py-1 rounded-full border border-(--color-border) text-(--color-text-muted) bg-(--color-card)">{c}</span>
         ))}
       </div>
       {items.map((item) => (
-        <div
-          key={item.name}
-          className="bg-(--color-card) rounded-xl border border-(--color-border) px-3 py-2.5"
-        >
+        <div key={item.name} className="bg-(--color-card) rounded-xl border border-(--color-border) px-3 py-2.5">
           <div className="flex items-center justify-between mb-1.5">
             <span className="text-sm font-medium text-(--color-text-primary)">{item.name}</span>
             <span className="text-xs text-(--color-text-faint)">{item.label}</span>
@@ -58,36 +37,6 @@ function MockPantryDashboard() {
           </div>
         </div>
       ))}
-    </div>
-  );
-}
-
-function MockScanPage() {
-  return (
-    <div className="bg-(--color-surface) p-5 select-none">
-      <div className="flex items-center gap-3 mb-5">
-        <div className="w-7 h-7 rounded-full bg-(--color-brand) text-white text-xs font-bold flex items-center justify-center">
-          1
-        </div>
-        <div className="flex-1 h-0.5 bg-(--color-border)" />
-        <div className="w-7 h-7 rounded-full bg-stone-200 text-stone-400 text-xs font-bold flex items-center justify-center">
-          2
-        </div>
-        <div className="flex-1 h-0.5 bg-(--color-border)" />
-        <div className="w-7 h-7 rounded-full bg-stone-200 text-stone-400 text-xs font-bold flex items-center justify-center">
-          3
-        </div>
-      </div>
-      <div className="border-2 border-dashed border-(--color-brand-light) rounded-2xl p-6 text-center bg-(--color-brand-xlight)/40">
-        <div className="text-3xl mb-2">📷</div>
-        <p className="text-sm font-semibold text-(--color-text-primary) mb-1">
-          Drop your receipt here
-        </p>
-        <p className="text-xs text-(--color-text-faint)">Image, PDF, Excel, Word, CSV or TXT</p>
-      </div>
-      <div className="mt-4 bg-(--color-brand) text-white text-sm font-semibold text-center py-2.5 rounded-xl">
-        Process Receipt →
-      </div>
     </div>
   );
 }
@@ -103,17 +52,12 @@ function MockAlertsPage() {
         { name: "Spinach", badge: "Today", bar: "w-1/12", color: "bg-red-400", label: "Today" },
         { name: "Greek yogurt", badge: null, bar: "w-4/12", color: "bg-amber-400", label: "2d left" },
       ].map((item) => (
-        <div
-          key={item.name}
-          className="bg-(--color-card) rounded-xl border border-(--color-border) px-3 py-2.5"
-        >
+        <div key={item.name} className="bg-(--color-card) rounded-xl border border-(--color-border) px-3 py-2.5">
           <div className="flex items-center justify-between mb-1.5">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-(--color-text-primary)">{item.name}</span>
               {item.badge && (
-                <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-medium">
-                  {item.badge}
-                </span>
+                <span className="text-xs bg-red-100 text-red-700 px-1.5 py-0.5 rounded-full font-medium">{item.badge}</span>
               )}
             </div>
             <span className="text-xs text-(--color-text-faint)">{item.label}</span>
@@ -128,6 +72,19 @@ function MockAlertsPage() {
 }
 
 // ── Data ──────────────────────────────────────────────────────────────────────
+
+const tickerItems = [
+  "📦 Pantry tracking",
+  "📸 AI receipt scanning",
+  "🔔 Expiry alerts",
+  "✅ 100% free to start",
+  "⚡ Set up in 2 minutes",
+  "🤖 Powered by Claude AI",
+  "📊 Freshness bars",
+  "🛒 Shop smarter",
+  "🧾 Any receipt format",
+  "🏠 For every household",
+];
 
 const steps = [
   {
@@ -168,158 +125,97 @@ const proFeatures = [
 export default function Home() {
   return (
     <>
+      {/* Announcement bar */}
+      <div className="bg-(--color-brand) text-white text-center text-xs font-medium py-2.5 px-6">
+        🎉 Larder is completely free to start — no credit card needed.{" "}
+        <a href="https://larder-theta.vercel.app" className="underline font-semibold hover:opacity-80 transition-opacity">
+          Get started →
+        </a>
+      </div>
+
       <Nav />
+
       <main>
         {/* ── Hero ── */}
-        <section className="pt-20 pb-0 px-6 text-center bg-(--color-surface) overflow-hidden">
-          <AnimatedSection className="max-w-3xl mx-auto">
+        <section className="pt-14 pb-0 px-6 bg-(--color-surface) overflow-hidden">
+          <AnimatedSection className="text-center max-w-4xl mx-auto mb-10">
             <div className="inline-flex items-center gap-2 bg-(--color-brand-xlight) text-(--color-brand) text-xs font-semibold px-3 py-1.5 rounded-full mb-6 border border-(--color-brand-xlight)">
               <span>🧺</span>
               <span>Free pantry tracker</span>
             </div>
-
-            <h1 className="font-[family-name:--font-display] text-5xl md:text-[68px] leading-[1.08] text-(--color-text-primary) mb-6 tracking-tight">
+            <h1 className="font-[family-name:--font-display] text-5xl md:text-[68px] leading-[1.08] text-(--color-text-primary) mb-5 tracking-tight">
               Stop wasting groceries.
               <br />
               Start knowing your pantry.
             </h1>
-
-            <p className="text-lg md:text-xl text-(--color-text-muted) max-w-xl mx-auto mb-10 leading-relaxed">
-              Snap your receipt. Larder reads it, tracks your food, and warns you before you
-              overbuy.
+            <p className="text-lg text-(--color-text-muted) max-w-lg mx-auto">
+              Snap your receipt. Larder reads it, tracks your food, and warns you before you overbuy.
             </p>
+          </AnimatedSection>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center mb-14">
+          {/* Two hero cards */}
+          <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-5">
+            <AnimatedSection direction="left" className="bg-(--color-brand-xlight) rounded-3xl p-8 overflow-hidden">
+              <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">Pantry tracking</p>
+              <h2 className="font-[family-name:--font-display] text-2xl text-(--color-text-primary) mb-4 leading-tight">
+                Always know what you have
+              </h2>
               <a
                 href="https://larder-theta.vercel.app"
-                className="bg-(--color-brand) text-white px-8 py-3.5 rounded-xl font-semibold text-base hover:bg-(--color-brand-dark) transition-colors shadow-sm"
+                className="inline-block bg-(--color-brand) text-white px-5 py-2.5 rounded-xl font-semibold text-sm hover:bg-(--color-brand-dark) transition-colors mb-6 shadow-sm"
               >
                 Get started free →
               </a>
+              <div className="rounded-2xl overflow-hidden border border-(--color-border) shadow-sm">
+                <MockPantryDashboard />
+              </div>
+            </AnimatedSection>
+
+            <AnimatedSection direction="right" delay={100} className="bg-stone-100 rounded-3xl p-8 overflow-hidden">
+              <p className="text-xs font-bold tracking-widest text-stone-500 uppercase mb-3">Expiry alerts</p>
+              <h2 className="font-[family-name:--font-display] text-2xl text-(--color-text-primary) mb-4 leading-tight">
+                Never let food expire again
+              </h2>
               <a
-                href="#how-it-works"
-                className="border border-(--color-border) text-(--color-text-muted) px-8 py-3.5 rounded-xl font-semibold text-base hover:text-(--color-text-primary) hover:border-(--color-text-muted) transition-colors"
+                href="#features"
+                className="inline-block border border-(--color-border) bg-white text-(--color-text-muted) px-5 py-2.5 rounded-xl font-semibold text-sm hover:text-(--color-text-primary) transition-colors mb-6"
               >
                 See how it works ↓
               </a>
-            </div>
-          </AnimatedSection>
-
-          {/* Hero mockup */}
-          <AnimatedSection delay={200} className="max-w-3xl mx-auto">
-            <MockBrowser>
-              <MockPantryDashboard />
-            </MockBrowser>
-          </AnimatedSection>
+              <div className="rounded-2xl overflow-hidden border border-(--color-border) shadow-sm">
+                <MockAlertsPage />
+              </div>
+            </AnimatedSection>
+          </div>
         </section>
 
         {/* ── Stats bar ── */}
-        <section className="py-8 px-6 border-y border-(--color-border) bg-(--color-card)">
+        <section className="py-8 px-6 border-y border-(--color-border) bg-(--color-card) mt-5">
           <CounterStats />
         </section>
 
-        {/* ── Feature rows ── */}
-        <section id="features" className="py-6">
-          {/* Row 1 — mockup left, text right */}
-          <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <AnimatedSection direction="left" className="order-1">
-              <MockBrowser>
-                <MockPantryDashboard />
-              </MockBrowser>
-            </AnimatedSection>
-            <AnimatedSection direction="right" delay={100} className="order-2">
-              <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">
-                Pantry
-              </p>
-              <h2 className="font-[family-name:--font-display] text-4xl text-(--color-text-primary) mb-4 leading-tight">
-                Always know what you have
-              </h2>
-              <p className="text-(--color-text-muted) leading-relaxed mb-6">
-                Every receipt you scan updates your pantry automatically. Color-coded freshness bars
-                show you what to use first — green for fresh, amber for soon, red for now.
-              </p>
-              <ul className="space-y-2.5">
-                {["Freshness bars on every item", "Category filters", "Edit, delete, or decrement quantities"].map(
-                  (f) => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-(--color-text-muted)">
-                      <span className="w-5 h-5 rounded-full bg-(--color-brand-xlight) text-(--color-brand) text-xs flex items-center justify-center shrink-0 font-bold">
-                        ✓
-                      </span>
-                      {f}
-                    </li>
-                  )
-                )}
-              </ul>
-            </AnimatedSection>
+        {/* ── Ticker strip ── */}
+        <div className="overflow-hidden border-b border-(--color-border) bg-(--color-surface) py-4">
+          <div className="ticker-track">
+            {[...tickerItems, ...tickerItems].map((item, i) => (
+              <span key={i} className="px-10 text-sm text-(--color-text-muted) whitespace-nowrap">
+                {item}
+              </span>
+            ))}
           </div>
+        </div>
 
-          {/* Row 2 — text left, mockup right */}
-          <div className="bg-(--color-card-warm)">
-            <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-              <AnimatedSection direction="left" className="order-2 md:order-1">
-                <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">
-                  Scanning
-                </p>
-                <h2 className="font-[family-name:--font-display] text-4xl text-(--color-text-primary) mb-4 leading-tight">
-                  Snap. Done.
-                </h2>
-                <p className="text-(--color-text-muted) leading-relaxed mb-6">
-                  Photograph a receipt or upload a PDF. Claude AI reads every item in seconds — no
-                  manual entry, ever. Works with JPEG, PNG, PDF, Excel, Word, CSV and more.
-                </p>
-                <ul className="space-y-2.5">
-                  {["AI reads any receipt format", "Results in under 15 seconds", "10 scans per minute, unlimited total"].map(
-                    (f) => (
-                      <li key={f} className="flex items-center gap-2.5 text-sm text-(--color-text-muted)">
-                        <span className="w-5 h-5 rounded-full bg-(--color-brand-xlight) text-(--color-brand) text-xs flex items-center justify-center shrink-0 font-bold">
-                          ✓
-                        </span>
-                        {f}
-                      </li>
-                    )
-                  )}
-                </ul>
-              </AnimatedSection>
-              <AnimatedSection direction="right" delay={100} className="order-1 md:order-2">
-                <MockBrowser>
-                  <MockScanPage />
-                </MockBrowser>
-              </AnimatedSection>
-            </div>
-          </div>
-
-          {/* Row 3 — mockup left, text right */}
-          <div className="max-w-6xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 md:gap-20 items-center">
-            <AnimatedSection direction="left" className="order-1">
-              <MockBrowser>
-                <MockAlertsPage />
-              </MockBrowser>
-            </AnimatedSection>
-            <AnimatedSection direction="right" delay={100} className="order-2">
-              <p className="text-xs font-bold tracking-widest text-(--color-brand) uppercase mb-3">
-                Alerts
-              </p>
-              <h2 className="font-[family-name:--font-display] text-4xl text-(--color-text-primary) mb-4 leading-tight">
-                Nothing slips to the back of the fridge
-              </h2>
-              <p className="text-(--color-text-muted) leading-relaxed mb-6">
-                A red alert strip appears the moment something is about to expire. Expired items
-                stay visible with a badge until you mark them used — nothing disappears silently.
-              </p>
-              <ul className="space-y-2.5">
-                {["Red alert strip for upcoming expiries", "Expired badge stays visible", "Nightly expiry check runs automatically"].map(
-                  (f) => (
-                    <li key={f} className="flex items-center gap-2.5 text-sm text-(--color-text-muted)">
-                      <span className="w-5 h-5 rounded-full bg-(--color-brand-xlight) text-(--color-brand) text-xs flex items-center justify-center shrink-0 font-bold">
-                        ✓
-                      </span>
-                      {f}
-                    </li>
-                  )
-                )}
-              </ul>
-            </AnimatedSection>
-          </div>
+        {/* ── Tabbed features ── */}
+        <section id="features" className="py-24 px-6 bg-(--color-surface)">
+          <AnimatedSection className="text-center mb-14">
+            <h2 className="font-[family-name:--font-display] text-4xl text-(--color-text-primary) mb-4">
+              Everything your pantry needs
+            </h2>
+            <p className="text-(--color-text-muted) max-w-md mx-auto">
+              From scanning receipts to tracking expiry dates — Larder handles it all automatically.
+            </p>
+          </AnimatedSection>
+          <TabbedFeatures />
         </section>
 
         {/* ── How it works ── */}
@@ -331,7 +227,6 @@ export default function Home() {
               </h2>
             </AnimatedSection>
             <div className="grid md:grid-cols-3 gap-8 relative">
-              {/* Connecting line on desktop */}
               <div className="hidden md:block absolute top-9 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px bg-(--color-border)" />
               {steps.map((step, i) => (
                 <AnimatedSection key={i} delay={i * 150} className="flex flex-col items-center text-center relative">
@@ -339,9 +234,7 @@ export default function Home() {
                     {i + 1}
                   </div>
                   <div className="text-4xl mb-4">{step.icon}</div>
-                  <h3 className="text-lg font-semibold text-(--color-text-primary) mb-2">
-                    {step.title}
-                  </h3>
+                  <h3 className="text-lg font-semibold text-(--color-text-primary) mb-2">{step.title}</h3>
                   <p className="text-sm text-(--color-text-muted) leading-relaxed">{step.body}</p>
                 </AnimatedSection>
               ))}
@@ -349,8 +242,23 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── Social proof / testimonials ── */}
+        <section className="py-24 px-6 bg-(--color-surface)">
+          <div className="max-w-3xl mx-auto text-center">
+            <AnimatedSection>
+              <h2 className="font-[family-name:--font-display] text-4xl text-(--color-text-primary) mb-4">
+                People are loving Larder
+              </h2>
+              <p className="text-(--color-text-muted) mb-14">Real households saving real money.</p>
+            </AnimatedSection>
+            <AnimatedSection delay={150}>
+              <TestimonialRotator />
+            </AnimatedSection>
+          </div>
+        </section>
+
         {/* ── Pricing ── */}
-        <section id="pricing" className="py-24 px-6 bg-(--color-surface)">
+        <section id="pricing" className="py-24 px-6 bg-(--color-card) border-y border-(--color-border)">
           <div className="max-w-3xl mx-auto">
             <AnimatedSection>
               <h2 className="font-[family-name:--font-display] text-4xl text-center text-(--color-text-primary) mb-4">
@@ -361,64 +269,42 @@ export default function Home() {
               </p>
             </AnimatedSection>
             <div className="grid md:grid-cols-2 gap-6">
-              {/* Free */}
               <AnimatedSection delay={100} className="bg-(--color-card) rounded-2xl border-2 border-(--color-brand) shadow-[0_4px_24px_rgba(0,0,0,0.08)] p-8 flex flex-col relative">
                 <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-                  <span className="bg-(--color-brand) text-white text-xs font-bold px-3 py-1 rounded-full">
-                    MOST POPULAR
-                  </span>
+                  <span className="bg-(--color-brand) text-white text-xs font-bold px-3 py-1 rounded-full">MOST POPULAR</span>
                 </div>
-                <div className="font-[family-name:--font-display] text-3xl text-(--color-text-primary) mb-1 mt-2">
-                  Free
-                </div>
+                <div className="font-[family-name:--font-display] text-3xl text-(--color-text-primary) mb-1 mt-2">Free</div>
                 <div className="text-4xl font-bold text-(--color-text-primary) mb-6">
-                  $0
-                  <span className="text-base font-normal text-(--color-text-muted)">/month</span>
+                  $0<span className="text-base font-normal text-(--color-text-muted)">/month</span>
                 </div>
                 <ul className="space-y-3 mb-8 flex-1">
                   {freeFeatures.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-(--color-text-muted)">
-                      <span className="w-5 h-5 rounded-full bg-(--color-brand-xlight) text-(--color-brand) text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">
-                        ✓
-                      </span>
+                      <span className="w-5 h-5 rounded-full bg-(--color-brand-xlight) text-(--color-brand) text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">✓</span>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <a
-                  href="https://larder-theta.vercel.app"
-                  className="block text-center bg-(--color-brand) text-white py-3 rounded-xl font-semibold text-sm hover:bg-(--color-brand-dark) transition-colors"
-                >
+                <a href="https://larder-theta.vercel.app" className="block text-center bg-(--color-brand) text-white py-3 rounded-xl font-semibold text-sm hover:bg-(--color-brand-dark) transition-colors">
                   Get started free →
                 </a>
               </AnimatedSection>
 
-              {/* Pro */}
               <AnimatedSection delay={200} className="bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.06)] p-8 flex flex-col opacity-60">
-                <div className="inline-block bg-stone-100 text-stone-400 text-xs font-bold px-3 py-1 rounded-full mb-4 self-start tracking-wide">
-                  COMING SOON
-                </div>
-                <div className="font-[family-name:--font-display] text-3xl text-(--color-text-primary) mb-1">
-                  Pro
-                </div>
+                <div className="inline-block bg-stone-100 text-stone-400 text-xs font-bold px-3 py-1 rounded-full mb-4 self-start tracking-wide">COMING SOON</div>
+                <div className="font-[family-name:--font-display] text-3xl text-(--color-text-primary) mb-1">Pro</div>
                 <div className="text-4xl font-bold text-(--color-text-primary) mb-6">
-                  $5
-                  <span className="text-base font-normal text-(--color-text-muted)">/month</span>
+                  $5<span className="text-base font-normal text-(--color-text-muted)">/month</span>
                 </div>
                 <ul className="space-y-3 mb-8 flex-1">
                   {proFeatures.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-(--color-text-muted)">
-                      <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-400 text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">
-                        ✓
-                      </span>
+                      <span className="w-5 h-5 rounded-full bg-stone-100 text-stone-400 text-xs flex items-center justify-center shrink-0 mt-0.5 font-bold">✓</span>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <button
-                  disabled
-                  className="block w-full text-center bg-stone-100 text-stone-400 py-3 rounded-xl font-semibold text-sm cursor-not-allowed"
-                >
+                <button disabled className="block w-full text-center bg-stone-100 text-stone-400 py-3 rounded-xl font-semibold text-sm cursor-not-allowed">
                   Coming soon
                 </button>
               </AnimatedSection>
@@ -426,9 +312,24 @@ export default function Home() {
           </div>
         </section>
 
+        {/* ── FAQ ── */}
+        <section className="py-24 px-6 bg-(--color-surface)">
+          <div className="max-w-2xl mx-auto">
+            <AnimatedSection className="text-center mb-14">
+              <h2 className="font-[family-name:--font-display] text-4xl text-(--color-text-primary) mb-4">
+                Frequently asked questions
+              </h2>
+              <p className="text-(--color-text-muted)">Everything you need to know about Larder.</p>
+            </AnimatedSection>
+            <AnimatedSection delay={100}>
+              <FaqAccordion />
+            </AnimatedSection>
+          </div>
+        </section>
+
         {/* ── Bottom CTA ── */}
         <section className="py-24 px-6 bg-(--color-brand-xlight) border-t border-(--color-border)">
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-2xl mx-auto text-center">
             <AnimatedSection>
               <p className="font-[family-name:--font-display] text-4xl md:text-5xl text-(--color-text-primary) mb-4 leading-snug">
                 The average US household wastes{" "}
@@ -439,18 +340,17 @@ export default function Home() {
               </p>
               <a
                 href="https://larder-theta.vercel.app"
-                className="inline-block bg-(--color-brand) text-white px-10 py-4 rounded-xl font-semibold text-base hover:bg-(--color-brand-dark) transition-colors shadow-sm mb-14"
+                className="inline-block bg-(--color-brand) text-white px-10 py-4 rounded-xl font-semibold text-base hover:bg-(--color-brand-dark) transition-colors shadow-sm mb-10"
               >
                 Start saving food — it&apos;s free →
               </a>
-            </AnimatedSection>
 
-            <AnimatedSection delay={200}>
-              <TestimonialRotator />
+              <EmailSubscribe />
             </AnimatedSection>
           </div>
         </section>
       </main>
+
       <Footer />
     </>
   );

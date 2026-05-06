@@ -30,3 +30,18 @@ body {
 html {
   scroll-behavior: smooth;
 }
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+.ticker-track {
+  animation: ticker 30s linear infinite;
+  width: max-content;
+  display: flex;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
