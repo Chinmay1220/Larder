@@ -199,6 +199,98 @@ function EditModal({ item, onSave, onClose }: {
   );
 }
 
+function AddItemModal({
+  onSave,
+  onClose,
+}: {
+  onSave: (fields: Omit<PantryItem, "id">) => Promise<void>;
+  onClose: () => void;
+}) {
+  const defaultExpiry = new Date(Date.now() + 14 * 86400000).toISOString().split("T")[0];
+  const [name, setName] = useState("");
+  const [qty, setQty] = useState(1);
+  const [unit, setUnit] = useState("each");
+  const [category, setCategory] = useState("other");
+  const [expiry, setExpiry] = useState(defaultExpiry);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSave() {
+    if (!name.trim()) { setError("Name is required"); return; }
+    setSaving(true);
+    setError(null);
+    try {
+      await onSave({
+        canonical_name: name.trim().toLowerCase(),
+        category,
+        quantity: qty,
+        unit,
+        price: null,
+        est_expiry: new Date(expiry + "T12:00:00Z").toISOString(),
+        shelf_life_days: Math.max(1, Math.floor((new Date(expiry).getTime() - Date.now()) / 86400000)),
+      });
+      onClose();
+    } catch {
+      setError("Failed to add item. Try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  const inputCls = "w-full px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition";
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-(--color-card) rounded-2xl w-full max-w-sm p-5 shadow-xl" onClick={e => e.stopPropagation()}>
+        <h3 className="font-semibold text-(--color-text-primary) mb-4">Add item</h3>
+        <div className="space-y-3">
+          <div>
+            <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Name</label>
+            <input
+              autoFocus
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="e.g. Whole milk"
+              className={inputCls}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Quantity</label>
+              <input type="number" min={0.5} step={0.5} value={qty} onChange={e => setQty(Number(e.target.value))} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Unit</label>
+              <input value={unit} onChange={e => setUnit(e.target.value)} placeholder="each, lb, oz…" className={inputCls} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Category</label>
+            <select value={category} onChange={e => setCategory(e.target.value)} className={inputCls}>
+              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Expiry date</label>
+            <input type="date" value={expiry} onChange={e => setExpiry(e.target.value)} className={inputCls} />
+          </div>
+          {error && (
+            <p className="text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2 rounded-lg border border-red-200">{error}</p>
+          )}
+        </div>
+        <div className="flex gap-2 mt-5">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors">
+            Cancel
+          </button>
+          <button onClick={handleSave} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm disabled:opacity-50">
+            {saving ? "Adding…" : "Add item"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const [items, setItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -208,6 +300,8 @@ export default function Home() {
   const [decrementing, setDecrementing] = useState<string | null>(null);
   const [editing, setEditing] = useState<PantryItem | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [addingItem, setAddingItem] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -291,14 +385,39 @@ export default function Home() {
     showToast("Item removed");
   }
 
+  async function addItem(fields: Omit<PantryItem, "id">) {
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token ?? "";
+    const res = await fetch(`${API}/pantry`, {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
+      body: JSON.stringify(fields),
+    });
+    if (!res.ok) throw new Error("Failed to add item");
+    const newItem = await res.json();
+    setItems(prev => [...prev, newItem].sort((a, b) =>
+      new Date(a.est_expiry).getTime() - new Date(b.est_expiry).getTime()
+    ));
+    showToast("Item added");
+  }
+
   const byCategory = items.reduce<Record<string, PantryItem[]>>((acc, item) => {
     (acc[item.category] = acc[item.category] || []).push(item);
     return acc;
   }, {});
 
-  const visibleCategories = activeFilter === "all"
-    ? byCategory
-    : byCategory[activeFilter] ? { [activeFilter]: byCategory[activeFilter] } : {};
+  const displayItems = searchQuery.trim()
+    ? items.filter(i => i.canonical_name.toLowerCase().includes(searchQuery.toLowerCase()))
+    : items;
+
+  const byDisplayCategory = displayItems.reduce<Record<string, PantryItem[]>>((acc, item) => {
+    (acc[item.category] = acc[item.category] || []).push(item);
+    return acc;
+  }, {});
+
+  const visibleDisplayCategories = activeFilter === "all"
+    ? byDisplayCategory
+    : byDisplayCategory[activeFilter] ? { [activeFilter]: byDisplayCategory[activeFilter] } : {};
 
   const urgentItems  = items.filter(i => daysLeft(i.est_expiry) <= 3);
   const expiredCount = items.filter(i => daysLeft(i.est_expiry) < 0).length;
@@ -310,15 +429,22 @@ export default function Home() {
   return (
     <main className="min-h-full bg-(--color-surface)">
       {/* Header */}
-      <div className="px-4 md:px-8 pt-6 pb-2 flex items-start justify-between">
+      <div className="px-4 md:px-8 pt-6 pb-3 flex items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-(--color-text-primary) tracking-tight">
-            Pantry
-          </h1>
+          <h1 className="text-xl font-semibold text-(--color-text-primary) tracking-tight">Pantry</h1>
           <p className="text-sm text-(--color-text-muted) mt-0.5">
             {loading ? "Loading…" : error ? "Could not load pantry" : `${items.length} item${items.length !== 1 ? "s" : ""} tracked${expiredCount > 0 ? ` · ${expiredCount} expired` : ""}`}
           </p>
         </div>
+        {!loading && !error && (
+          <button
+            onClick={() => setAddingItem(true)}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add item
+          </button>
+        )}
       </div>
 
       {/* Error state */}
@@ -337,6 +463,37 @@ export default function Home() {
             <StatCard label="Categories"    value={Object.keys(byCategory).length}  icon={<IconGrid />} />
             <StatCard label="Est. Value"    value={`$${totalValue.toFixed(2)}`}     icon={<IconDollar />} />
           </div>
+
+          {/* Search bar */}
+          {items.length > 0 && (
+            <div className="px-4 md:px-8 pb-3">
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) pointer-events-none">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search items…"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-primary) text-sm placeholder:text-(--color-text-faint) focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors"
+                  >
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  </button>
+                )}
+              </div>
+              {searchQuery && (
+                <p className="text-xs text-(--color-text-faint) mt-1.5 px-1">
+                  {displayItems.length} result{displayItems.length !== 1 ? "s" : ""} for &ldquo;{searchQuery}&rdquo;
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Alert strip */}
           {urgentItems.length > 0 && (
@@ -394,7 +551,7 @@ export default function Home() {
           )}
 
           {/* Category groups */}
-          {Object.entries(visibleCategories).map(([cat, catItems]) => (
+          {Object.entries(visibleDisplayCategories).map(([cat, catItems]) => (
             <section key={cat} className="mb-5">
               <div className="px-4 md:px-8 mb-1 mt-4 flex items-center gap-2">
                 <span className="text-base">{CATEGORY_EMOJI[cat] ?? "📦"}</span>
@@ -469,6 +626,13 @@ export default function Home() {
           item={editing}
           onSave={editItem}
           onClose={() => setEditing(null)}
+        />
+      )}
+
+      {addingItem && (
+        <AddItemModal
+          onSave={addItem}
+          onClose={() => setAddingItem(false)}
         />
       )}
 
