@@ -92,13 +92,17 @@ function urgencyBarWidth(item: PantryItem) {
   return Math.min(100, (d / shelf) * 100);
 }
 
-function StatCard({ label, value, icon, urgent }: { label: string; value: string | number; icon: React.ReactNode; urgent?: boolean }) {
+function StatStrip({ label, value, icon, urgent }: { label: string; value: string | number; icon: React.ReactNode; urgent?: boolean }) {
   return (
-    <div className={`rounded-2xl px-4 py-4 bg-(--color-card) border shadow-[0_1px_4px_rgba(0,0,0,0.06)]
-      ${urgent ? "border-red-200 bg-(--color-urgent-bg)" : "border-(--color-border)"}`}>
-      <p className={`mb-2 ${urgent ? "text-(--color-urgent-text)" : "text-(--color-text-faint)"}`}>{icon}</p>
-      <p className="text-2xl font-bold text-(--color-text-primary) tabular-nums">{value}</p>
-      <p className="text-xs text-(--color-text-muted) mt-0.5 font-medium">{label}</p>
+    <div className="flex items-center gap-3 px-4 py-3.5">
+      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0
+        ${urgent ? "bg-red-50 text-red-500" : "bg-(--color-brand-xlight) text-(--color-brand)"}`}>
+        {icon}
+      </div>
+      <div>
+        <p className={`text-xl font-bold tabular-nums leading-tight ${urgent ? "text-red-600" : "text-(--color-text-primary)"}`}>{value}</p>
+        <p className="text-[11px] text-(--color-text-faint) font-medium">{label}</p>
+      </div>
     </div>
   );
 }
@@ -456,12 +460,20 @@ export default function Home() {
 
       {loading ? <Skeleton /> : !error && (
         <>
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 gap-3 px-4 md:px-8 py-4">
-            <StatCard label="Total Items"   value={items.length}                    icon={<IconBox />} />
-            <StatCard label="Expiring Soon" value={urgentItems.length}              icon={<IconClock />} urgent={urgentItems.length > 0} />
-            <StatCard label="Categories"    value={Object.keys(byCategory).length}  icon={<IconGrid />} />
-            <StatCard label="Est. Value"    value={`$${totalValue.toFixed(2)}`}     icon={<IconDollar />} />
+          {/* Stat strip */}
+          <div className="mx-4 md:mx-8 my-3 bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.06)] grid grid-cols-2 md:grid-cols-4">
+            <div className="border-r border-b md:border-b-0 border-(--color-border)">
+              <StatStrip label="Total Items"   value={items.length}                   icon={<IconBox />} />
+            </div>
+            <div className="border-b md:border-b-0 md:border-r border-(--color-border)">
+              <StatStrip label="Expiring Soon" value={urgentItems.length}             icon={<IconClock />} urgent={urgentItems.length > 0} />
+            </div>
+            <div className="border-r border-(--color-border)">
+              <StatStrip label="Categories"   value={Object.keys(byCategory).length} icon={<IconGrid />} />
+            </div>
+            <div>
+              <StatStrip label="Est. Value"   value={`$${totalValue.toFixed(2)}`}    icon={<IconDollar />} />
+            </div>
           </div>
 
           {/* Search bar */}
@@ -498,7 +510,12 @@ export default function Home() {
           {/* Alert strip */}
           {urgentItems.length > 0 && (
             <div className="mx-4 md:mx-8 mb-2 rounded-xl bg-(--color-urgent-bg) border border-red-200 px-4 py-3 flex items-start gap-3">
-              <span className="text-lg shrink-0">⚠️</span>
+              <span className="shrink-0 text-red-400 mt-0.5">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+              </span>
               <div>
                 <p className="text-sm font-semibold text-(--color-urgent-text)">
                   Use soon: {urgentNames.join(", ")}{urgentExtra}
@@ -553,21 +570,21 @@ export default function Home() {
           {/* Category groups */}
           {Object.entries(visibleDisplayCategories).map(([cat, catItems]) => (
             <section key={cat} className="mb-5">
-              <div className="px-4 md:px-8 mb-1 mt-4 flex items-center gap-2">
-                <span className="text-base">{CATEGORY_EMOJI[cat] ?? "📦"}</span>
+              <div className="px-4 md:px-8 mb-1 mt-5 flex items-center gap-2">
+                <div className="w-0.5 h-3.5 rounded-full bg-(--color-brand) opacity-60 shrink-0" />
                 <span className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest">{cat}</span>
-                <span className="ml-auto text-xs text-(--color-text-faint)">{catItems.length}</span>
+                <span className="ml-auto text-xs font-medium text-(--color-text-faint) bg-stone-100 px-1.5 py-0.5 rounded-md">{catItems.length}</span>
               </div>
               <div className="mx-4 md:mx-8 bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.04)] divide-y divide-(--color-border) overflow-hidden">
                 {catItems.map((item) => (
-                  <div key={item.id} className="px-4 py-3 group hover:bg-(--color-card-warm) transition-colors duration-100">
-                    {/* Top row: name + expiry badge + edit/delete */}
-                    <div className="flex items-center justify-between mb-1.5">
+                  <div key={item.id} className="px-4 py-3.5 group hover:bg-(--color-card-warm) transition-colors duration-100">
+                    {/* Top row: name + expiry badge (inline) + actions far right */}
+                    <div className="flex items-center gap-2 mb-2">
                       <p className="font-medium text-(--color-text-primary) capitalize text-sm leading-snug">
                         {item.canonical_name}
                       </p>
-                      <div className="flex items-center gap-1.5">
-                        <ExpiryBadge expiry={item.est_expiry} />
+                      <ExpiryBadge expiry={item.est_expiry} />
+                      <div className="ml-auto flex items-center gap-1">
                         <button
                           onClick={() => setEditing(item)}
                           title="Edit"
@@ -591,7 +608,7 @@ export default function Home() {
                       <p className="text-xs text-(--color-text-faint) shrink-0">
                         {decrementing === item.id ? "…" : `${item.quantity} ${item.unit}`}
                       </p>
-                      <div className="flex-1 h-1 rounded-full bg-stone-100 overflow-hidden">
+                      <div className="flex-1 h-2 rounded-full bg-stone-200 overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${urgencyBarColor(item.est_expiry)}`}
                           style={{ width: `${urgencyBarWidth(item)}%` }}
