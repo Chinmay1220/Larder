@@ -92,3 +92,39 @@ def decrement_item(user_id: str, item_id: str) -> dict | None:
     supabase.table("pantry_items").update({"quantity": new_qty}) \
         .eq("id", item_id).eq("user_id", user_id).execute()
     return {"consumed": False, "quantity": new_qty}
+
+
+def create_item(user_id: str, data: dict) -> dict:
+    now = datetime.now(timezone.utc)
+    canonical = data.get("canonical_name", "").lower().strip()
+
+    # Re-purchase inference: mark existing active item with same name as consumed
+    supabase.table("pantry_items").update({
+        "status": "consumed_inferred",
+        "consumed_at": now.isoformat(),
+    }).eq("user_id", user_id).eq("canonical_name", canonical).eq("status", "active").execute()
+
+    # Compute shelf_life_days from est_expiry
+    est_expiry_str = data.get("est_expiry")
+    if est_expiry_str:
+        est_expiry_dt = datetime.fromisoformat(est_expiry_str.replace("Z", "+00:00"))
+        shelf_life_days = max(1, (est_expiry_dt - now).days)
+    else:
+        shelf_life_days = 14
+        est_expiry_dt = now + timedelta(days=shelf_life_days)
+        est_expiry_str = est_expiry_dt.isoformat()
+
+    res = supabase.table("pantry_items").insert({
+        "user_id": user_id,
+        "canonical_name": canonical,
+        "category": data.get("category", "other"),
+        "quantity": data.get("quantity", 1),
+        "unit": data.get("unit", "each"),
+        "price": data.get("price", None),
+        "purchased_at": now.isoformat(),
+        "est_expiry": est_expiry_str,
+        "shelf_life_days": shelf_life_days,
+        "status": "active",
+    }).execute()
+
+    return res.data[0]
