@@ -32,15 +32,18 @@ allowed_origins = [
     "http://localhost:3001",
 ]
 
-frontend_url = os.environ.get("FRONTEND_URL")
-if frontend_url:
-    allowed_origins.append(frontend_url)
+# FRONTEND_URL accepts a single URL or comma-separated list of URLs
+frontend_url = os.environ.get("FRONTEND_URL", "")
+for url in [u.strip() for u in frontend_url.split(",") if u.strip()]:
+    allowed_origins.append(url)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_methods=["GET", "POST", "PATCH", "DELETE"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
+    allow_credentials=True,
 )
 
 app.include_router(receipts.router)
