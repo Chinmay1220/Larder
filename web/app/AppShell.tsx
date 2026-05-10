@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
-const AUTH_ROUTES = ["/login", "/signup"];
+const AUTH_ROUTES = ["/login", "/signup", "/forgot-password", "/reset-password"];
 const API = process.env.NEXT_PUBLIC_API_URL;
 
 // SVG icons
