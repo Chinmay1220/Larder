@@ -19,6 +19,9 @@ export default function Footer() {
           <a href="/docs" className="hover:text-(--color-text-primary) transition-colors">
             Docs
           </a>
+          <a href="/privacy" className="hover:text-(--color-text-primary) transition-colors">
+            Privacy
+          </a>
           <a
             href="https://github.com/Chinmay1220/Larder"
             className="hover:text-(--color-text-primary) transition-colors"
