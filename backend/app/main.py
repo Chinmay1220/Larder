@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
-from app.api import receipts, pantry
+from app.api import receipts, pantry, account
 from app.limiter import limiter
 
 REQUIRED_VARS = ["SUPABASE_URL", "SUPABASE_SERVICE_KEY", "ANTHROPIC_API_KEY"]
@@ -48,6 +48,7 @@ app.add_middleware(
 
 app.include_router(receipts.router)
 app.include_router(pantry.router)
+app.include_router(account.router)
 
 
 @app.get("/health")

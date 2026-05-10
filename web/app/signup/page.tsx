@@ -183,8 +183,7 @@ export default function SignupPage() {
         {/* Terms note */}
         <p className="text-center text-[11px] text-(--color-text-faint) mt-4 px-4">
           By creating an account you agree to our{" "}
-          <span className="underline cursor-pointer">Terms</span> and{" "}
-          <span className="underline cursor-pointer">Privacy Policy</span>.
+          <a href="https://larder-website.vercel.app/privacy" target="_blank" rel="noopener noreferrer" className="underline hover:text-(--color-text-muted)">Privacy Policy</a>.
         </p>
 
         <p className="text-center text-sm text-(--color-text-muted) mt-3">
