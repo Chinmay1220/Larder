@@ -1,8 +1,36 @@
 # 🧺 Larder
 
-**An AI-powered pantry tracker.** Snap a grocery receipt, and Claude AI extracts every item into a smart pantry view that tracks expiry dates and helps reduce food waste.
+**A production full-stack application** — Next.js 16 + React 19 frontend, FastAPI Python backend, Supabase Postgres + JWT auth, Anthropic Claude AI integration, deployed across Vercel and Render with GitHub Actions CI/CD.
 
-A full-stack application — Next.js 16 + React 19 frontend, FastAPI backend, Supabase auth/database, deployed across Vercel and Render.
+> Snap a grocery receipt → Claude AI extracts every item → smart pantry view tracks expiry dates and helps reduce food waste.
+
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![React](https://img.shields.io/badge/React-19-blue?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript)
+![Tailwind](https://img.shields.io/badge/Tailwind-v4-38bdf8?logo=tailwindcss)
+![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?logo=fastapi)
+![Supabase](https://img.shields.io/badge/Supabase-Postgres-3ecf8e?logo=supabase)
+![Anthropic](https://img.shields.io/badge/Claude-Vision%20AI-d97706?logo=anthropic)
+![Vercel](https://img.shields.io/badge/Vercel-deployed-black?logo=vercel)
+![Render](https://img.shields.io/badge/Render-deployed-46e3b7?logo=render)
+
+---
+
+## 🎯 What this project demonstrates
+
+A complete end-to-end product built solo — frontend, backend, database, auth, AI integration, DevOps, and design.
+
+| Area | Where it lives |
+|---|---|
+| **Frontend engineering** | 3 Next.js 16 App Router apps (web + marketing + docs), 11 routes, ~3,500 LOC of TypeScript/React |
+| **Backend engineering** | FastAPI service with 10 endpoints, Pydantic v2 validation, dependency injection, lifespan hooks |
+| **Authentication & security** | Supabase JWT (ES256) verification with JWKS, key-rotation fallback, type-email-to-confirm flows for destructive actions |
+| **Database design** | Postgres schema with soft deletes, status state machine, re-purchase inference, indexed queries |
+| **AI / ML integration** | Claude vision API for receipt parsing, structured JSON extraction, shelf-life estimation |
+| **DevOps & deployment** | Three independent deploy targets (2× Vercel, 1× Render), CORS regex for preview URLs, env-var-driven config |
+| **CI/CD** | GitHub Actions: ruff lint, Next.js typecheck, auto-merge on green with retry loop |
+| **Product & UX design** | Warm earthy design system, Notion-style sidebar, Headspace-inspired marketing site, animated mockups |
+| **Compliance** | GDPR-friendly account deletion (cascades pantry + receipts + auth user), public privacy policy |
 
 ---
 
