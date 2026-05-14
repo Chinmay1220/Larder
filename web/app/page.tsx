@@ -15,7 +15,10 @@ type PantryItem = {
   price: number | null;
   est_expiry: string;
   shelf_life_days: number;
+  purchased_at?: string;
 };
+
+type SortBy = "expiry" | "name" | "recent";
 
 const CATEGORY_EMOJI: Record<string, string> = {
   produce: "🥦", dairy: "🥛", meat: "🥩", seafood: "🐟",
@@ -295,6 +298,97 @@ function AddItemModal({
   );
 }
 
+function DetailModal({
+  item,
+  onClose,
+  onEdit,
+  onDelete,
+  onUsed,
+}: {
+  item: PantryItem;
+  onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onUsed: () => void;
+}) {
+  const d = daysLeft(item.est_expiry);
+  const expiryDate = new Date(item.est_expiry).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  const purchasedDate = item.purchased_at
+    ? new Date(item.purchased_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : null;
+  const daysSincePurchase = item.purchased_at
+    ? Math.floor((Date.now() - new Date(item.purchased_at).getTime()) / 86400000)
+    : null;
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-(--color-card) rounded-2xl w-full max-w-sm shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="px-5 pt-5 pb-4 border-b border-(--color-border)">
+          <div className="flex items-start gap-3">
+            <div className="text-2xl">{CATEGORY_EMOJI[item.category] ?? "📦"}</div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-semibold text-(--color-text-primary) text-base capitalize leading-snug">{item.canonical_name}</h3>
+              <p className="text-xs text-(--color-text-faint) capitalize mt-0.5">{item.category}</p>
+            </div>
+            <button onClick={onClose} className="text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors -mt-1 -mr-1 p-1">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+        </div>
+
+        {/* Details */}
+        <dl className="px-5 py-4 space-y-3">
+          <Row label="Quantity" value={`${item.quantity} ${item.unit}`} />
+          {item.price != null && <Row label="Price" value={`$${item.price.toFixed(2)}`} />}
+          <Row
+            label="Expires"
+            value={
+              <span className="flex items-center gap-2">
+                {expiryDate}
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
+                  d < 0 ? "bg-(--color-urgent-bg) text-(--color-urgent-text) border-red-200"
+                  : d <= 2 ? "bg-(--color-urgent-bg) text-(--color-urgent-text) border-red-200"
+                  : d <= 5 ? "bg-(--color-warn-bg) text-(--color-warn-text) border-amber-200"
+                  : "bg-(--color-safe-bg) text-(--color-safe-text) border-green-200"
+                }`}>
+                  {d < 0 ? "Expired" : d === 0 ? "Today" : `in ${d}d`}
+                </span>
+              </span>
+            }
+          />
+          {purchasedDate && (
+            <Row label="Added" value={`${purchasedDate}${daysSincePurchase != null ? ` (${daysSincePurchase}d ago)` : ""}`} />
+          )}
+          <Row label="Shelf life" value={`${item.shelf_life_days} days`} />
+        </dl>
+
+        {/* Actions */}
+        <div className="px-5 pb-5 grid grid-cols-3 gap-2">
+          <button onClick={onEdit} className="py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-text-primary) transition-colors">
+            Edit
+          </button>
+          <button onClick={onUsed} className="py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-text-primary) transition-colors">
+            Used
+          </button>
+          <button onClick={onDelete} className="py-2.5 rounded-xl border border-red-200 bg-red-50 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors">
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <dt className="text-xs font-medium text-(--color-text-faint) uppercase tracking-wide">{label}</dt>
+      <dd className="text-sm text-(--color-text-primary) text-right">{value}</dd>
+    </div>
+  );
+}
+
 export default function Home() {
   const [items, setItems] = useState<PantryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -306,6 +400,8 @@ export default function Home() {
   const [toast, setToast] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [addingItem, setAddingItem] = useState(false);
+  const [sortBy, setSortBy] = useState<SortBy>("expiry");
+  const [viewing, setViewing] = useState<PantryItem | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -410,9 +506,20 @@ export default function Home() {
     return acc;
   }, {});
 
-  const displayItems = searchQuery.trim()
+  const filteredItems = searchQuery.trim()
     ? items.filter(i => i.canonical_name.toLowerCase().includes(searchQuery.toLowerCase()))
     : items;
+
+  const displayItems = [...filteredItems].sort((a, b) => {
+    if (sortBy === "name") return a.canonical_name.localeCompare(b.canonical_name);
+    if (sortBy === "recent") {
+      const ta = a.purchased_at ? new Date(a.purchased_at).getTime() : 0;
+      const tb = b.purchased_at ? new Date(b.purchased_at).getTime() : 0;
+      return tb - ta; // most recent first
+    }
+    // expiry: soonest first
+    return new Date(a.est_expiry).getTime() - new Date(b.est_expiry).getTime();
+  });
 
   const byDisplayCategory = displayItems.reduce<Record<string, PantryItem[]>>((acc, item) => {
     (acc[item.category] = acc[item.category] || []).push(item);
@@ -476,28 +583,40 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Search bar */}
+          {/* Search bar + sort */}
           {items.length > 0 && (
             <div className="px-4 md:px-8 pb-3">
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) pointer-events-none">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                </span>
-                <input
-                  type="text"
-                  placeholder="Search items…"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  className="w-full pl-9 pr-8 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-primary) text-sm placeholder:text-(--color-text-faint) focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery("")}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors"
-                  >
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  </button>
-                )}
+              <div className="flex gap-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) pointer-events-none">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  </span>
+                  <input
+                    type="text"
+                    placeholder="Search items…"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full pl-9 pr-8 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-primary) text-sm placeholder:text-(--color-text-faint) focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors"
+                    >
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                  )}
+                </div>
+                <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value as SortBy)}
+                  title="Sort items"
+                  className="shrink-0 px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-muted) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition cursor-pointer hover:text-(--color-text-primary)"
+                >
+                  <option value="expiry">Expiry ↑</option>
+                  <option value="name">Name A→Z</option>
+                  <option value="recent">Recent first</option>
+                </select>
               </div>
               {searchQuery && (
                 <p className="text-xs text-(--color-text-faint) mt-1.5 px-1">
@@ -548,22 +667,52 @@ export default function Home() {
 
           {/* Empty state */}
           {items.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 px-8 text-center">
-              <div className="w-20 h-20 rounded-full bg-(--color-card-warm) border-2 border-dashed border-(--color-border) flex items-center justify-center text-stone-300 mb-5">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" />
-                </svg>
+            <div className="px-4 md:px-8 py-10 max-w-2xl mx-auto">
+              <div className="text-center mb-8">
+                <div className="w-20 h-20 rounded-full bg-(--color-card-warm) border-2 border-dashed border-(--color-border) flex items-center justify-center text-stone-300 mb-5 mx-auto">
+                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" />
+                  </svg>
+                </div>
+                <h2 className="text-xl font-semibold text-(--color-text-primary) mb-1">
+                  Welcome to Larder
+                </h2>
+                <p className="text-sm text-(--color-text-muted) max-w-sm mx-auto">
+                  Track everything in your kitchen so nothing goes to waste. Get started in seconds.
+                </p>
               </div>
-              <h2 className="text-lg font-semibold text-(--color-text-primary) mb-1">
-                Your pantry is empty
-              </h2>
-              <p className="text-sm text-(--color-text-muted) mb-6">
-                Scan a grocery receipt to stock your shelves
-              </p>
-              <Link href="/scan" className="bg-(--color-brand) text-white px-6 py-2.5 rounded-xl text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm">
-                Scan your first receipt
-              </Link>
+
+              {/* Two CTA cards */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+                <Link href="/scan" className="group bg-(--color-card) rounded-2xl border border-(--color-border) p-5 hover:border-(--color-brand-light) hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-(--color-brand-xlight) text-(--color-brand) flex items-center justify-center mb-3">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  </div>
+                  <p className="font-semibold text-(--color-text-primary) text-sm mb-0.5">Scan a receipt</p>
+                  <p className="text-xs text-(--color-text-muted) leading-snug">Snap a grocery receipt — Claude AI reads every item in seconds.</p>
+                  <p className="text-xs text-(--color-brand) font-medium mt-2 group-hover:underline">Open scanner →</p>
+                </Link>
+
+                <button onClick={() => setAddingItem(true)} className="group text-left bg-(--color-card) rounded-2xl border border-(--color-border) p-5 hover:border-(--color-brand-light) hover:shadow-md transition-all">
+                  <div className="w-10 h-10 rounded-xl bg-(--color-brand-xlight) text-(--color-brand) flex items-center justify-center mb-3">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  </div>
+                  <p className="font-semibold text-(--color-text-primary) text-sm mb-0.5">Add an item</p>
+                  <p className="text-xs text-(--color-text-muted) leading-snug">Type it in manually — name, quantity, category, and expiry date.</p>
+                  <p className="text-xs text-(--color-brand) font-medium mt-2 group-hover:underline">Add item →</p>
+                </button>
+              </div>
+
+              {/* Tips */}
+              <div className="bg-(--color-card-warm) rounded-2xl border border-(--color-border) p-4">
+                <p className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest mb-2">A few things to know</p>
+                <ul className="text-sm text-(--color-text-muted) space-y-1.5">
+                  <li className="flex gap-2"><span className="text-(--color-brand) shrink-0">·</span>Larder estimates expiry dates — adjust them anytime by clicking an item.</li>
+                  <li className="flex gap-2"><span className="text-(--color-brand) shrink-0">·</span>The colored bar shows freshness: green is fresh, red means use soon.</li>
+                  <li className="flex gap-2"><span className="text-(--color-brand) shrink-0">·</span>Click <strong className="text-(--color-text-primary)">Used</strong> when you finish something — it tracks what you actually consume.</li>
+                </ul>
+              </div>
             </div>
           )}
 
@@ -580,9 +729,12 @@ export default function Home() {
                   <div key={item.id} className="px-4 py-3.5 group hover:bg-(--color-card-warm) transition-colors duration-100">
                     {/* Top row: name + expiry badge (inline) + actions far right */}
                     <div className="flex items-center gap-2 mb-2">
-                      <p className="font-medium text-(--color-text-primary) capitalize text-sm leading-snug">
+                      <button
+                        onClick={() => setViewing(item)}
+                        className="font-medium text-(--color-text-primary) capitalize text-sm leading-snug text-left hover:text-(--color-brand) transition-colors"
+                      >
                         {item.canonical_name}
-                      </p>
+                      </button>
                       <ExpiryBadge expiry={item.est_expiry} />
                       <div className="ml-auto flex items-center gap-1">
                         <button
@@ -638,6 +790,16 @@ export default function Home() {
       </Link>
 
       {/* Edit modal */}
+      {viewing && (
+        <DetailModal
+          item={viewing}
+          onClose={() => setViewing(null)}
+          onEdit={() => { setEditing(viewing); setViewing(null); }}
+          onDelete={() => { deleteItem(viewing); setViewing(null); }}
+          onUsed={() => { markUsed(viewing); setViewing(null); }}
+        />
+      )}
+
       {editing && (
         <EditModal
           item={editing}

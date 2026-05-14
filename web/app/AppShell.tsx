@@ -49,11 +49,13 @@ function NavItem({
   icon,
   label,
   active,
+  badge,
 }: {
   href: string;
   icon: React.ReactNode;
   label: string;
   active: boolean;
+  badge?: number;
 }) {
   return (
     <Link
@@ -67,7 +69,12 @@ function NavItem({
       <span className={`shrink-0 ${active ? "text-(--color-brand)" : "text-stone-400 group-hover:text-stone-500"}`}>
         {icon}
       </span>
-      {label}
+      <span className="flex-1 truncate">{label}</span>
+      {badge !== undefined && badge > 0 && (
+        <span className="shrink-0 text-[10px] font-semibold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full leading-none">
+          {badge}
+        </span>
+      )}
     </Link>
   );
 }
@@ -155,6 +162,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [checking, setChecking] = useState(true);
   const [showDelete, setShowDelete] = useState(false);
+  const [expiringCount, setExpiringCount] = useState(0);
 
   const isAuthPage = AUTH_ROUTES.includes(pathname);
 
@@ -177,6 +185,20 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
 
     return () => subscription.unsubscribe();
   }, [isAuthPage, router]);
+
+  // Keep the sidebar "Expiring soon" badge fresh as the user navigates
+  useEffect(() => {
+    if (isAuthPage || !user) return;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const token = session?.access_token ?? "";
+      fetch(`${API}/pantry/expiring?days=3`, {
+        headers: { "Authorization": `Bearer ${token}` },
+      })
+        .then(r => r.ok ? r.json() : [])
+        .then((items: unknown[]) => setExpiringCount(Array.isArray(items) ? items.length : 0))
+        .catch(() => setExpiringCount(0));
+    });
+  }, [isAuthPage, user, pathname]);
 
   async function logout() {
     await supabase.auth.signOut();
@@ -214,7 +236,8 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
         {/* Quick actions section */}
         <div className="px-2">
           <SectionLabel label="Quick access" />
-          <NavItem href="/" icon={Icons.alert} label="Expiring soon" active={false} />
+          <NavItem href="/expiring" icon={Icons.alert} label="Expiring soon" active={pathname === "/expiring"} badge={expiringCount} />
+          <NavItem href="/settings" icon={Icons.settings} label="Settings" active={pathname === "/settings"} />
         </div>
 
         {/* Bottom: user info + sign out */}
