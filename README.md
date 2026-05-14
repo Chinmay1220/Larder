@@ -1,8 +1,8 @@
 # 🧺 Larder
 
-**A production full-stack application** — Next.js 16 + React 19 frontend, FastAPI Python backend, Supabase Postgres + JWT auth, Anthropic Claude AI integration, deployed across Vercel and Render with GitHub Actions CI/CD.
+**Larder is an AI-powered pantry tracker that turns grocery receipts into a smart kitchen inventory.** Upload a photo of any receipt and Claude AI extracts every item — name, quantity, category, price, and estimated shelf life — into a pantry view that warns you before things expire. The average US household wastes ~$1,500 of food a year; Larder helps you fix that.
 
-> Snap a grocery receipt → Claude AI extracts every item → smart pantry view tracks expiry dates and helps reduce food waste.
+A production full-stack application built with **Next.js 16** + **React 19** on the frontend, **FastAPI** + **Python** on the backend, **Supabase** (Postgres + JWT auth) for data and identity, and **Anthropic Claude** for AI-powered receipt parsing. Deployed across **Vercel** and **Render** with **GitHub Actions** CI/CD.
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![React](https://img.shields.io/badge/React-19-blue?logo=react)
