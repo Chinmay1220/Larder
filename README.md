@@ -76,6 +76,21 @@ A complete end-to-end product built solo — frontend, backend, database, auth, 
 
 ---
 
+## 🤖 AI / LLM integration
+
+Larder treats Claude as a first-class component, not a wrapper.
+
+- **Vision-based receipt parsing** — Anthropic's **Claude Sonnet** (vision model) parses uploaded receipt images, PDFs, and structured documents (Word, Excel, CSV, TXT) into validated JSON items
+- **Structured output via JSON schema** — the prompt instructs Claude to return strictly-typed items (`canonical_name`, `category`, `quantity`, `unit`, `price`, `shelf_life_days`); responses are then parsed and validated through **Pydantic v2** before insert
+- **Prompt engineering** — single-shot prompt with category enum constraints, unit normalization rules, and shelf-life estimation grounded in food-type knowledge (milk ~7 days, canned goods ~365, produce ~3-14)
+- **Multi-modal input handling** — images sent as base64; documents stripped to plain text before sending; the same prompt handles all input types via Claude's content blocks API
+- **Cost & latency aware** — receipt parsing is the only LLM call in the hot path; everything else (search, sort, expiry checks) is pure Postgres
+- **Server-side only** — Anthropic API key never leaves the FastAPI backend; the frontend never touches the LLM directly
+
+Code: [`backend/app/services/vision.py`](backend/app/services/vision.py) and [`backend/app/api/receipts.py`](backend/app/api/receipts.py)
+
+---
+
 ## 🧱 Tech stack
 
 | Layer | Tech |
