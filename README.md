@@ -16,6 +16,22 @@ A production full-stack application built with **Next.js 16** + **React 19** on 
 
 ---
 
+## 📸 Screenshots
+
+| Pantry dashboard | Expiring soon |
+|---|---|
+| ![Pantry dashboard](docs/screenshots/pantry-dashboard.png) | ![Expiring soon](docs/screenshots/expiring-soon.png) |
+
+| Scan receipt | Settings |
+|---|---|
+| ![Scan receipt](docs/screenshots/scan-receipt.png) | ![Settings](docs/screenshots/settings.png) |
+
+| Marketing landing page |
+|---|
+| ![Marketing landing page](docs/screenshots/marketing-landing.png) |
+
+---
+
 ## 🎯 What this project demonstrates
 
 A complete end-to-end product built solo — frontend, backend, database, auth, AI integration, DevOps, and design.

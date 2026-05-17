@@ -393,16 +393,83 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - `web/next.config.ts`: added `Strict-Transport-Security` header (HSTS, 1-year max-age)
 - `backend/.env`: added `DEV_MODE=true` for local development
 
-### Known Issues (open)
-| Issue | Priority |
-|-------|----------|
-| No React Native mobile app | Next |
+### Day 11 — Notion-Inspired Sidebar
+- `web/app/AppShell.tsx`: full rewrite — compact `NavItem` component with optional `badge` prop, `SectionLabel` heading component, workspace header with 🧺 mark + tagline, user initials avatar built from `user.email.slice(0,2).toUpperCase()`, sign-out at the bottom
+- All sidebar icons are inline SVG (no emoji): home, scan, alert, settings, logout
+- Mobile bottom nav rewritten with the same SVG icons + 3-tab layout
+
+### Day 12 — UI Polish
+- `web/app/page.tsx`: `StatCard` replaced with `StatStrip` — 4 stats in a single bordered card, `grid grid-cols-2 md:grid-cols-4` with explicit borders between cells, colored icon squares (brand-xlight default, red-50 when urgent)
+- Item rows: `py-3` → `py-3.5`, freshness bar `h-1` → `h-2` with `bg-stone-200` track, expiry badge moved next to name with `ml-auto` actions group
+- Category headers: brand-colored 0.5px tall accent bar (`w-0.5 h-3.5 rounded-full bg-(--color-brand) opacity-60`) + item count rendered as a pill badge
+- Alert strip ⚠️ emoji → triangle SVG
+- `web/app/scan/page.tsx`: progress step icons all SVG; ⚠️ error icon, 📸 camera, 📄 doc icons all swapped
+- Inline SVG icon constants defined at top of `page.tsx`: IconBox, IconClock, IconGrid, IconDollar, IconPencil, IconTrash, IconCamera
+
+### Day 13 — Manual Add + Search + Sort
+- `backend/app/api/pantry.py`: `ItemCreate` Pydantic model with the same validators as `ItemUpdate` (category enum, ISO date, length limits). New `POST /pantry` route placed before `PATCH /pantry/{item_id}` to avoid path conflict
+- `backend/app/services/pantry_state.py`: `create_item(user_id, data)` — runs re-purchase inference like `ingest_items`, computes `shelf_life_days` from delta to `est_expiry`, inserts row, returns `data[0]`
+- `web/app/page.tsx`: new `AddItemModal` component (name + qty/unit + category + expiry date input). Wired to a "+ Add item" button in the pantry header
+- Search: `searchQuery` state, inline search bar between stat strip and alert strip with magnifying-glass SVG prefix + × clear button. `displayItems` derived from `items` filtered by `canonical_name.toLowerCase().includes(query)`. Stats still use the full `items` list so totals stay accurate.
+- Sort: `sortBy: "expiry" | "name" | "recent"` state, dropdown with three options, items re-sorted before grouping by category. Default expiry, stable sort within groups.
+
+### Day 14 — Auth Hardening + Privacy + Settings + Expiring page
+- `web/app/forgot-password/page.tsx`: email input → `supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset-password' })` → confirmation card
+- `web/app/reset-password/page.tsx`: listens for `PASSWORD_RECOVERY` event via `onAuthStateChange`, validates session presence with `hasSession` state. Three render states: invalid-link card, success card (redirects to /login after 2s `setTimeout`), and the new-password form. Calls `supabase.auth.updateUser({ password })`.
+- `web/app/login/page.tsx`: "Forgot?" link beside password label
+- `web/app/AppShell.tsx`: `AUTH_ROUTES` extended to include `/forgot-password` and `/reset-password` so they bypass the auth gate
+- `web/app/settings/page.tsx`: profile section with email, initials avatar (`bg-(--color-brand-xlight)`), member-since date from `user.created_at`. Change-password form with current/new/confirm inputs + show/hide toggle. Sign out + Delete account links at the bottom.
+- `web/app/expiring/page.tsx`: fetches from `GET /pantry/expiring?days=3`, groups items into "Expired" (daysLeft < 0), "Today" (= 0), "Next 3 days" (1-3). Uses the same item row JSX as the pantry page.
+- `web/app/AppShell.tsx`: `expiringCount` state, `useEffect` re-fetches on `pathname` change, renders a red pill badge on the "Expiring soon" NavItem when count > 0
+- `backend/app/api/account.py`: `DELETE /account` endpoint — wipes `pantry_items` + `receipts` rows for `user_id`, calls `supabase.auth.admin.delete_user(user_id)`. Wrapped in try/except with server-side logging. Rate-limited to `3/hour`.
+- `backend/app/main.py`: registered `account.router`
+- `web/app/AppShell.tsx`: `DeleteAccountModal` component — requires the user to type their email to enable the delete button, calls `DELETE /account`, signs out + redirects to /login on success
+- `web/app/signup/page.tsx`: Privacy Policy text now links to `https://larder-website.vercel.app/privacy`
+- `website/app/privacy/page.tsx`: new static page with the full data policy
+- `website/components/Footer.tsx`: Privacy link added
+
+### Day 15 — Security Audit
+- `backend/app/main.py`: removed `allow_origin_regex=r"https://.*\.vercel\.app"`; added `_is_production()` helper that checks for `RENDER` env or `larder.*` in `FRONTEND_URL`; lifespan now raises if `DEV_MODE=true` in production
+- `backend/app/api/account.py`: error response sanitized (`raise HTTPException(500, "Account deletion failed. Please try again later.")`), full traceback logged server-side via `logging.exception`. Decorated with `@limiter.limit("3/hour")`. Function now takes `request: Request` (required by slowapi).
+- `backend/app/api/pantry.py`: every endpoint decorated with `@limiter.limit(...)` — `GET /pantry` 120/min, `GET /pantry/expiring` 60/min, `PATCH /pantry/{id}/consumed` 60/min, `PATCH /pantry/{id}/decrement` 60/min, `POST /pantry` 30/min, `PATCH /pantry/{id}` 60/min, `DELETE /pantry/{id}` 30/min. All endpoints now take `request: Request`.
+- `backend/app/api/receipts.py`: `_matches_magic(file_bytes, content_type)` verifies leading bytes against expected magic for JPEG (`FF D8 FF`), PNG (`89 50 4E 47 0D 0A 1A 0A`), GIF (`GIF87a`/`GIF89a`), WebP (`RIFF…WEBP`), PDF (`%PDF`), Office files (`PK\x03\x04` for openxml, `D0 CF 11 E0` for legacy). Image dimensions checked after `Image.open` against `MAX_IMAGE_PIXELS = 50_000_000`.
+- `backend/app/auth.py`: `jwt.decode` now passes `issuer=f"{SUPABASE_URL}/auth/v1"` and `options={"require": ["exp","sub","aud","iss"]}` on both ES256 and HS256 paths
+- `backend/app/services/vision.py`: openpyxl + python-docx parsing wrapped in try/except with `logging.exception`. `MODEL` now reads `CLAUDE_MODEL` env var with `claude-sonnet-4-6` default.
+- `backend/app/services/pantry_state.py`: `_clamp_shelf_life(raw) -> [1, 365]`, `_clamp_quantity(raw) -> [0.01, 9999]`, `_safe_category(raw)` falls back to `"other"` if not in `VALID_CATEGORIES`. Applied in `ingest_items` insert. `canonical_name` and `unit` length-limited.
+- `web/next.config.ts` and `website/next.config.ts`: new `Content-Security-Policy` header — `default-src 'self'`, `script-src 'self' 'unsafe-inline' 'unsafe-eval'` (Next.js requires these), `style-src 'self' 'unsafe-inline'` (Tailwind), `img-src 'self' data: blob: https:`, `connect-src 'self' https://*.supabase.co wss://*.supabase.co https://larder.onrender.com http://localhost:8000`, `frame-ancestors 'none'`, `object-src 'none'`
+- `backend/requirements.txt`: every package pinned to exact version (fastapi==0.124.2, anthropic==0.96.0, supabase==2.29.0, etc.)
+- `web/package.json` + `website/package.json`: removed all `^` ranges, exact versions only
+- `.github/workflows/ci.yml` + `nightly.yml`: `actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2`, `actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0`, `actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0`. Node version standardized to `'22'` in both build jobs.
+
+### Day 15 (cont.) — Portfolio README
+- `README.md`: full rewrite for portfolio showcase — opening pitch sentence, shields.io tech badges, "What this project demonstrates" mapping table, screenshots section referencing `docs/screenshots/*.png`, architecture ASCII diagram, "Notable design decisions" prose section, dedicated "AI / LLM integration" section (vision-based parsing, JSON schema, prompt engineering, multi-modal, cost-aware, server-side only), tech stack table, repo structure tree, local dev setup, API reference table, database schema tables, deployment notes
+- `docs/screenshots/`: scaffold folder with its own README explaining what each PNG should show and how to capture them
+
+### Environment variables (production)
+| Var | Where set | Notes |
+|---|---|---|
+| `SUPABASE_URL` | Render + Vercel (`NEXT_PUBLIC_SUPABASE_URL`) | both backend and frontend need it |
+| `SUPABASE_SERVICE_KEY` | Render only | service-role JWT, never expose to client |
+| `SUPABASE_ANON_KEY` | Vercel (`NEXT_PUBLIC_SUPABASE_ANON_KEY`) | safe to expose |
+| `SUPABASE_JWT_SECRET` | Render only | HS256 fallback secret (legacy) |
+| `ANTHROPIC_API_KEY` | Render only | Claude API |
+| `FRONTEND_URL` | Render | comma-separated: `https://larder-theta.vercel.app,https://larder-website.vercel.app` |
+| `CLAUDE_MODEL` | Render | optional, defaults to `claude-sonnet-4-6` |
+| `DEV_MODE` | local only (`backend/.env`) | must be `false` or unset in prod — server refuses to boot otherwise |
+| `NEXT_PUBLIC_API_URL` | Vercel (web app) | `https://larder.onrender.com` |
+
+### Supabase URL configuration
+- Site URL: `https://larder-theta.vercel.app`
+- Redirect URLs: `https://larder-theta.vercel.app/**` (wildcard required so the password reset link with path `/reset-password` works)
 
 ---
 
-## Next Steps (Day 4)
+## Next Steps
 
-- [ ] Test full scan flow on mobile browser (larder-theta.vercel.app)
+- [ ] Capture the 5 screenshots referenced in `README.md` (see `docs/screenshots/README.md`)
+- [ ] Recipe Suggestions feature — `POST /recipes` endpoint that takes expiring items, calls Claude with structured prompt, returns 3-5 recipe ideas
+- [ ] PWA manifest (`web/public/manifest.json`) + service worker so the app installs to home screen
+- [ ] Direct camera capture on mobile — `<input type="file" accept="image/*" capture="environment">` on the scan page
+- [ ] Shopping list — new `shopping_items` table + `/shopping` page + "Add to list" button on each pantry row
+- [ ] Vercel Analytics in both apps (free tier, no cookie banner needed)
 - [ ] Build React Native mobile app (Expo)
-- [ ] Wire mobile camera → Render backend → pantry view
-- [ ] GitHub Actions: nightly cron to flag expired items in Supabase

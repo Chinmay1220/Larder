@@ -403,6 +403,114 @@ Four small but important security improvements:
 
 ---
 
+## Day 11 — Notion-Inspired Sidebar
+
+**The problem:** The app's left sidebar was a basic vertical list with emoji icons. It looked like a school project, not a real product.
+
+**What we shipped:**
+- Brand-new `AppShell` layout with a compact Notion-style sidebar — small SVG icons, tight spacing, subtle active state on the current page
+- "Quick access" section heading separates frequent destinations from primary nav
+- Workspace header at the top with a 🧺 mark and the "Your kitchen's memory" tagline
+- User avatar (initials from email) at the bottom plus a Sign Out button styled as a quiet text link
+- Mobile bottom nav now uses the same SVG icons, no more emoji
+
+Result: the app finally **looks** like a real product instead of a side project.
+
+---
+
+## Day 12 — UI Polish Pass
+
+A focused round of visual cleanup across every screen:
+
+- **Stat cards** on the pantry page were 4 boxy tiles taking up half the screen. Replaced with a single compact "stat strip" — 4 stats with small icon squares in one tidy row (2-column on mobile, 4-column on desktop). Frees up the page.
+- **Item rows** got a thicker freshness bar (twice as visible) and slightly more breathing room. The expiry badge now sits right next to the item name instead of being lost on the far right.
+- **Category section headers** got a subtle brand-colored accent bar on the left and the item count is now a small pill badge instead of plain text.
+- Every emoji button in the app (✏️ 🗑 📸 ⚠️) was swapped for a proper SVG icon. Hover states added.
+- Scan-receipt page got the same treatment — SVG icons everywhere, cleaner header, better progress steps.
+
+Result: the app feels designed, not just functional.
+
+---
+
+## Day 13 — Manual Add + Search + Sort
+
+The pantry was getting hard to scan with 15+ items, and the only way to add items was scanning a receipt — both blockers for real use.
+
+**What we shipped:**
+- **"+ Add item" button** in the pantry header. Opens a modal with name, quantity, unit, category, and expiry date fields. Defaults expiry to today + 14 days. Posts to a new `POST /pantry` backend endpoint.
+- **Search bar** between the stat strip and the item list. Filters items in real time as you type. Shows result count and an × to clear. Stats and the expiry alert strip stay accurate to the full list regardless of what's searched.
+- **Sort dropdown** — Expiry / Name / Recently added. Persists for the session.
+
+Result: users without receipts (farmers market, gifts, existing pantry) can finally use the app, and the list scales past 50 items without becoming a wall of text.
+
+---
+
+## Day 14 — Auth Hardening + Privacy
+
+We added the things every "real" product needs and a portfolio reviewer would expect to see.
+
+**Password reset:**
+- `/forgot-password` page — enter email, calls `supabase.auth.resetPasswordForEmail`, shows a "check your inbox" confirmation
+- `/reset-password` page — detects Supabase's `PASSWORD_RECOVERY` session from the email link, shows new-password + confirm fields with a show/hide toggle, redirects to login on success
+- "Forgot?" link added beside the password label on the login page
+
+**Settings page (`/settings`):**
+- Profile section with email + initials avatar + member-since date
+- Change-password form (current → new → confirm)
+- "Sign out" button
+- "Delete account" link surfaces the same type-your-email-to-confirm modal we built in Day 13.5
+
+**Account deletion (built earlier in the day):**
+- New `DELETE /account` endpoint that cascades: wipes pantry items, wipes receipts, deletes the Supabase auth user — irreversible
+- Sidebar bottom got a small red "Delete account" link that opens a confirmation modal requiring the user to type their email
+
+**Privacy policy:**
+- New `/privacy` page on the marketing site, full data policy: what we collect, how it's stored, vendors (Supabase, Anthropic, Render, Vercel), user rights (access, correction, deletion, export), cookies, children, contact
+- Linked from the marketing site footer and the signup form's terms text
+
+**Expiring soon page (`/expiring`):**
+- The sidebar link that previously pointed to `/` (broken behavior) now points to its own page
+- Items grouped into three sections: Expired / Today / Next 3 days
+- Sidebar shows a live red badge with the count of items expiring within 3 days
+- The badge re-fetches on every navigation so it stays accurate after marking items used
+
+---
+
+## Day 15 — Security Audit + Catch-Up Documentation
+
+Before showing the project to anyone, we ran a full security review across backend, frontend, and infrastructure. Found and fixed 12 issues in one commit.
+
+**Backend hardening:**
+- CORS allowlist no longer uses a `.*\.vercel\.app` regex — any random Vercel deployment could previously have called the API with credentials. Now explicit: only the two production URLs plus localhost.
+- Server refuses to boot with `DEV_MODE=true` if it detects a production environment (Render env var or `vercel.app` in `FRONTEND_URL`). Prevents the auth-bypass disaster mode.
+- Account deletion errors no longer leak stack traces to clients — logged server-side only.
+- Every pantry endpoint now has a rate limit (reads 60-120/min, writes 30/min, account deletion 3/hour).
+- Receipt uploads now verify file magic bytes — won't accept a malicious ZIP claiming to be a JPEG.
+- Decompression-bomb guard: images over 50 megapixels are rejected before Pillow tries to decode them.
+- JWT validation now checks the `iss` claim and requires `exp/sub/aud/iss` to be present.
+- Office file parsing (.docx, .xlsx) wrapped in try/except — corrupt files can't crash the worker.
+- Values from Claude are now clamped — shelf life [1, 365] days, quantity [0.01, 9999], category against an enum allowlist. Defense in depth against an LLM returning garbage.
+
+**Frontend hardening:**
+- Both Next.js apps now send a strict `Content-Security-Policy` header. `default-src 'self'`, `frame-ancestors 'none'`, explicit `connect-src` allowlist for Supabase and the backend.
+
+**Supply chain:**
+- Every Python and npm dependency pinned to an exact version. No more `^` caret ranges.
+- GitHub Actions pinned to commit SHAs instead of floating `@v4` tags. Supply-chain attack surface closed.
+- CI standardized on Node 22 (was inconsistently 20 vs 24).
+
+**Documentation:**
+- README completely rewritten as a portfolio piece — tech stack badges, "What this demonstrates" table mapping skill areas to evidence, architecture diagram, notable design decisions, API reference, database schema, deployment topology, dedicated AI/LLM integration section. Screenshots scaffold added under `docs/screenshots/`.
+- Profile README upgrade discussed (skillicons.dev for tech logos, featured project card).
+
+Result: the app is now safe to share publicly and the GitHub repo tells the full engineering story in one page.
+
+---
+
 ## What's Next
 
+- Recipe Suggestions (Claude takes your expiring items and suggests recipes)
+- PWA manifest + direct camera access on mobile
+- Shopping list — flag items for repurchase
 - React Native mobile app (Expo) with native camera
+- Email notifications when items are about to expire
