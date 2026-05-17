@@ -1,6 +1,8 @@
 import base64
 import io
 import json
+import logging
+import os
 import re
 
 import openpyxl
@@ -8,7 +10,8 @@ from docx import Document
 from anthropic import Anthropic
 
 client = Anthropic()
-MODEL = "claude-sonnet-4-6"
+MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-4-6")
+log = logging.getLogger(__name__)
 
 PROMPT = """You are a grocery-receipt parser. Extract every purchased food/household item from the receipt data below.
 
@@ -47,19 +50,27 @@ def _extract_text(file_bytes: bytes, media_type: str) -> str:
 
     if media_type in ("application/vnd.ms-excel",
                       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"):
-        wb = openpyxl.load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=True)
-        lines = []
-        for sheet in wb.worksheets:
-            for row in sheet.iter_rows(values_only=True):
-                line = " | ".join(str(c) for c in row if c is not None)
-                if line:
-                    lines.append(line)
-        return "\n".join(lines)
+        try:
+            wb = openpyxl.load_workbook(io.BytesIO(file_bytes), read_only=True, data_only=True)
+            lines = []
+            for sheet in wb.worksheets:
+                for row in sheet.iter_rows(values_only=True):
+                    line = " | ".join(str(c) for c in row if c is not None)
+                    if line:
+                        lines.append(line)
+            return "\n".join(lines)
+        except Exception:
+            log.exception("excel_parse_failed media_type=%s", media_type)
+            return ""
 
     if media_type in ("application/msword",
                       "application/vnd.openxmlformats-officedocument.wordprocessingml.document"):
-        doc = Document(io.BytesIO(file_bytes))
-        return "\n".join(p.text for p in doc.paragraphs if p.text)
+        try:
+            doc = Document(io.BytesIO(file_bytes))
+            return "\n".join(p.text for p in doc.paragraphs if p.text)
+        except Exception:
+            log.exception("word_parse_failed media_type=%s", media_type)
+            return ""
 
     return ""
 

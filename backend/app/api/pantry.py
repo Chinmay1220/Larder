@@ -1,8 +1,9 @@
 from datetime import datetime
-from fastapi import APIRouter, Query, HTTPException, Depends
+from fastapi import APIRouter, Query, HTTPException, Depends, Request
 from pydantic import BaseModel, Field, field_validator
 from typing import Optional
 from app.auth import get_user_id
+from app.limiter import limiter
 from app.services.pantry_state import get_pantry, get_expiring, mark_consumed, update_item, delete_item, decrement_item, create_item
 
 router = APIRouter()
@@ -73,12 +74,15 @@ class ItemUpdate(BaseModel):
 
 
 @router.get("/pantry")
-def pantry(user_id: str = Depends(get_user_id)):
+@limiter.limit("120/minute")
+def pantry(request: Request, user_id: str = Depends(get_user_id)):
     return get_pantry(user_id)
 
 
 @router.get("/pantry/expiring")
+@limiter.limit("60/minute")
 def expiring(
+    request: Request,
     days: int = Query(default=3, ge=1, le=30),
     user_id: str = Depends(get_user_id),
 ):
@@ -86,7 +90,8 @@ def expiring(
 
 
 @router.patch("/pantry/{item_id}/consumed")
-def consume(item_id: str, user_id: str = Depends(get_user_id)):
+@limiter.limit("60/minute")
+def consume(request: Request, item_id: str, user_id: str = Depends(get_user_id)):
     updated = mark_consumed(user_id, item_id)
     if not updated:
         raise HTTPException(404, "Item not found")
@@ -94,7 +99,8 @@ def consume(item_id: str, user_id: str = Depends(get_user_id)):
 
 
 @router.patch("/pantry/{item_id}/decrement")
-def decrement(item_id: str, user_id: str = Depends(get_user_id)):
+@limiter.limit("60/minute")
+def decrement(request: Request, item_id: str, user_id: str = Depends(get_user_id)):
     result = decrement_item(user_id, item_id)
     if result is None:
         raise HTTPException(404, "Item not found")
@@ -102,13 +108,15 @@ def decrement(item_id: str, user_id: str = Depends(get_user_id)):
 
 
 @router.post("/pantry", status_code=201)
-def create(body: ItemCreate, user_id: str = Depends(get_user_id)):
+@limiter.limit("30/minute")
+def create(request: Request, body: ItemCreate, user_id: str = Depends(get_user_id)):
     item = create_item(user_id, body.model_dump())
     return item
 
 
 @router.patch("/pantry/{item_id}")
-def update(item_id: str, body: ItemUpdate, user_id: str = Depends(get_user_id)):
+@limiter.limit("60/minute")
+def update(request: Request, item_id: str, body: ItemUpdate, user_id: str = Depends(get_user_id)):
     fields = {k: v for k, v in body.model_dump().items() if v is not None}
     if not fields:
         raise HTTPException(400, "No fields to update")
@@ -119,7 +127,8 @@ def update(item_id: str, body: ItemUpdate, user_id: str = Depends(get_user_id)):
 
 
 @router.delete("/pantry/{item_id}")
-def delete(item_id: str, user_id: str = Depends(get_user_id)):
+@limiter.limit("30/minute")
+def delete(request: Request, item_id: str, user_id: str = Depends(get_user_id)):
     deleted = delete_item(user_id, item_id)
     if not deleted:
         raise HTTPException(404, "Item not found")

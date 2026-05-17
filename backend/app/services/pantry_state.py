@@ -1,12 +1,42 @@
 from datetime import datetime, timedelta, timezone
 from app.db import supabase
 
+VALID_CATEGORIES = {
+    "produce", "dairy", "meat", "seafood", "bakery",
+    "pantry", "frozen", "beverage", "snack", "household", "other",
+}
+
+
+def _clamp_shelf_life(raw) -> int:
+    """Clamp shelf_life_days from Claude to a reasonable range [1, 365]."""
+    try:
+        v = int(raw)
+    except (TypeError, ValueError):
+        return 14
+    return max(1, min(v, 365))
+
+
+def _clamp_quantity(raw) -> float:
+    """Clamp quantity to a reasonable range [0.01, 9999]."""
+    try:
+        v = float(raw)
+    except (TypeError, ValueError):
+        return 1.0
+    return max(0.01, min(v, 9999.0))
+
+
+def _safe_category(raw) -> str:
+    """Fall back to 'other' if Claude returns an unknown category."""
+    if isinstance(raw, str) and raw.lower() in VALID_CATEGORIES:
+        return raw.lower()
+    return "other"
+
 
 def ingest_items(user_id: str, items: list[dict], receipt_id: str):
     now = datetime.now(timezone.utc)
 
     for item in items:
-        canonical = item.get("canonical_name", "").lower().strip()
+        canonical = item.get("canonical_name", "").lower().strip()[:200]
         if not canonical:
             continue
 
@@ -16,15 +46,15 @@ def ingest_items(user_id: str, items: list[dict], receipt_id: str):
             "consumed_at": now.isoformat(),
         }).eq("user_id", user_id).eq("canonical_name", canonical).eq("status", "active").execute()
 
-        shelf_life = item.get("shelf_life_days") or 14
+        shelf_life = _clamp_shelf_life(item.get("shelf_life_days"))
         est_expiry = now + timedelta(days=shelf_life)
 
         supabase.table("pantry_items").insert({
             "user_id": user_id,
             "canonical_name": canonical,
-            "category": item.get("category", "other"),
-            "quantity": item.get("quantity", 1),
-            "unit": item.get("unit", "each"),
+            "category": _safe_category(item.get("category")),
+            "quantity": _clamp_quantity(item.get("quantity", 1)),
+            "unit": str(item.get("unit", "each"))[:50],
             "price": item.get("price"),
             "purchased_at": now.isoformat(),
             "est_expiry": est_expiry.isoformat(),

@@ -20,6 +20,40 @@ TEXT_TYPES  = {
 }
 ALLOWED_TYPES = IMAGE_TYPES | TEXT_TYPES | {"application/pdf"}
 MAX_BYTES = 10 * 1024 * 1024  # 10 MB
+MAX_IMAGE_PIXELS = 50_000_000  # 50 megapixels — guards against decompression bombs
+
+# File magic bytes — content type alone is client-supplied and untrusted.
+IMAGE_MAGIC = {
+    "image/jpeg": [b"\xff\xd8\xff"],
+    "image/png":  [b"\x89PNG\r\n\x1a\n"],
+    "image/gif":  [b"GIF87a", b"GIF89a"],
+    "image/webp": [b"RIFF"],  # additional "WEBP" check below
+}
+OFFICE_MAGIC = {
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [b"PK\x03\x04"],
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [b"PK\x03\x04"],
+    "application/vnd.ms-excel": [b"\xd0\xcf\x11\xe0", b"PK\x03\x04"],
+    "application/msword": [b"\xd0\xcf\x11\xe0", b"PK\x03\x04"],
+}
+
+
+def _matches_magic(file_bytes: bytes, content_type: str) -> bool:
+    """Verify the file's leading bytes match its claimed content type."""
+    if content_type == "application/pdf":
+        return file_bytes.startswith(b"%PDF")
+    if content_type in IMAGE_MAGIC:
+        if not any(file_bytes.startswith(m) for m in IMAGE_MAGIC[content_type]):
+            return False
+        # WebP: after RIFF + 4 size bytes, expect "WEBP"
+        if content_type == "image/webp":
+            return len(file_bytes) >= 12 and file_bytes[8:12] == b"WEBP"
+        return True
+    if content_type in OFFICE_MAGIC:
+        return any(file_bytes.startswith(m) for m in OFFICE_MAGIC[content_type])
+    # Plain text / CSV — no magic bytes, accept as-is
+    if content_type in {"text/plain", "text/csv"}:
+        return True
+    return False
 
 
 @router.post("/receipts")
@@ -36,13 +70,21 @@ async def upload_receipt(
     if len(file_bytes) > MAX_BYTES:
         raise HTTPException(413, "File is too large. Please use a file under 10 MB.")
 
-    if file.content_type == "application/pdf":
-        if not file_bytes.startswith(b"%PDF"):
-            raise HTTPException(400, "File is not a valid PDF.")
-    elif file.content_type in IMAGE_TYPES:
+    # Verify magic bytes — never trust client-supplied Content-Type alone
+    if not _matches_magic(file_bytes, file.content_type):
+        raise HTTPException(400, "File contents do not match the declared type.")
+
+    if file.content_type in IMAGE_TYPES:
         try:
             img = Image.open(io.BytesIO(file_bytes))
             img.verify()
+            # Re-open after verify (verify exhausts the stream) to check dimensions
+            img2 = Image.open(io.BytesIO(file_bytes))
+            w, h = img2.size
+            if w * h > MAX_IMAGE_PIXELS:
+                raise HTTPException(413, "Image dimensions are too large.")
+        except HTTPException:
+            raise
         except Exception:
             raise HTTPException(400, "File is not a valid image.")
 

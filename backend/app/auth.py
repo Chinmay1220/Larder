@@ -36,6 +36,9 @@ def get_user_id(authorization: str = Header(default="")) -> str:
 
     token = authorization.split(" ", 1)[1]
 
+    # Supabase issuer for `iss` claim validation
+    issuer = f"{_SUPABASE_URL}/auth/v1" if _SUPABASE_URL else None
+
     # Try ES256 via JWKS first (Supabase default since 2025)
     client = _get_jwks_client()
     if client:
@@ -46,6 +49,8 @@ def get_user_id(authorization: str = Header(default="")) -> str:
                 signing_key.key,
                 algorithms=["ES256", "RS256"],
                 audience="authenticated",
+                issuer=issuer,
+                options={"require": ["exp", "sub", "aud", "iss"]},
             )
             return payload["sub"]
         except jwt.ExpiredSignatureError:
@@ -61,6 +66,8 @@ def get_user_id(authorization: str = Header(default="")) -> str:
                 _JWT_SECRET,
                 algorithms=["HS256"],
                 audience="authenticated",
+                issuer=issuer,
+                options={"require": ["exp", "sub", "aud", "iss"]},
             )
             return payload["sub"]
         except jwt.ExpiredSignatureError:
