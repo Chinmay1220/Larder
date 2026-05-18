@@ -473,3 +473,37 @@ Render auto-deploys from GitHub pushes to `main` — no GitHub Action needed for
 - [ ] Shopping list — new `shopping_items` table + `/shopping` page + "Add to list" button on each pantry row
 - [ ] Vercel Analytics in both apps (free tier, no cookie banner needed)
 - [ ] Build React Native mobile app (Expo)
+
+---
+
+## End-of-Day 15 — Production state
+
+**Backend deploy (Render — `larder.onrender.com`)**
+- Branch: `main`, auto-deploy on push
+- Runtime: Python 3.11, uvicorn, single web service
+- Env vars set: `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, `SUPABASE_JWT_SECRET`, `ANTHROPIC_API_KEY`, `FRONTEND_URL=https://larder-theta.vercel.app,https://larder-website.vercel.app`
+- Plan: free (spins down after 15 min idle; `keepalive.yml` pings every 14 min)
+- All 10 endpoints rate-limited via slowapi (IP-keyed)
+
+**Frontend deploys (Vercel — 2 projects)**
+- `larder-theta` (web app) — `web/` directory, branch `main`
+- `larder-website` (marketing site) — `website/` directory, branch `main`
+- Both ship CSP + HSTS + X-Frame-Options DENY + X-Content-Type-Options nosniff + Referrer-Policy strict-origin-when-cross-origin + Permissions-Policy locking camera/mic/geolocation
+
+**Supabase (`auth.users`, `pantry_items`, `receipts`)**
+- Site URL: `https://larder-theta.vercel.app`
+- Redirect URL allowlist: `https://larder-theta.vercel.app/**`
+- ES256 JWT signing keys (with HS256 fallback for legacy tokens in `auth.py`)
+- 2 confirmed users as of end-of-day
+
+**CI/CD (`.github/workflows/`)**
+- `ci.yml` — backend ruff lint + 2 Next.js builds, auto-merge with retry loop on green
+- `nightly.yml` — daily cron at 6 UTC for expiry flagging
+- `keepalive.yml` — 14-min cron pinging `/health`
+- All Actions pinned to commit SHAs
+
+**Repo state**
+- Main branch protected, requires both CI checks before merge
+- Latest commit: `a277717` (STORY/TECHNICAL catchup + screenshots scaffold)
+- Tip-of-main builds clean: `npm run build` passes for web and website, ruff passes for backend
+- Outstanding work: capture 5 screenshots into `docs/screenshots/`

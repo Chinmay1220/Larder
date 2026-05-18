@@ -507,9 +507,32 @@ Result: the app is now safe to share publicly and the GitHub repo tells the full
 
 ---
 
-## What's Next
+---
 
-- Recipe Suggestions (Claude takes your expiring items and suggests recipes)
+## End of Day 15 — Snapshot
+
+This is where the project actually is right now, written down so a future reader (or recruiter) gets the real picture, not the marketing version.
+
+**What's live and working:**
+- Marketing site at https://larder-website.vercel.app — landing page, docs, privacy
+- Web app at https://larder-theta.vercel.app — sign up, sign in, password reset, scan a receipt with Claude, view pantry with search/sort, see what's expiring, manage your account, delete your account
+- Backend API at https://larder.onrender.com — 10 endpoints, rate-limited, JWT-authed
+- GitHub repo at https://github.com/Chinmay1220/Larder — public, portfolio-ready README, full STORY + TECHNICAL changelogs
+
+**What got fixed today (Day 15):**
+- 12 security audit findings closed in one commit — CORS regex removed, error responses sanitized, magic-byte file checks, image-bomb guard, JWT issuer validation, DEV_MODE production block, rate limits on every endpoint, CSP headers, dependency pinning, GitHub Actions SHA pinning
+- README rewritten as a portfolio piece — tech badges, "What this demonstrates" table, architecture diagram, dedicated AI/LLM section, screenshots scaffold
+- STORY.md and TECHNICAL.md caught up through Day 15
+
+**What's open:**
+- Need to capture 5 screenshots and drop them into `docs/screenshots/` — the README references them by filename
+- The app has 2 real users so far (both me)
+- No analytics yet — Vercel Analytics is 5 minutes of work whenever
+- Render's free tier still spins down after 15 min of inactivity; the `keepalive.yml` workflow pings every 14 min but cold-start can still bite first morning visitors
+
+**What's next (deferred):**
+
+- Recipe Suggestions — Claude takes your expiring items and suggests recipes
 - PWA manifest + direct camera access on mobile
 - Shopping list — flag items for repurchase
 - React Native mobile app (Expo) with native camera
