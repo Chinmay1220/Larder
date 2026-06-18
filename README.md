@@ -18,6 +18,8 @@ A production full-stack application built with **Next.js 16** + **React 19** on 
 
 ## 📸 Screenshots
 
+Screenshots are checked into [`docs/screenshots`](docs/screenshots) and captured from the local production builds with a seeded demo pantry session.
+
 | Pantry dashboard | Expiring soon |
 |---|---|
 | ![Pantry dashboard](docs/screenshots/pantry-dashboard.png) | ![Expiring soon](docs/screenshots/expiring-soon.png) |
