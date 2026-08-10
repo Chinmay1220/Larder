@@ -302,6 +302,15 @@ All authenticated endpoints expect `Authorization: Bearer <Supabase JWT>`.
 
 A merge to `main` triggers all three deploys via webhook.
 
+### 🩺 Uptime & keepalive
+
+Two scheduled GitHub Actions keep the free-tier services warm:
+
+- **[`keepalive.yml`](.github/workflows/keepalive.yml)** — pings the Render `/health` endpoint every ~14 min so the backend never cold-starts (Render sleeps after 15 min idle).
+- **[`nightly.yml`](.github/workflows/nightly.yml)** — runs the expiry sweep daily, which doubles as Supabase traffic so the database never pauses (Supabase free tier pauses after ~7 days idle).
+
+> ⚠️ **Gotcha:** GitHub auto-disables scheduled workflows after **60 days with no repo commits** — which would silently stop the keepalive and pause Supabase. A commit to `main` resets that clock. _Services last verified active: **2026-08-10**._
+
 ---
 
 ## 📄 License
