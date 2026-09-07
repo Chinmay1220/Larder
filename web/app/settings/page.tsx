@@ -78,10 +78,10 @@ function ChangePasswordForm() {
                placeholder="Re-type password" className={inputCls} />
       </div>
       {error && (
-        <p className="text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2 rounded-lg border border-red-200">{error}</p>
+        <p className="text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2 rounded-lg border border-(--color-border)">{error}</p>
       )}
       {success && (
-        <p className="text-xs text-green-700 bg-green-50 px-3 py-2 rounded-lg border border-green-200">Password updated successfully</p>
+        <p className="text-xs text-(--color-ok) bg-(--color-safe-bg) px-3 py-2 rounded-lg border border-(--color-border)">Password updated successfully</p>
       )}
       <button type="submit" disabled={saving}
         className="px-4 py-2 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm disabled:opacity-60 flex items-center gap-2">
@@ -122,15 +122,15 @@ function DeleteAccountSection({ email }: { email: string }) {
   if (!open) {
     return (
       <button onClick={() => setOpen(true)}
-        className="px-4 py-2 rounded-xl border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors">
+        className="px-4 py-2 rounded-xl border border-(--color-border) text-(--color-alert) text-sm font-semibold hover:bg-(--color-urgent-bg) transition-colors">
         Delete account
       </button>
     );
   }
 
   return (
-    <div className="border border-red-200 rounded-xl p-4 bg-red-50/50 space-y-3">
-      <p className="text-sm text-red-700 font-medium">
+    <div className="border border-(--color-border) rounded-xl p-4 bg-(--color-urgent-bg) space-y-3">
+      <p className="text-sm text-(--color-urgent-text) font-medium">
         Type <span className="font-mono">{email}</span> to permanently delete your account and all data.
       </p>
       <input
@@ -138,16 +138,16 @@ function DeleteAccountSection({ email }: { email: string }) {
         value={confirmText}
         onChange={e => setConfirmText(e.target.value)}
         placeholder={email}
-        className="w-full px-3 py-2 rounded-xl border border-red-200 bg-white text-(--color-text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+        className="w-full px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-alert) focus:border-transparent transition"
       />
-      {error && <p className="text-xs text-red-700">{error}</p>}
+      {error && <p className="text-xs text-(--color-urgent-text)">{error}</p>}
       <div className="flex gap-2">
         <button onClick={() => { setOpen(false); setConfirmText(""); setError(null); }} disabled={deleting}
-          className="flex-1 py-2 rounded-xl border border-(--color-border) bg-white text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors disabled:opacity-50">
+          className="flex-1 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) transition-colors disabled:opacity-50">
           Cancel
         </button>
         <button onClick={handleDelete} disabled={!canConfirm || deleting}
-          className="flex-1 py-2 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
+          className="flex-1 py-2 rounded-xl bg-(--color-alert) text-white text-sm font-semibold hover:brightness-95 transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed">
           {deleting ? "Deleting…" : "Delete forever"}
         </button>
       </div>
@@ -207,7 +207,7 @@ export default function SettingsPage() {
         {/* Session */}
         <Card title="Session">
           <button onClick={signOut}
-            className="px-4 py-2 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-text-primary) transition-colors">
+            className="px-4 py-2 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) hover:text-(--color-text-primary) transition-colors">
             Sign out of this device
           </button>
         </Card>
