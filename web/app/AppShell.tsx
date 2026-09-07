@@ -62,16 +62,16 @@ function NavItem({
       href={href}
       className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-sm transition-colors duration-100 group ${
         active
-          ? "bg-stone-100 text-(--color-text-primary) font-medium"
-          : "text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-text-primary)"
+          ? "bg-(--color-card-warm) text-(--color-text-primary) font-medium"
+          : "text-(--color-text-muted) hover:bg-(--color-card-warm) hover:text-(--color-text-primary)"
       }`}
     >
-      <span className={`shrink-0 ${active ? "text-(--color-brand)" : "text-stone-400 group-hover:text-stone-500"}`}>
+      <span className={`shrink-0 ${active ? "text-(--color-brand)" : "text-(--color-text-faint) group-hover:text-(--color-text-muted)"}`}>
         {icon}
       </span>
       <span className="flex-1 truncate">{label}</span>
       {badge !== undefined && badge > 0 && (
-        <span className="shrink-0 text-[10px] font-semibold bg-red-100 text-red-600 px-1.5 py-0.5 rounded-full leading-none">
+        <span className="shrink-0 text-[10px] font-semibold bg-(--color-urgent-bg) text-(--color-urgent-text) px-1.5 py-0.5 rounded-full leading-none">
           {badge}
         </span>
       )}
@@ -116,7 +116,7 @@ function DeleteAccountModal({ email, onClose, onSuccess }: { email: string; onCl
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
       <div className="bg-(--color-card) rounded-2xl w-full max-w-sm p-5 shadow-xl" onClick={e => e.stopPropagation()}>
-        <div className="w-12 h-12 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-500 mx-auto mb-4">
+        <div className="w-12 h-12 rounded-full bg-(--color-urgent-bg) border border-(--color-border) flex items-center justify-center text-(--color-alert) mx-auto mb-4">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
             <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
@@ -134,19 +134,19 @@ function DeleteAccountModal({ email, onClose, onSuccess }: { email: string; onCl
           value={confirmText}
           onChange={e => setConfirmText(e.target.value)}
           placeholder={email}
-          className="w-full px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-transparent transition"
+          className="w-full px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-surface) text-(--color-text-primary) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-alert) focus:border-transparent transition"
         />
         {error && (
-          <p className="text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg border border-red-200 mt-3">{error}</p>
+          <p className="text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2 rounded-lg border border-(--color-border) mt-3">{error}</p>
         )}
         <div className="flex gap-2 mt-5">
-          <button onClick={onClose} disabled={deleting} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors disabled:opacity-50">
+          <button onClick={onClose} disabled={deleting} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) transition-colors disabled:opacity-50">
             Cancel
           </button>
           <button
             onClick={handleDelete}
             disabled={!canConfirm || deleting}
-            className="flex-1 py-2.5 rounded-xl bg-red-500 text-white text-sm font-semibold hover:bg-red-600 transition-colors shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
+            className="flex-1 py-2.5 rounded-xl bg-(--color-alert) text-white text-sm font-semibold hover:brightness-95 transition shadow-sm disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {deleting ? "Deleting…" : "Delete forever"}
           </button>
@@ -217,9 +217,9 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="hidden md:flex md:w-56 md:shrink-0 md:flex-col bg-(--color-card) border-r border-(--color-border) py-3 gap-0.5">
 
         {/* Workspace header */}
-        <div className="flex items-center gap-2.5 px-3 py-2 mx-1 rounded-md hover:bg-stone-50 cursor-pointer transition-colors mb-1">
+        <div className="flex items-center gap-2.5 px-3 py-2 mx-1 rounded-md hover:bg-(--color-card-warm) cursor-pointer transition-colors mb-1">
           <div className="w-6 h-6 rounded-md bg-(--color-brand) flex items-center justify-center text-white text-[11px] font-bold shrink-0">
-            🧺
+            L
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-(--color-text-primary) truncate leading-tight">Larder</p>
@@ -250,16 +250,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           </div>
           <button
             onClick={logout}
-            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-sm text-(--color-text-muted) hover:bg-stone-50 hover:text-red-600 transition-colors"
+            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-sm text-(--color-text-muted) hover:bg-(--color-card-warm) hover:text-(--color-alert) transition-colors"
           >
-            <span className="text-stone-400">{Icons.logout}</span>
+            <span className="text-(--color-text-faint)">{Icons.logout}</span>
             Sign out
           </button>
           <button
             onClick={() => setShowDelete(true)}
-            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-(--color-text-faint) hover:bg-red-50 hover:text-red-600 transition-colors mt-0.5"
+            className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs text-(--color-text-faint) hover:bg-(--color-urgent-bg) hover:text-(--color-alert) transition-colors mt-0.5"
           >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-stone-400">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-(--color-text-faint)">
               <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
             </svg>
             Delete account
@@ -287,16 +287,16 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
                 active ? "text-(--color-brand)" : "text-(--color-text-faint) hover:text-(--color-text-muted)"
               }`}
             >
-              <span className={active ? "text-(--color-brand)" : "text-stone-400"}>{icon}</span>
+              <span className={active ? "text-(--color-brand)" : "text-(--color-text-faint)"}>{icon}</span>
               {label}
             </Link>
           );
         })}
         <button
           onClick={logout}
-          className="flex-1 flex flex-col items-center justify-center gap-1 text-xs font-medium text-(--color-text-faint) hover:text-red-500 transition-colors"
+          className="flex-1 flex flex-col items-center justify-center gap-1 text-xs font-medium text-(--color-text-faint) hover:text-(--color-alert) transition-colors"
         >
-          <span className="text-stone-400">{Icons.logout}</span>
+          <span className="text-(--color-text-faint)">{Icons.logout}</span>
           Sign out
         </button>
       </nav>
