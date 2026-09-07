@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · Unique Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e2ded6; color: #1c1a17; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .head { padding: 56px 40px 6px; max-width: 1100px; margin: 0 auto; }
+  .head .k { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #8a8578; margin-bottom: 14px; }
+  .head h1 { font-family: 'Fraunces', serif; font-size: 46px; font-weight: 600; letter-spacing: -.5px; line-height: 1.02; }
+  .head h1 em { font-style: italic; font-weight: 500; }
+  .head p { max-width: 620px; margin-top: 16px; color: #5f5b52; font-size: 15px; line-height: 1.6; }
+  .head .hint { margin-top: 18px; display: inline-block; font-size: 13px; color: #6b5a2a; border: 1px solid #cabf9f; background: #f0e9d3; padding: 9px 18px; border-radius: 4px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 56px 40px; padding: 44px 40px 90px; max-width: 1400px; margin: 0 auto; justify-items: center; }
+  .show { width: 360px; display: flex; flex-direction: column; gap: 16px; }
+  .note .idx { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #a39a88; }
+  .note b { font-family: 'Fraunces', serif; font-size: 23px; font-weight: 600; display: block; margin: 2px 0 6px; }
+  .note small { color: #6b665c; font-size: 13.5px; line-height: 1.5; display: block; }
+
+  .dev { width: 360px; border-radius: 38px; overflow: hidden; position: relative; box-shadow: 0 40px 80px -30px rgba(30,28,24,.55); display: flex; flex-direction: column; min-height: 660px; }
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px 4px; font-size: 12px; font-weight: 600; }
+  .ic { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; display: block; }
+
+  /* ============ 1 · RECEIPT ============ */
+  .rc { background: #d9d4c8; padding: 20px 16px; }
+  .rc .paper { background: #fbfaf6; color: #1a1a1a; font-family: 'IBM Plex Mono', monospace; padding: 26px 22px 30px; position: relative;
+    -webkit-mask: linear-gradient(#000 0 0) center/100% calc(100% - 14px) no-repeat, conic-gradient(from 135deg at top, #0000 25%, #000 0) top/14px 7px repeat-x, conic-gradient(from -45deg at bottom, #0000 25%, #000 0) bottom/14px 7px repeat-x;
+            mask: linear-gradient(#000 0 0) center/100% calc(100% - 14px) no-repeat, conic-gradient(from 135deg at top, #0000 25%, #000 0) top/14px 7px repeat-x, conic-gradient(from -45deg at bottom, #0000 25%, #000 0) bottom/14px 7px repeat-x; }
+  .rc .brand { text-align: center; font-size: 26px; font-weight: 600; letter-spacing: 6px; }
+  .rc .meta { text-align: center; font-size: 10px; letter-spacing: 1px; color: #666; margin-top: 6px; line-height: 1.6; }
+  .rc .dash { border-top: 1.5px dashed #b9b3a3; margin: 14px 0; }
+  .rc .colh { display: flex; justify-content: space-between; font-size: 10px; letter-spacing: 1px; color: #999; }
+  .rc .li { display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; margin: 11px 0; }
+  .rc .li .nm { text-transform: uppercase; white-space: nowrap; }
+  .rc .li .dot { flex: 1; border-bottom: 1.5px dotted #cbc5b5; transform: translateY(-3px); }
+  .rc .li .ex { white-space: nowrap; font-weight: 600; }
+  .rc .li .ex.due { color: #c2382c; } .rc .li .ex.soon { color: #b7791f; }
+  .rc .tot { display: flex; justify-content: space-between; font-size: 12.5px; margin: 8px 0; }
+  .rc .tot b { font-weight: 600; }
+  .rc .big { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
+  .rc .bc { height: 46px; margin: 16px 0 6px; background: repeating-linear-gradient(90deg,#1a1a1a 0 2px,#fbfaf6 2px 4px,#1a1a1a 4px 5px,#fbfaf6 5px 9px,#1a1a1a 9px 11px,#fbfaf6 11px 13px); }
+  .rc .bcn { text-align: center; font-size: 10px; letter-spacing: 3px; color: #666; }
+  .rc .cta { text-align: center; font-size: 12px; letter-spacing: 2px; margin-top: 18px; color: #1a1a1a; }
+
+  /* ============ 2 · STOPLIGHT ============ */
+  .sl { background: #16130f; color: #fff; font-family: 'Archivo', sans-serif; padding: 8px; }
+  .sl .top { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px 12px; }
+  .sl .top .wm { font-size: 15px; font-weight: 800; letter-spacing: -.3px; }
+  .sl .top .pl { width: 34px; height: 34px; border-radius: 12px; background: rgba(255,255,255,.12); display: grid; place-items: center; color: #fff; }
+  .sl .zone { border-radius: 26px; padding: 20px 22px; margin: 7px 0; position: relative; overflow: hidden; }
+  .sl .zone .cnt { position: absolute; top: 16px; right: 20px; font-size: 60px; font-weight: 900; letter-spacing: -3px; opacity: .28; }
+  .sl .zone .lb { font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: .9; }
+  .sl .zone .hd { font-size: 30px; font-weight: 900; letter-spacing: -1px; margin: 4px 0 12px; }
+  .sl .zone .it { font-size: 13px; font-weight: 600; opacity: .92; border-top: 1px solid rgba(255,255,255,.28); padding: 8px 0; display: flex; justify-content: space-between; }
+  .sl .red { background: #e0463a; } .sl .amber { background: #e0982e; color: #241703; } .sl .green { background: #3f9d5a; }
+  .sl .amber .it { border-color: rgba(0,0,0,.18); }
+
+  /* ============ 3 · HORIZON ============ */
+  .hz { background: #f6f4ef; color: #1b1a17; font-family: 'Bricolage Grotesque', sans-serif; padding: 22px 22px 0; }
+  .hz .t { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #a39a88; font-family: 'IBM Plex Mono', monospace; }
+  .hz .h { font-size: 27px; font-weight: 800; letter-spacing: -.6px; margin: 4px 0 18px; }
+  .hz .line { position: relative; margin-left: 58px; padding-bottom: 26px; }
+  .hz .line::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 24px; width: 3px; border-radius: 3px; background: linear-gradient(#d23b30, #d99a2b 45%, #5f8a4a); }
+  .hz .now { position: absolute; left: -50px; top: -2px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1px; color: #d23b30; }
+  .hz .node { position: relative; padding: 0 0 22px 22px; }
+  .hz .node .dot { position: absolute; left: -6px; top: 3px; width: 15px; height: 15px; border-radius: 50%; border: 3px solid #f6f4ef; }
+  .hz .node .when { position: absolute; left: -52px; top: 2px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #8a8578; width: 44px; text-align: right; }
+  .hz .card { background: #fff; border: 1px solid #eae3d5; border-radius: 16px; padding: 12px 14px; box-shadow: 0 8px 20px rgba(60,50,30,.06); }
+  .hz .card .nm { font-weight: 700; font-size: 14px; }
+  .hz .card .mt { font-size: 11px; color: #a39a88; margin-top: 2px; }
+
+  /* ============ 4 · SHELF ============ */
+  .sh { background: #efe4cf; color: #40301f; font-family: 'Fraunces', serif; padding: 24px 20px 0; }
+  .sh .t { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #a58a63; }
+  .sh .h { font-size: 30px; font-weight: 600; letter-spacing: -.5px; margin: 4px 0 20px; }
+  .sh .unit { margin-bottom: 26px; }
+  .sh .lab { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase; color: #b08a5f; margin-bottom: 6px; }
+  .sh .jars { display: flex; align-items: flex-end; gap: 10px; padding: 0 4px; }
+  .sh .board { height: 8px; background: linear-gradient(#c79a63,#9c7040); border-radius: 2px; box-shadow: 0 8px 14px -6px rgba(90,60,30,.5); }
+  .sh .jar { width: 48px; height: 58px; border: 1.5px solid #6b4f30; border-radius: 7px 7px 5px 5px; position: relative; display: flex; align-items: flex-end; justify-content: center; padding-bottom: 6px; background: #fbf5ea; }
+  .sh .jar::before { content: ''; position: absolute; top: 7px; left: 6px; right: 6px; height: 1px; background: #6b4f30; opacity: .4; }
+  .sh .jar .lid { position: absolute; top: -6px; left: 9px; right: 9px; height: 7px; border: 1.5px solid #6b4f30; border-radius: 4px 4px 0 0; background: #efe4cf; }
+  .sh .jar .nm { font-family: 'IBM Plex Mono', monospace; font-size: 7.5px; letter-spacing: .3px; text-transform: uppercase; text-align: center; line-height: 1.1; }
+  .sh .jar.due { background: #f6ddd4; border-color: #b5533a; } .sh .jar.due .lid { border-color: #b5533a; }
+  .sh .jar.soon { background: #f6ecd4; }
+
+  /* ============ 5 · GARDEN ============ */
+  .gd { background: linear-gradient(#eaf1e6,#dfeadd); color: #24331f; font-family: 'Fraunces', serif; padding: 24px 22px 0; position: relative; }
+  .gd .t { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #7f9273; }
+  .gd .h { font-size: 28px; font-weight: 600; letter-spacing: -.4px; margin: 4px 0 2px; }
+  .gd .sub { font-size: 12px; color: #6f8064; font-family: 'Inter'; }
+  .gd .bed { display: flex; align-items: flex-end; justify-content: space-around; height: 220px; margin-top: 16px; }
+  .gd .plant { display: flex; flex-direction: column; align-items: center; gap: 0; }
+  .gd .plant svg { display: block; }
+  .gd .plant .nm { font-family: 'Inter'; font-size: 10px; font-weight: 600; margin-top: 2px; }
+  .gd .plant .dd { font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; }
+  .gd .soil { height: 34px; background: linear-gradient(#8a6a3f,#6b4f2f); border-radius: 0 0 4px 4px; margin: 0 -22px; box-shadow: inset 0 4px 8px rgba(0,0,0,.15); }
+
+  /* ============ 6 · BOARDING PASS ============ */
+  .bp { background: #eaeef2; color: #14202a; padding: 22px 18px; --devbg: #eaeef2; }
+  .bp .t { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #7c8b97; }
+  .bp .h { font-family: 'Archivo', sans-serif; font-size: 26px; font-weight: 800; letter-spacing: -.5px; margin: 4px 0 16px; }
+  .bp .tk { display: flex; background: #fff; border-radius: 16px; overflow: hidden; margin-bottom: 14px; box-shadow: 0 12px 26px -14px rgba(20,40,60,.4); }
+  .bp .tk .main { flex: 1; padding: 15px 16px; }
+  .bp .tk .rt { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 1px; color: #9aa7b2; }
+  .bp .tk .nm { font-family: 'Archivo', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -.3px; margin: 3px 0 8px; }
+  .bp .tk .route { display: flex; align-items: center; gap: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #5c6b77; }
+  .bp .tk .route .ln { flex: 1; border-top: 1.5px dashed #cdd6de; }
+  .bp .tk .stub { width: 92px; border-left: 2px dashed #cdd6de; padding: 14px 10px; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; }
+  .bp .tk .stub::before, .bp .tk .stub::after { content: ''; position: absolute; left: -9px; width: 16px; height: 16px; border-radius: 50%; background: var(--devbg); }
+  .bp .tk .stub::before { top: -9px; } .bp .tk .stub::after { bottom: -9px; }
+  .bp .tk .stub .lb { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: 1px; color: #9aa7b2; }
+  .bp .tk .stub .big { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -1px; }
+  .bp .tk .stub .bc { width: 60px; height: 26px; background: repeating-linear-gradient(90deg,#14202a 0 2px,#fff 2px 3px,#14202a 3px 4px,#fff 4px 7px); }
+  .bp .due .big { color: #d0452f; } .bp .soon .big { color: #c07d18; }
+</style>
+</head>
+<body>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="i-plane" viewBox="0 0 24 24"><path d="M4 13l16-6-6 16-2.5-6L4 13z"/></symbol>
+  </defs></svg>
+
+  <header class="head">
+    <div class="k">Larder · Studio · Unique</div>
+    <h1>Six <em>one-of-a-kind</em> ideas.</h1>
+    <p>Each has its own metaphor for freshness &amp; expiry — not a dashboard reskin. A receipt, a stoplight, a timeline, a shelf, a garden, a boarding pass.</p>
+    <div class="hint">👉 Tell Claude which idea to develop (e.g. “build the Receipt one”) and I’ll refine it and ship it for real.</div>
+  </header>
+
+  <main class="grid">
+
+    <!-- 1 RECEIPT -->
+    <div class="show">
+      <div class="note"><span class="idx">01</span><b>The Receipt</b><small>The whole screen is a printed receipt — perfectly on-brand for a receipt-scanning app. Monospace, torn edges, dotted leaders, a “freshness subtotal”, and a barcode.</small></div>
+      <div class="dev rc">
+        <div class="paper">
+          <div class="brand">LARDER</div>
+          <div class="meta">PANTRY RECEIPT · NO. 0027<br>WED 27 AUG 2026 · 21:04<br>CASHIER: CLAUDE AI</div>
+          <div class="dash"></div>
+          <div class="colh"><span>ITEM</span><span>EXPIRES</span></div>
+          <div class="li"><span class="nm">Baby Spinach</span><span class="dot"></span><span class="ex due">TODAY</span></div>
+          <div class="li"><span class="nm">Whole Milk</span><span class="dot"></span><span class="ex soon">2 DAYS</span></div>
+          <div class="li"><span class="nm">Strawberries</span><span class="dot"></span><span class="ex soon">3 DAYS</span></div>
+          <div class="li"><span class="nm">Chicken Breast</span><span class="dot"></span><span class="ex">5 DAYS</span></div>
+          <div class="li"><span class="nm">Aged Cheddar</span><span class="dot"></span><span class="ex">21 DAYS</span></div>
+          <div class="dash"></div>
+          <div class="tot"><span>ITEMS IN PANTRY</span><b>24</b></div>
+          <div class="tot"><span>EXPIRING SOON</span><b>05</b></div>
+          <div class="dash"></div>
+          <div class="big"><span>FRESHNESS</span><span>78%</span></div>
+          <div class="bc"></div>
+          <div class="bcn">0 27 4815 236 9</div>
+          <div class="cta">*** SCAN NEXT RECEIPT ***</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 STOPLIGHT -->
+    <div class="show">
+      <div class="note"><span class="idx">02</span><b>The Stoplight</b><small>Freshness as a traffic light. Three bold zones — eat now / this week / stocked — fill the screen like a poster. Zero ambiguity, one glance tells you what to cook.</small></div>
+      <div class="dev sl">
+        <div class="top"><span class="wm">Larder</span><span class="pl"><svg class="ic"><use href="#i-plus"/></svg></span></div>
+        <div class="zone red"><span class="cnt">2</span><div class="lb">Eat now</div><div class="hd">Today or<br>they’re gone</div><div class="it"><span>Baby spinach</span><span>0d</span></div></div>
+        <div class="zone amber"><span class="cnt">5</span><div class="lb">This week</div><div class="hd">Use soon</div><div class="it"><span>Whole milk</span><span>2d</span></div><div class="it"><span>Strawberries</span><span>3d</span></div></div>
+        <div class="zone green"><span class="cnt">24</span><div class="lb">Stocked</div><div class="hd">All good</div><div class="it"><span>Chicken · Cheddar · …</span><span>5d+</span></div></div>
+      </div>
+    </div>
+
+    <!-- 3 HORIZON -->
+    <div class="show">
+      <div class="note"><span class="idx">03</span><b>The Horizon</b><small>Time is a vertical river. Items hang off a gradient timeline from NOW downward — the closer to the top, the more urgent. Reads like a metro map of your week.</small></div>
+      <div class="dev hz">
+        <div class="t">Larder · Timeline</div>
+        <div class="h">Next up</div>
+        <div class="line">
+          <span class="now">NOW</span>
+          <div class="node"><span class="when">TODAY</span><span class="dot" style="background:#d23b30"></span><div class="card"><div class="nm">Baby spinach</div><div class="mt">Produce · eat today</div></div></div>
+          <div class="node"><span class="when">+2 DAYS</span><span class="dot" style="background:#d99a2b"></span><div class="card"><div class="nm">Whole milk</div><div class="mt">Dairy</div></div></div>
+          <div class="node"><span class="when">+3 DAYS</span><span class="dot" style="background:#d99a2b"></span><div class="card"><div class="nm">Strawberries</div><div class="mt">Produce</div></div></div>
+          <div class="node"><span class="when">+5 DAYS</span><span class="dot" style="background:#5f8a4a"></span><div class="card"><div class="nm">Chicken breast</div><div class="mt">Meat</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 SHELF -->
+    <div class="show">
+      <div class="note"><span class="idx">04</span><b>The Shelf</b><small>Your pantry as actual shelves. Items are labelled jars grouped by urgency shelf. Tactile and instantly legible — you “see” your kitchen, not a database.</small></div>
+      <div class="dev sh">
+        <div class="t">Larder · Larder</div>
+        <div class="h">The pantry</div>
+        <div class="unit">
+          <div class="lab">Eat today</div>
+          <div class="jars"><div class="jar due"><span class="lid"></span><span class="nm">Spin-<br>ach</span></div><div class="jar due"><span class="lid"></span><span class="nm">Basil</span></div></div>
+          <div class="board"></div>
+        </div>
+        <div class="unit">
+          <div class="lab">This week</div>
+          <div class="jars"><div class="jar soon"><span class="lid"></span><span class="nm">Milk</span></div><div class="jar soon"><span class="lid"></span><span class="nm">Berries</span></div><div class="jar soon"><span class="lid"></span><span class="nm">Yog-<br>urt</span></div></div>
+          <div class="board"></div>
+        </div>
+        <div class="unit">
+          <div class="lab">Stocked</div>
+          <div class="jars"><div class="jar"><span class="lid"></span><span class="nm">Rice</span></div><div class="jar"><span class="lid"></span><span class="nm">Beans</span></div><div class="jar"><span class="lid"></span><span class="nm">Ched-<br>dar</span></div><div class="jar"><span class="lid"></span><span class="nm">Oats</span></div></div>
+          <div class="board"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 GARDEN -->
+    <div class="show">
+      <div class="note"><span class="idx">05</span><b>The Garden</b><small>Items are plants that wilt. Fresh ones stand tall and green; expiring ones droop and turn amber. Freshness becomes something you nurture, not just track.</small></div>
+      <div class="dev gd">
+        <div class="t">Larder · Garden</div>
+        <div class="h">Your pantry garden</div>
+        <div class="sub">78% thriving · 2 need water today</div>
+        <div class="bed">
+          <div class="plant">
+            <svg width="48" height="150" viewBox="0 0 48 150"><g transform="rotate(16 24 150)"><path d="M24 150 C24 110 22 90 24 64" stroke="#b5533a" stroke-width="2.5" fill="none"/><path d="M24 78 C10 74 6 62 8 54 C18 54 26 64 24 78Z" fill="#d98a6a"/><path d="M24 70 C38 66 42 54 40 46 C30 46 22 56 24 70Z" fill="#c96f4c"/></g></svg>
+            <span class="nm">Spinach</span><span class="dd" style="color:#b5533a">today</span>
+          </div>
+          <div class="plant">
+            <svg width="48" height="150" viewBox="0 0 48 150"><g transform="rotate(8 24 150)"><path d="M24 150 C24 104 23 84 24 50" stroke="#c99a3a" stroke-width="2.5" fill="none"/><path d="M24 66 C10 62 6 50 8 42 C18 42 26 52 24 66Z" fill="#e0be6a"/><path d="M24 56 C38 52 42 40 40 32 C30 32 22 42 24 56Z" fill="#d8b04a"/></g></svg>
+            <span class="nm">Milk</span><span class="dd" style="color:#b7791f">2 days</span>
+          </div>
+          <div class="plant">
+            <svg width="48" height="150" viewBox="0 0 48 150"><path d="M24 150 C24 100 23 78 24 40" stroke="#5f8a4a" stroke-width="2.5" fill="none"/><path d="M24 58 C10 54 6 42 8 34 C18 34 26 44 24 58Z" fill="#7fb069"/><path d="M24 46 C38 42 42 30 40 22 C30 22 22 32 24 46Z" fill="#6b9c55"/></svg>
+            <span class="nm">Chicken</span><span class="dd" style="color:#5f8a4a">5 days</span>
+          </div>
+          <div class="plant">
+            <svg width="48" height="150" viewBox="0 0 48 150"><path d="M24 150 C24 96 23 72 24 30" stroke="#5f8a4a" stroke-width="2.5" fill="none"/><path d="M24 50 C10 46 6 34 8 26 C18 26 26 36 24 50Z" fill="#7fb069"/><path d="M24 38 C38 34 42 22 40 14 C30 14 22 24 24 38Z" fill="#6b9c55"/></svg>
+            <span class="nm">Cheddar</span><span class="dd" style="color:#5f8a4a">3 wks</span>
+          </div>
+        </div>
+        <div class="soil"></div>
+      </div>
+    </div>
+
+    <!-- 6 BOARDING PASS -->
+    <div class="show">
+      <div class="note"><span class="idx">06</span><b>The Boarding Pass</b><small>Every expiring item gets a ticket — “departs in 2 days”, fridge → plate. The perforated stub + barcode makes urgency feel like a countdown to a flight you can’t miss.</small></div>
+      <div class="dev bp">
+        <div class="t">Larder · Departures</div>
+        <div class="h">Boarding soon</div>
+        <div class="tk due">
+          <div class="main"><div class="rt">PANTRY · PRODUCE</div><div class="nm">Baby Spinach</div><div class="route"><span>FRIDGE</span><span class="ln"></span><svg class="ic" style="width:14px;color:#9aa7b2"><use href="#i-plane"/></svg><span class="ln"></span><span>PLATE</span></div></div>
+          <div class="stub"><span class="lb">USE BY</span><span class="big">0d</span><div class="bc"></div></div>
+        </div>
+        <div class="tk soon">
+          <div class="main"><div class="rt">PANTRY · DAIRY</div><div class="nm">Whole Milk</div><div class="route"><span>FRIDGE</span><span class="ln"></span><svg class="ic" style="width:14px;color:#9aa7b2"><use href="#i-plane"/></svg><span class="ln"></span><span>PLATE</span></div></div>
+          <div class="stub"><span class="lb">USE BY</span><span class="big">2d</span><div class="bc"></div></div>
+        </div>
+        <div class="tk soon">
+          <div class="main"><div class="rt">PANTRY · PRODUCE</div><div class="nm">Strawberries</div><div class="route"><span>FRIDGE</span><span class="ln"></span><svg class="ic" style="width:14px;color:#9aa7b2"><use href="#i-plane"/></svg><span class="ln"></span><span>PLATE</span></div></div>
+          <div class="stub"><span class="lb">USE BY</span><span class="big">3d</span><div class="bc"></div></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>
