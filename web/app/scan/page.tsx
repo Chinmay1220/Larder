@@ -33,7 +33,7 @@ function ProcessingStep({ done, label, active }: { done: boolean; label: string;
       <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-xs
         ${done   ? "bg-(--color-brand) text-white"                          : ""}
         ${active ? "bg-(--color-brand-xlight) border-2 border-(--color-brand)" : ""}
-        ${!done && !active ? "bg-stone-100"                                 : ""}
+        ${!done && !active ? "bg-(--color-card-warm)"                                 : ""}
       `}>
         {done   ? "✓" : null}
         {active ? <span className="w-2 h-2 rounded-full bg-(--color-brand) animate-pulse block" /> : null}
@@ -128,7 +128,7 @@ export default function ScanPage() {
     <main className="min-h-full bg-(--color-surface)">
       {/* Header */}
       <div className="px-4 md:px-8 pt-6 pb-2 flex items-center gap-3">
-        <Link href="/" className="text-(--color-text-faint) hover:text-(--color-text-primary) transition-colors p-1 -ml-1 rounded-md hover:bg-stone-100">
+        <Link href="/" className="text-(--color-text-faint) hover:text-(--color-text-primary) transition-colors p-1 -ml-1 rounded-md hover:bg-(--color-card-warm)">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
         </Link>
         <div>
@@ -144,8 +144,8 @@ export default function ScanPage() {
             <div className="flex flex-col items-center gap-1">
               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm transition-all duration-300
                 ${i < stepIdx  ? "bg-(--color-brand) text-white"                                         : ""}
-                ${i === stepIdx ? "bg-(--color-brand) text-white ring-4 ring-amber-200"                  : ""}
-                ${i > stepIdx  ? "bg-stone-100 text-(--color-text-faint)"                                : ""}
+                ${i === stepIdx ? "bg-(--color-brand) text-white ring-4 ring-(--color-brand-xlight)"     : ""}
+                ${i > stepIdx  ? "bg-(--color-card-warm) text-(--color-text-faint)"                                : ""}
               `}>
                 {i < stepIdx ? <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg> : s.icon}
               </div>
@@ -155,7 +155,7 @@ export default function ScanPage() {
             </div>
             {i < STEPS.length - 1 && (
               <div className={`flex-1 h-0.5 mx-2 mb-4 rounded-full transition-all duration-500
-                ${i < stepIdx ? "bg-(--color-brand)" : "bg-stone-200"}`} />
+                ${i < stepIdx ? "bg-(--color-brand)" : "bg-(--color-border)"}`} />
             )}
           </Fragment>
         ))}
@@ -178,7 +178,7 @@ export default function ScanPage() {
                 onDragEnter={() => setIsDragging(true)}
                 onDragLeave={() => setIsDragging(false)}
               >
-                <div className="w-16 h-16 rounded-2xl bg-(--color-card-warm) border border-(--color-border) flex items-center justify-center text-stone-400 mx-auto mb-4">
+                <div className="w-16 h-16 rounded-2xl bg-(--color-card-warm) border border-(--color-border) flex items-center justify-center text-(--color-text-faint) mx-auto mb-4">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                 </div>
                 <p className="font-semibold text-(--color-text-primary) text-base mb-1">Drop your receipt here</p>
@@ -187,10 +187,10 @@ export default function ScanPage() {
               </div>
             ) : isDoc ? (
               <div
-                className="relative rounded-3xl border border-(--color-border) shadow-sm cursor-pointer group bg-stone-50 p-10 text-center"
+                className="relative rounded-3xl border border-(--color-border) shadow-sm cursor-pointer group bg-(--color-card-warm) p-10 text-center"
                 onClick={() => inputRef.current?.click()}
               >
-                <div className="w-16 h-16 rounded-2xl bg-(--color-card-warm) border border-(--color-border) flex items-center justify-center text-stone-400 mx-auto mb-3">
+                <div className="w-16 h-16 rounded-2xl bg-(--color-card-warm) border border-(--color-border) flex items-center justify-center text-(--color-text-faint) mx-auto mb-3">
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 </div>
                 <p className="font-medium text-(--color-text-primary) text-sm">{file?.name}</p>
@@ -202,7 +202,7 @@ export default function ScanPage() {
                 className="relative rounded-3xl overflow-hidden border border-(--color-border) shadow-sm cursor-pointer group"
                 onClick={() => inputRef.current?.click()}
               >
-                <img src={preview!} alt="receipt" className="w-full max-h-72 object-contain bg-stone-50" />
+                <img src={preview!} alt="receipt" className="w-full max-h-72 object-contain bg-(--color-card-warm)" />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-white text-sm font-medium bg-black/50 px-4 py-2 rounded-full flex items-center gap-2">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
@@ -219,7 +219,7 @@ export default function ScanPage() {
               disabled={loading || !file}
               className={`w-full py-4 rounded-2xl font-semibold text-base transition-all duration-200
                 ${loading || !file
-                  ? "bg-stone-200 text-(--color-text-faint) cursor-not-allowed"
+                  ? "bg-(--color-border) text-(--color-text-faint) cursor-not-allowed"
                   : "bg-(--color-brand) text-white hover:bg-(--color-brand-light) shadow-md hover:shadow-lg active:scale-[0.98]"
                 }`}
             >
@@ -243,11 +243,11 @@ export default function ScanPage() {
 
         {/* Error */}
         {error && (
-          <div className="rounded-xl bg-(--color-urgent-bg) border border-red-200 px-5 py-4 flex gap-3 items-start">
-            <span className="shrink-0 text-red-400 mt-0.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+          <div className="rounded-xl bg-(--color-urgent-bg) border border-(--color-border) px-5 py-4 flex gap-3 items-start">
+            <span className="shrink-0 text-(--color-alert) mt-0.5"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
             <div>
               <p className="text-sm font-semibold text-(--color-urgent-text)">Could not read receipt</p>
-              <p className="text-xs text-red-400 mt-1">{error}</p>
+              <p className="text-xs text-(--color-alert) mt-1">{error}</p>
             </div>
           </div>
         )}
@@ -255,13 +255,13 @@ export default function ScanPage() {
         {/* Results */}
         {result && (
           <div className="rounded-2xl border border-(--color-border) bg-(--color-card) overflow-hidden shadow-sm">
-            <div className="px-5 py-4 bg-(--color-safe-bg) border-b border-green-100 flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+            <div className="px-5 py-4 bg-(--color-safe-bg) border-b border-(--color-border) flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-(--color-ok) flex items-center justify-center text-white">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <div>
                 <p className="font-semibold text-(--color-safe-text) text-sm">{result.length} items added to your pantry</p>
-                <p className="text-xs text-green-500 mt-0.5">All items are now being tracked</p>
+                <p className="text-xs text-(--color-ok) mt-0.5">All items are now being tracked</p>
               </div>
             </div>
 
@@ -286,7 +286,7 @@ export default function ScanPage() {
             <div className="px-5 py-4 border-t border-(--color-border) flex gap-3">
               <button
                 onClick={reset}
-                className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors"
+                className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) transition-colors"
               >
                 Scan another
               </button>
