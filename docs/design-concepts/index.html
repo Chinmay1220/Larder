@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · 40 UI Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #16161a;
+    color: #e9e9ef;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------- Gallery shell ---------- */
+  .hero {
+    padding: 54px 32px 30px; text-align: center;
+    background: radial-gradient(130% 150% at 50% 0%, #24242f 0%, #16161a 62%);
+    border-bottom: 1px solid #2a2a33;
+  }
+  .hero h1 { font-size: 38px; margin: 0 0 10px; font-weight: 800; letter-spacing: -0.6px; }
+  .hero h1 span { background: linear-gradient(90deg,#ffb457,#ff6b8b,#8ab4ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { margin: 6px auto; max-width: 660px; color: #a8a8b5; font-size: 15px; line-height: 1.6; }
+  .hero .hint { margin-top: 18px; display: inline-block; font-size: 13px; color: #ffd08a; border: 1px dashed #55503f; padding: 9px 18px; border-radius: 99px; }
+  .toc { margin: 22px auto 0; max-width: 900px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .toc b { width: 100%; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #77778a; margin-top: 8px; }
+  .toc span { font-size: 11px; color: #b7b7c4; background: #23232d; border: 1px solid #2f2f3a; padding: 4px 10px; border-radius: 99px; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 30px; padding: 40px; max-width: 1720px; margin: 0 auto;
+  }
+  .frame { display: flex; flex-direction: column; gap: 12px; }
+  .frame .cap { padding: 0 4px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .frame .cap b { font-size: 16px; font-weight: 700; }
+  .frame .cap .pill { font-size: 10px; letter-spacing: .5px; text-transform: uppercase; color: #9a9ab0; border: 1px solid #33333f; border-radius: 99px; padding: 2px 9px; }
+  .frame .cap small { width: 100%; color: #8f8f9c; font-size: 12.5px; margin-top: 4px; line-height: 1.45; }
+  .frame .stage {
+    display: flex; justify-content: center; padding: 26px; border-radius: 24px;
+    background: linear-gradient(160deg,#212129,#1b1b22); border: 1px solid #2c2c37;
+  }
+
+  /* ---------- Shared mock (driven by CSS variables) ---------- */
+  .mock {
+    --ok: #3fae6b; --warn: #e0a13a; --bad: #d0503a; --accent-contrast: #fff;
+    width: 360px; padding: 20px;
+    border-radius: var(--radius, 22px);
+    background: var(--bg); color: var(--text);
+    font-family: var(--font, 'Inter', system-ui, sans-serif);
+    box-shadow: var(--shadow, 0 22px 55px rgba(0,0,0,.45));
+    border: var(--border, none);
+    display: flex; flex-direction: column; gap: 15px;
+    position: relative; overflow: hidden;
+  }
+  .m-nav { display: flex; align-items: center; gap: 10px; }
+  .m-logo { font-weight: 700; font-size: 15px; color: var(--logo, var(--text)); white-space: nowrap; }
+  .m-search { flex: 1; font-size: 11px; color: var(--muted); background: var(--search-bg, rgba(0,0,0,.05)); padding: 8px 12px; border-radius: var(--pill, 10px); border: var(--search-border, none); }
+  .m-avatar { width: 33px; height: 33px; border-radius: var(--avatar-radius, 50%); background: var(--accent); color: var(--accent-contrast); display: grid; place-items: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .m-hello h2 { margin: 0; font-size: 21px; font-weight: var(--h-weight, 700); color: var(--head, var(--text)); letter-spacing: -.2px; }
+  .m-hello p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+  .m-stats { display: flex; gap: 10px; }
+  .m-stat { flex: 1; background: var(--surface); border-radius: var(--radius-sm, 14px); padding: 12px 13px; display: flex; flex-direction: column; gap: 3px; border: var(--surface-border, none); }
+  .m-stat b { font-size: 23px; line-height: 1; color: var(--head, var(--text)); }
+  .m-stat span { font-size: 9px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+  .m-stat--warn b { color: var(--warn); }
+  .m-stat--bad b { color: var(--bad); }
+  .m-sechead { display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px; }
+  .m-sechead span { font-size: 13px; font-weight: 600; color: var(--head, var(--text)); }
+  .m-sechead a { font-size: 11px; color: var(--accent); text-decoration: none; }
+  .m-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 9px; }
+  .m-item { display: flex; gap: 12px; align-items: center; background: var(--surface); border-radius: var(--radius-sm, 14px); padding: 11px 13px; border: var(--surface-border, none); }
+  .m-emoji { font-size: 25px; line-height: 1; flex-shrink: 0; }
+  .m-body { flex: 1; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .m-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .m-name { font-weight: 600; font-size: 13px; color: var(--text); }
+  .m-tag { font-size: 8.5px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); background: var(--chip, rgba(0,0,0,.06)); padding: 3px 8px; border-radius: 99px; white-space: nowrap; }
+  .m-bar { height: 6px; border-radius: 99px; background: var(--track, rgba(0,0,0,.1)); overflow: hidden; }
+  .m-bar i { display: block; height: 100%; border-radius: 99px; }
+  .m-bar i.ok { background: var(--ok); }
+  .m-bar i.warn { background: var(--warn); }
+  .m-bar i.bad { background: var(--bad); }
+  .m-days { font-size: 10px; color: var(--muted); }
+  .m-fab { margin-top: 3px; border: none; background: var(--accent); color: var(--accent-contrast); font-weight: 600; font-size: 13px; padding: 13px; border-radius: var(--pill, 12px); cursor: pointer; font-family: inherit; }
+
+  /* ================= 01–08  CLASSIC & TIMELESS + WARM ================= */
+  .mock--warm { --bg:#f7f0e2; --surface:#fffaf0; --text:#4a3b2b; --muted:#a08a6f; --accent:#c56a3f; --head:#3a2d1e; --search-bg:#ede0c8; --chip:#ece0c8; --track:#e6d8bf; --radius:24px; --shadow:0 18px 44px rgba(120,90,50,.26); }
+  .mock--apple { --bg:#f2f2f7; --surface:#ffffff; --text:#1c1c1e; --muted:#8e8e93; --accent:#0a84ff; --head:#1c1c1e; --search-bg:#e5e5ea; --chip:#eef0f5; --track:#e5e5ea; --radius:28px; --radius-sm:20px; --pill:16px; --shadow:0 20px 46px rgba(0,0,0,.13); }
+  .mock--swiss { --bg:#fff; --surface:#fafafa; --text:#111; --muted:#767676; --accent:#e2231a; --head:#111; --font:'Helvetica Neue',Arial,sans-serif; --radius:2px; --radius-sm:2px; --pill:2px; --avatar-radius:2px; --border:1px solid #e6e6e6; --shadow:0 12px 34px rgba(0,0,0,.09); --track:#eee; --chip:#f0f0f0; --ok:#111; --warn:#b58900; --bad:#e2231a; }
+  .mock--swiss .m-logo { text-transform:uppercase; letter-spacing:2px; font-size:12px; }
+  .mock--editorial { --bg:#faf7f2; --surface:#fff; --text:#1a1a1a; --muted:#8a7f6f; --accent:#8a3324; --head:#1a1a1a; --font:Georgia,'Times New Roman',serif; --radius:8px; --radius-sm:6px; --border:1px solid #e6ded0; --shadow:0 18px 44px rgba(80,60,30,.14); --track:#ece5d6; --chip:#f0e9db; --ok:#3c6e47; --warn:#b07d2b; --bad:#8a3324; }
+  .mock--editorial .m-hello h2 { font-style:italic; font-size:24px; }
+  .mock--ios { --bg:linear-gradient(180deg,#f7f7fb,#eef0f5); --surface:rgba(255,255,255,.75); --text:#000; --muted:#8e8e93; --accent:#007aff; --head:#000; --search-bg:rgba(255,255,255,.6); --chip:#eef0f5; --track:#e5e5ea; --radius:24px; --radius-sm:16px; --shadow:0 18px 44px rgba(0,0,0,.11); --ok:#34c759; --warn:#ff9500; --bad:#ff3b30; }
+  .mock--ios .m-stat, .mock--ios .m-item, .mock--ios .m-search { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  .mock--muji { --bg:#f4f3ef; --surface:#fbfbf9; --text:#33322e; --muted:#9b9a93; --accent:#8a8578; --head:#2b2a26; --search-bg:#eeede8; --radius:6px; --radius-sm:5px; --border:1px solid #e6e5df; --shadow:0 14px 34px rgba(0,0,0,.07); --track:#e6e5df; --chip:#eeede8; --ok:#7a8b6f; --warn:#c2a86a; --bad:#b57f6f; --h-weight:600; }
+  .mock--slate { --bg:#f8fafc; --surface:#fff; --text:#0f172a; --muted:#64748b; --accent:#334155; --head:#0f172a; --search-bg:#eef2f7; --radius:14px; --border:1px solid #e2e8f0; --shadow:0 16px 40px rgba(15,23,42,.1); --track:#e2e8f0; --chip:#eef2f7; --ok:#14b8a6; --warn:#f59e0b; --bad:#ef4444; }
+  .mock--news { --bg:#f4f1e8; --surface:#faf8f1; --text:#161616; --muted:#7a746a; --accent:#7a2018; --head:#111; --font:'Playfair Display',Georgia,serif; --radius:3px; --radius-sm:2px; --border:1px solid #1a1a1a; --shadow:0 18px 44px rgba(60,50,30,.15); --track:#e3ddce; --chip:#ece5d4; --ok:#2f5233; --warn:#8a6a2b; --bad:#7a2018; }
+  .mock--news .m-nav { border-bottom:3px double #111; padding-bottom:11px; }
+  .mock--news .m-logo { font-weight:900; }
+
+  /* ================= 09–16  MODERN SaaS ================= */
+  .mock--notion { --bg:#ffffff; --surface:#f7f6f3; --text:#37352f; --muted:#9b9a97; --accent:#2f80ed; --head:#37352f; --search-bg:#f1f0ee; --radius:12px; --radius-sm:8px; --border:1px solid #ececea; --shadow:0 14px 34px rgba(0,0,0,.08); --track:#eceae5; --chip:#eceae5; --ok:#0f9d58; --warn:#e6a532; --bad:#e0544e; }
+  .mock--stripe { --bg:#ffffff; --surface:#f6f9fc; --text:#0a2540; --muted:#8898aa; --accent:#635bff; --head:#0a2540; --search-bg:#eef3f8; --radius:16px; --radius-sm:12px; --border:1px solid #eaf0f6; --shadow:0 22px 48px rgba(50,50,93,.13); --track:#e3ebf3; --chip:#e9eefb; --ok:#3ecf8e; --warn:#f5a623; --bad:#e25950; }
+  .mock--material { --bg:#fef7ff; --surface:#f3edf7; --text:#1d1b20; --muted:#6b5f6e; --accent:#6750a4; --head:#1d1b20; --search-bg:#ece6f0; --radius:28px; --radius-sm:20px; --pill:16px; --shadow:0 14px 34px rgba(103,80,164,.16); --track:#e7e0ec; --chip:#e8def8; --ok:#386a20; --warn:#8a5000; --bad:#b3261e; }
+  .mock--fintech { --bg:#ffffff; --surface:#f2fbf8; --text:#0d2b25; --muted:#6b8a83; --accent:#00b894; --head:#0d2b25; --search-bg:#e8f6f1; --radius:18px; --radius-sm:14px; --border:1px solid #e2f2ee; --shadow:0 20px 46px rgba(0,120,100,.13); --track:#dcf0eb; --chip:#e0f5ef; --ok:#00b894; --warn:#f0a500; --bad:#e05a5a; }
+  .mock--health { --bg:#f4fbfb; --surface:#ffffff; --text:#123a4a; --muted:#6f95a1; --accent:#1fa4b8; --head:#0f3644; --search-bg:#e6f3f6; --radius:18px; --radius-sm:14px; --border:1px solid #e2eef2; --shadow:0 18px 42px rgba(30,120,140,.12); --track:#e0eef2; --chip:#e6f3f6; --ok:#33b679; --warn:#f4b400; --bad:#db4437; }
+  .mock--corporate { --bg:#f5f8fc; --surface:#fff; --text:#1a2b48; --muted:#6b7c99; --accent:#1e5fd8; --head:#12233f; --search-bg:#e8f0fb; --radius:12px; --radius-sm:10px; --border:1px solid #e4ebf5; --shadow:0 18px 42px rgba(30,70,150,.13); --track:#e2eaf5; --chip:#e8f0fb; --ok:#2ca66f; --warn:#e6a532; --bad:#d64b4b; }
+  .mock--linear { --bg:#111114; --surface:#1a1a20; --text:#e6e6ee; --muted:#8a8a99; --accent:#7c6cff; --head:#fff; --search-bg:#1e1e26; --chip:#26262f; --track:#2a2a34; --border:1px solid #232330; --shadow:0 26px 62px rgba(0,0,0,.6); --ok:#4cd497; --warn:#ffcb6b; --bad:#ff6b7a; }
+  .mock--grocery { --bg:#ffffff; --surface:#f4faf0; --text:#1f3320; --muted:#6f8a6a; --accent:#3fae4a; --head:#16260f; --search-bg:#eaf4e3; --radius:20px; --radius-sm:15px; --border:1px solid #e4f0dc; --shadow:0 20px 46px rgba(60,140,60,.15); --track:#dcecd2; --chip:#e6f3dc; --ok:#3fae4a; --warn:#f2a93a; --bad:#e05a4a; }
+
+  /* ================= 17–24  DARK & ELEGANT ================= */
+  .mock--vercel { --bg:#000; --surface:#0e0e0e; --text:#ededed; --muted:#8f8f8f; --accent:#fff; --accent-contrast:#000; --head:#fff; --search-bg:#111; --chip:#1a1a1a; --track:#262626; --border:1px solid #1f1f1f; --radius:12px; --radius-sm:9px; --shadow:0 26px 62px rgba(0,0,0,.7); --ok:#62c073; --warn:#e0b341; --bad:#e5484d; }
+  .mock--emerald { --bg:#0d1512; --surface:#13201b; --text:#e6f0ea; --muted:#7fa090; --accent:#2fbf71; --head:#fff; --search-bg:#16241e; --chip:#1b2c24; --track:#1e3129; --border:1px solid #1c2b24; --shadow:0 26px 62px rgba(0,0,0,.6); --ok:#41d98a; --warn:#e8c15a; --bad:#e57a7a; }
+  .mock--indigo { --bg:#0f0f1e; --surface:#181832; --text:#e4e4f5; --muted:#8888aa; --accent:#8b7dff; --head:#fff; --search-bg:#1c1c3a; --chip:#232347; --track:#26264a; --border:1px solid #21213f; --shadow:0 26px 62px rgba(0,0,0,.55); --ok:#5ad1a0; --warn:#ffcf70; --bad:#ff7a90; }
+  .mock--noir { --bg:#1a1c1e; --surface:#232629; --text:#e3e6e8; --muted:#8b9297; --accent:#a3b9c9; --accent-contrast:#1a1c1e; --head:#fff; --search-bg:#26292c; --chip:#2c3033; --track:#30353a; --border:1px solid #2a2e31; --shadow:0 26px 62px rgba(0,0,0,.5); --ok:#7fb39a; --warn:#d4b483; --bad:#cf8a86; }
+  .mock--deco { --bg:#12100e; --surface:#1b1813; --text:#f0e6d2; --muted:#a99a7c; --accent:#c9a227; --accent-contrast:#12100e; --head:#f5ecd6; --font:'Playfair Display',Georgia,serif; --search-bg:#201c16; --chip:#2a251c; --track:#2c2820; --border:1px solid #3a3222; --shadow:0 26px 62px rgba(0,0,0,.6); --ok:#b8a24a; --warn:#d9a441; --bad:#c85a4a; }
+  .mock--termchic { --bg:#0d0d0d; --surface:#151515; --text:#e0e0e0; --muted:#7a7a7a; --accent:#e0e0e0; --accent-contrast:#0d0d0d; --head:#fff; --font:'DM Mono',monospace; --search-bg:#161616; --chip:#1e1e1e; --track:#242424; --border:1px solid #1e1e1e; --radius:8px; --radius-sm:6px; --shadow:0 26px 62px rgba(0,0,0,.6); --ok:#5fd39a; --warn:#e6c05a; --bad:#e57a7a; }
+  .mock--luxe { --bg:#1c1c1c; --surface:#242424; --text:#ece6d8; --muted:#a39a86; --accent:#c8a04a; --accent-contrast:#1c1c1c; --head:#f3ecdb; --font:'Playfair Display',Georgia,serif; --search-bg:#262626; --chip:#2e2e2e; --track:#333; --border:1px solid #2c2c2c; --shadow:0 26px 62px rgba(0,0,0,.55); --ok:#86b06a; --warn:#d1a748; --bad:#cf7a5a; }
+  .mock--softgrad { --bg:#f6f7fb; --surface:#f0f1fb; --text:#34324a; --muted:#8a88a8; --accent:#6d6af5; --head:#2c2a44; --search-bg:#ecebf9; --radius:20px; --radius-sm:16px; --shadow:0 20px 46px rgba(120,120,200,.16); --track:#e6e5f7; --chip:#eeecfb; --ok:#6fd0a8; --warn:#f4c56a; --bad:#f090a0; }
+  .mock--softgrad .m-stat, .mock--softgrad .m-item { background: linear-gradient(135deg,#eef1ff,#fbeefe); }
+
+  /* ================= 25–32  WARM & NATURE ================= */
+  .mock--scandi { --bg:#eef0ec; --surface:#f8f9f6; --text:#3a3f39; --muted:#8f958c; --accent:#7d9b76; --head:#2f342e; --search-bg:#e6eae2; --radius:18px; --radius-sm:14px; --border:1px solid #e0e3dc; --shadow:0 16px 38px rgba(90,100,80,.15); --track:#e2e6df; --chip:#e6eae2; --ok:#7d9b76; --warn:#c9a56a; --bad:#c08872; }
+  .mock--terracotta { --bg:#f5e6da; --surface:#fdf3ea; --text:#5a3a2a; --muted:#a8836c; --accent:#c0603a; --head:#4a2e20; --search-bg:#efdccb; --radius:20px; --radius-sm:15px; --border:1px solid #ecd7c5; --shadow:0 18px 42px rgba(160,90,50,.2); --track:#ecd5c3; --chip:#f0dccb; --ok:#7a9a4f; --warn:#dba13a; --bad:#c0603a; }
+  .mock--sage { --bg:#f3f2e9; --surface:#fbfbf3; --text:#40463a; --muted:#8f947f; --accent:#8a9a5b; --head:#333a2c; --search-bg:#e9e9d9; --radius:18px; --radius-sm:14px; --border:1px solid #e6e5d6; --shadow:0 16px 38px rgba(120,120,80,.14); --track:#e6e6d5; --chip:#eaeadb; --ok:#8a9a5b; --warn:#cbab5e; --bad:#bb7a5f; }
+  .mock--botanical { --bg:#eef3ea; --surface:#fbfdf8; --text:#2d3a2a; --muted:#7f8c78; --accent:#4f7d4a; --head:#26331f; --search-bg:#e4efdc; --radius:18px; --radius-sm:14px; --border:1px solid #dde6d6; --shadow:0 18px 42px rgba(80,110,60,.15); --track:#dde8d5; --chip:#e4efdc; --ok:#4f7d4a; --warn:#c9a54e; --bad:#b96f52; }
+  .mock--farmhouse { --bg:#f4ece0; --surface:#fdf8f0; --text:#4a3f30; --muted:#9a8b74; --accent:#8a5a3b; --head:#3a3122; --search-bg:#ede1cd; --radius:12px; --radius-sm:10px; --border:1px solid #e4d8c5; --shadow:0 16px 38px rgba(140,110,70,.17); --track:#e8dcc9; --chip:#efe4d2; --ok:#6f8f4a; --warn:#cf9f45; --bad:#bb6a45; }
+  .mock--ocean { --bg:#eef7fa; --surface:#fbfeff; --text:#0f3a4a; --muted:#6b96a3; --accent:#1993b3; --head:#0b2e3b; --search-bg:#e2f1f5; --radius:20px; --radius-sm:15px; --border:1px solid #dcecf1; --shadow:0 18px 42px rgba(30,110,140,.14); --track:#daeaf0; --chip:#e2f1f5; --ok:#2bb3a3; --warn:#e8b04a; --bad:#e0705a; }
+  .mock--autumn { --bg:#f6ecdd; --surface:#fdf5ea; --text:#4a3320; --muted:#a3835f; --accent:#c15a28; --head:#3d2914; --search-bg:#f0e0c8; --radius:16px; --radius-sm:12px; --border:1px solid #ecd9c0; --shadow:0 18px 42px rgba(160,90,40,.19); --track:#ecd7bb; --chip:#f2e2ca; --ok:#8a8f3a; --warn:#d68a2e; --bad:#c1432a; }
+  .mock--sunsetwarm { --bg:linear-gradient(160deg,#fff1e6,#ffe0d1,#ffd6e0); --surface:#fff8f3; --text:#5a3a34; --muted:#a87f74; --accent:#ff7a59; --head:#4a2c26; --search-bg:#fbe4d8; --radius:22px; --radius-sm:16px; --shadow:0 18px 44px rgba(200,120,90,.22); --track:#f2ddd2; --chip:#fbe4d8; --ok:#5aa06f; --warn:#eaa13a; --bad:#e0603a; }
+
+  /* ================= 33–40  SOFT, BOLD & EXPRESSIVE ================= */
+  .mock--pastel { --bg:#fbfaff; --surface:#f4f2ff; --text:#3a3550; --muted:#8f89a8; --accent:#a78bfa; --head:#2e2a44; --search-bg:#efeafd; --radius:20px; --radius-sm:16px; --border:1px solid #ece8fb; --shadow:0 18px 42px rgba(150,130,220,.16); --track:#ece7fb; --chip:#efeafd; --ok:#7ed3b2; --warn:#f6c975; --bad:#f0908f; }
+  .mock--glass { --bg:linear-gradient(150deg,#eef2ff,#e0e7ff,#f3e6ff); --surface:rgba(255,255,255,.55); --text:#2a2a4a; --muted:#6a6a8a; --accent:#6366f1; --head:#22224a; --search-bg:rgba(255,255,255,.5); --radius:22px; --radius-sm:16px; --shadow:0 20px 46px rgba(90,90,180,.18); --track:rgba(255,255,255,.5); --chip:rgba(255,255,255,.6); --ok:#34c79a; --warn:#f0b84a; --bad:#f07a8a; }
+  .mock--glass .m-stat, .mock--glass .m-item, .mock--glass .m-search { backdrop-filter: blur(11px); -webkit-backdrop-filter: blur(11px); border: 1px solid rgba(255,255,255,.6); }
+  .mock--neu { --bg:#e6e7ee; --surface:#e6e7ee; --text:#4b4f63; --muted:#9498ad; --accent:#6d5dfc; --head:#3a3e52; --search-bg:#e6e7ee; --radius:20px; --radius-sm:16px; --track:#dcdde6; --chip:#e6e7ee; --shadow:0 20px 46px rgba(160,164,190,.4); --ok:#7ec8a0; --warn:#f0c476; --bad:#ef9a9a; }
+  .mock--neu .m-stat, .mock--neu .m-item { box-shadow: 5px 5px 12px #c8c9d3, -5px -5px 12px #ffffff; }
+  .mock--neu .m-bar { box-shadow: inset 2px 2px 4px #c8c9d3, inset -2px -2px 4px #fff; }
+  .mock--neu .m-search { box-shadow: inset 3px 3px 6px #c8c9d3, inset -3px -3px 6px #fff; }
+  .mock--contrast { --bg:#fff; --surface:#fff; --text:#000; --muted:#333; --accent:#000; --head:#000; --radius:14px; --radius-sm:12px; --border:2.5px solid #000; --surface-border:2.5px solid #000; --shadow:8px 8px 0 #000; --track:#ddd; --chip:#ffe600; --ok:#008a3e; --warn:#c47a00; --bad:#d40000; --h-weight:800; }
+  .mock--brut { --bg:#fef6e4; --surface:#fff; --text:#001858; --muted:#5a6a94; --accent:#f582ae; --accent-contrast:#001858; --head:#001858; --radius:14px; --radius-sm:12px; --border:2.5px solid #001858; --surface-border:2px solid #001858; --shadow:7px 7px 0 #001858; --track:#dfe3f0; --chip:#8bd3dd; --ok:#00b878; --warn:#f2c94c; --bad:#f25f5c; }
+  .mock--bauhaus { --bg:#f4f1ea; --surface:#fff; --text:#1a1a1a; --muted:#6b6b6b; --accent:#e63946; --head:#1a1a1a; --radius:2px; --radius-sm:2px; --pill:2px; --avatar-radius:2px; --border:2px solid #1a1a1a; --surface-border:2px solid #1a1a1a; --shadow:0 14px 34px rgba(0,0,0,.16); --track:#e6e6e6; --chip:#ffd400; --ok:#2a9d8f; --warn:#e9c46a; --bad:#e63946; }
+  .mock--duotone { --bg:#2b2af0; --surface:rgba(255,255,255,.1); --text:#fff; --muted:rgba(255,255,255,.72); --accent:#ffe600; --accent-contrast:#1a1a1a; --head:#fff; --search-bg:rgba(255,255,255,.14); --radius:18px; --radius-sm:14px; --shadow:0 24px 56px rgba(20,20,120,.5); --track:rgba(255,255,255,.2); --chip:rgba(255,255,255,.16); --ok:#7dff9e; --warn:#ffe600; --bad:#ff7aa8; }
+  .mock--sunsetgrad { --bg:linear-gradient(150deg,#ff9966,#ff5e62,#c86dd7); --surface:rgba(255,255,255,.14); --text:#fff; --muted:rgba(255,255,255,.78); --accent:#fff; --accent-contrast:#c8446b; --head:#fff; --search-bg:rgba(255,255,255,.16); --radius:22px; --radius-sm:16px; --shadow:0 24px 56px rgba(200,60,110,.4); --track:rgba(255,255,255,.28); --chip:rgba(255,255,255,.2); --ok:#b6ff9e; --warn:#ffe27a; --bad:#ffc1cc; }
+  .mock--sunsetgrad .m-stat, .mock--sunsetgrad .m-item, .mock--sunsetgrad .m-search { backdrop-filter: blur(9px); -webkit-backdrop-filter: blur(9px); border: 1px solid rgba(255,255,255,.25); }
+
+  footer { text-align: center; padding: 34px; color: #6f6f7c; font-size: 13px; border-top: 1px solid #2a2a33; }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <h1>🧺 Larder · <span>40 UI Concepts</span></h1>
+    <p>Forty carefully-crafted design directions for the pantry dashboard — same data, forty personalities. Each is a realistic screen: nav + search, greeting, stat tiles, an “expiring soon” list with category chips &amp; freshness bars, and a scan CTA.</p>
+    <div class="hint">👉 Tell Claude the number(s) you love — e.g. “build #11 &amp; #17”, or “mix the Linear layout with the Emerald palette” — and I’ll implement it in the real Next.js app.</div>
+    <div class="toc" id="toc"></div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+  <footer>Larder design exploration · 40 static mockups · pick your favorites and I’ll build them for real</footer>
+
+<script>
+  const items = [
+    { emoji: '🥬', name: 'Baby Spinach',   tag: 'produce', pct: 8,  tier: 'bad',  days: 'Expires today'  },
+    { emoji: '🥛', name: 'Whole Milk',     tag: 'dairy',   pct: 22, tier: 'warn', days: '2 days left'    },
+    { emoji: '🍓', name: 'Strawberries',   tag: 'produce', pct: 34, tier: 'warn', days: '3 days left'    },
+    { emoji: '🍗', name: 'Chicken Breast', tag: 'meat',    pct: 55, tier: 'ok',   days: '5 days left'    },
+  ];
+
+  // [class, name, category, description]
+  const concepts = [
+    ['warm',       'Warm Larder Pro',   'Warm',    'A refined, grown-up take on the current earthy brand — cream, terracotta & sage.'],
+    ['apple',      'Apple Bento',       'Classic', 'Big radii, soft white cards, SF-style clarity. Feels like a native iOS widget.'],
+    ['swiss',      'Swiss International','Classic', 'Grid, Helvetica, one decisive red. Ruthlessly clean & timeless.'],
+    ['editorial',  'Editorial Serif',   'Classic', 'Italic serif headlines, hairline rules, calm whitespace. Magazine elegance.'],
+    ['ios',        'iOS Cupertino',     'Classic', 'Translucent frosted cards, system blue, gentle depth. Apple HIG feel.'],
+    ['muji',       'Muji Minimal',      'Classic', 'Off-white restraint, thin type, almost no color. Quietly premium.'],
+    ['slate',      'Monochrome Slate',  'Classic', 'Cool grayscale UI with crisp semantic status colors. Very neutral.'],
+    ['news',       'Newspaper Classic', 'Classic', 'Ink-on-newsprint masthead, double rules, condensed serif. Editorial print.'],
+
+    ['notion',     'Notion Minimal',    'SaaS',    'Neutral, functional, content-first. The productivity-app aesthetic.'],
+    ['stripe',     'Stripe Dashboard',  'SaaS',    'Indigo accent, layered soft shadows, precise spacing. Polished fintech SaaS.'],
+    ['material',   'Material 3',        'SaaS',    'Google’s tonal surfaces, generous radii, expressive color roles.'],
+    ['fintech',    'Fintech Mint',      'SaaS',    'Fresh teal/mint, clean cards — like a modern banking app.'],
+    ['health',     'Healthcare Fresh',  'SaaS',    'Trustworthy teal & clean whites. Calm, clinical, reassuring.'],
+    ['corporate',  'Corporate Blue',    'SaaS',    'Dependable SaaS blue, tidy cards. Enterprise-ready & safe.'],
+    ['linear',     'Linear Dark',       'SaaS',    'Sleek near-black with a violet accent & crisp hairlines. Developer-tool cool.'],
+    ['grocery',    'Modern Grocery',    'SaaS',    'Fresh, vibrant green energy — polished, not cartoonish.'],
+
+    ['vercel',     'Vercel Monochrome', 'Dark',    'Pure black, white accent, geometric restraint. Maximum contrast.'],
+    ['emerald',    'Dark Emerald',      'Dark',    'Deep green-black with luminous emerald. Luxe & focused.'],
+    ['indigo',     'Midnight Indigo',   'Dark',    'Dark violet night mode with soft glow. Rich & calm.'],
+    ['noir',       'Nordic Noir',       'Dark',    'Sophisticated charcoal with muted steel-blue. Understated dark.'],
+    ['deco',       'Art Deco Gold',     'Dark',    'Gold-on-black, serif elegance, geometric luxury. Gatsby energy.'],
+    ['termchic',   'Terminal Chic',     'Dark',    'Monospace dark UI, refined — the tasteful cousin of a terminal.'],
+    ['luxe',       'Luxe Gold',         'Dark',    'Charcoal + brushed gold + serif. Premium concierge feel.'],
+    ['softgrad',   'Soft Gradient',     'Dark',    'Whisper-soft lilac gradient cards on a light canvas. Dreamy but tidy.'],
+
+    ['scandi',     'Scandinavian Calm', 'Nature',  'Muted sage & stone, thin lines, lots of air. Deeply hygge.'],
+    ['terracotta', 'Terracotta Kitchen','Warm',    'Clay, cream & warm rust. Cozy, homey, appetizing.'],
+    ['sage',       'Sage & Cream',      'Nature',  'Organic olive-sage on warm cream. Natural & grounded.'],
+    ['botanical',  'Botanical',         'Nature',  'Leafy forest greens & fresh whites. Garden-fresh.'],
+    ['farmhouse',  'Farmhouse',         'Warm',    'Rustic wood-brown warmth with a homemade touch.'],
+    ['ocean',      'Coastal Ocean',     'Nature',  'Breezy blues & teals. Clean, calm, seaside-fresh.'],
+    ['autumn',     'Autumn Harvest',    'Warm',    'Amber, rust & wheat. Warm harvest-season mood.'],
+    ['sunsetwarm', 'Warm Sunset',       'Warm',    'Soft peach-to-blush gradient. Gentle golden-hour glow.'],
+
+    ['pastel',     'Pastel Modern',     'Soft',    'Airy lilac pastels, rounded & friendly, still grown-up.'],
+    ['glass',      'Glassmorphism',     'Soft',    'Frosted translucent cards over a light gradient. Modern & refined.'],
+    ['neu',        'Neumorphism',       'Soft',    'Tasteful soft-UI: pillowy extruded surfaces, subtle depth.'],
+    ['contrast',   'High-Contrast',     'Bold',    'Black borders, hard shadow, yellow chips. Accessible & confident.'],
+    ['brut',       'Neo-Brutalist',     'Bold',    'Navy outlines, offset shadows, candy accents — done tastefully.'],
+    ['bauhaus',    'Bauhaus',           'Bold',    'Primary colors, sharp squares, geometric discipline. Design-school classic.'],
+    ['duotone',    'Electric Duotone',  'Bold',    'Two loud colors — electric blue + zap yellow. Unapologetic.'],
+    ['sunsetgrad', 'Sunset Gradient',   'Bold',    'Vivid coral-to-violet gradient with glassy cards. Vibrant but classy.'],
+  ];
+
+  const statsHTML = `
+    <div class="m-stats">
+      <div class="m-stat"><b>24</b><span>Fresh</span></div>
+      <div class="m-stat m-stat--warn"><b>5</b><span>Expiring</span></div>
+      <div class="m-stat m-stat--bad"><b>2</b><span>Expired</span></div>
+    </div>`;
+
+  const listHTML = `<ul class="m-list">${items.map(it => `
+    <li class="m-item">
+      <span class="m-emoji">${it.emoji}</span>
+      <div class="m-body">
+        <div class="m-row"><span class="m-name">${it.name}</span><span class="m-tag">${it.tag}</span></div>
+        <div class="m-bar"><i class="${it.tier}" style="width:${it.pct}%"></i></div>
+        <span class="m-days">${it.days}</span>
+      </div>
+    </li>`).join('')}</ul>`;
+
+  document.getElementById('grid').innerHTML = concepts.map(([cls, name, cat, desc], i) => `
+    <div class="frame" id="c${i+1}">
+      <div class="cap">
+        <b>${String(i+1).padStart(2,'0')} · ${name}</b>
+        <span class="pill">${cat}</span>
+        <small>${desc}</small>
+      </div>
+      <div class="stage">
+        <div class="mock mock--${cls}">
+          <div class="m-nav">
+            <span class="m-logo">🧺 Larder</span>
+            <span class="m-search">Search pantry…</span>
+            <span class="m-avatar">CS</span>
+          </div>
+          <div class="m-hello">
+            <h2>Your Pantry</h2>
+            <p>24 items · 5 need attention soon</p>
+          </div>
+          ${statsHTML}
+          <div class="m-sechead"><span>Expiring soon</span><a>See all →</a></div>
+          ${listHTML}
+          <button class="m-fab">＋ Scan a receipt</button>
+        </div>
+      </div>
+    </div>`).join('');
+
+  // Table of contents grouped by category
+  const cats = [...new Set(concepts.map(c => c[2]))];
+  document.getElementById('toc').innerHTML = cats.map(cat => {
+    const chips = concepts
+      .map((c, i) => [c, i])
+      .filter(([c]) => c[2] === cat)
+      .map(([c, i]) => `<span>${String(i+1).padStart(2,'0')} ${c[1]}</span>`)
+      .join('');
+    return `<b>${cat}</b>${chips}`;
+  }).join('');
+</script>
+</body>
+</html>
