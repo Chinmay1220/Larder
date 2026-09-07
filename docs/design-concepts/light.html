@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · Light Themes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #eceef3; color: #1a1a22; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .hero { padding: 58px 32px 18px; text-align: center; }
+  .hero .kicker { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #9098aa; margin-bottom: 12px; }
+  .hero h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; color: #14141c; }
+  .hero h1 span { background: linear-gradient(100deg,#ff7a59,#ff5c8a,#7c6cff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { max-width: 640px; margin: 0 auto; color: #6b7280; font-size: 15px; line-height: 1.6; }
+  .hero .hint { margin-top: 18px; display: inline-block; font-size: 13px; color: #a56a00; border: 1px solid #e6d3a8; background: #fbf3df; padding: 9px 18px; border-radius: 99px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); gap: 54px 36px; padding: 40px 36px 80px; max-width: 1500px; margin: 0 auto; justify-items: center; }
+  .show { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .cap { width: 390px; }
+  .cap .ref { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #a56a00; }
+  .cap b { display: block; font-size: 19px; margin-top: 3px; color: #14141c; }
+  .cap small { color: #6b7280; font-size: 13px; }
+
+  .dev { width: 390px; border-radius: 46px; overflow: hidden; position: relative; box-shadow: 0 40px 90px -24px rgba(60,70,120,.45), inset 0 0 0 1px rgba(0,0,0,.04); display: flex; flex-direction: column; }
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px 6px; font-size: 13px; font-weight: 700; }
+  .sb .r { font-size: 11px; letter-spacing: 1px; }
+  .scr { padding: 8px 20px 0; display: flex; flex-direction: column; gap: 15px; }
+  .tabbar { margin-top: 18px; display: flex; justify-content: space-around; align-items: center; padding: 14px 10px 16px; border-top: 1px solid rgba(0,0,0,.07); }
+  .tabbar span { font-size: 20px; opacity: .38; filter: grayscale(1); }
+  .tabbar span.on { opacity: 1; filter: none; }
+  .fab { position: absolute; right: 22px; bottom: 82px; width: 58px; height: 58px; border-radius: 20px; display: grid; place-items: center; font-size: 26px; color: #fff; border: none; cursor: pointer; }
+  .ring-svg .fg { transform: rotate(-90deg); transform-origin: 50% 50%; stroke-linecap: round; }
+
+  /* ============ 1 · CAL AI (coral) ============ */
+  .calai { background: #f5f5f7; color: #1a1a1f; }
+  .calai .title { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+  .calai .title h2 { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+  .calai .ava { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,#ff7a59,#ff5c8a); color:#fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .calai .hcard { background: linear-gradient(135deg,#ff8a5c,#ff5c7a); border-radius: 30px; padding: 22px; color: #fff; box-shadow: 0 20px 40px -14px rgba(255,92,122,.55); display: flex; align-items: center; gap: 14px; }
+  .calai .hcard .lbl { font-size: 13px; opacity: .9; font-weight: 600; }
+  .calai .hcard .big { font-size: 32px; font-weight: 800; margin-top: 2px; }
+  .calai .hcard .sub { font-size: 12px; opacity: .85; margin-top: 6px; line-height: 1.4; }
+  .calai .rw { position: relative; width: 88px; height: 88px; flex-shrink: 0; margin-left: auto; }
+  .calai .rw .cx { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 20px; }
+  .calai .cats { background: #fff; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+  .calai .cat { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; }
+  .calai .cat .nm { width: 62px; color: #444; }
+  .calai .cat .bar { flex: 1; height: 8px; background: #eee; border-radius: 99px; overflow: hidden; }
+  .calai .cat .bar i { display: block; height: 100%; border-radius: 99px; }
+  .calai .cat .v { color: #999; font-size: 11px; width: 30px; text-align: right; }
+  .calai .sec { font-size: 15px; font-weight: 700; margin: 2px 0 -4px; }
+  .calai .item { background: #fff; border-radius: 20px; padding: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.04); }
+  .calai .item .th { width: 44px; height: 44px; border-radius: 14px; background: #fff2ec; display: grid; place-items: center; font-size: 22px; }
+  .calai .item .nm { font-weight: 700; font-size: 14px; }
+  .calai .item .mt { font-size: 11px; color: #9a9aa2; margin-top: 2px; }
+  .calai .item .pill { margin-left: auto; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 99px; }
+  .calai .fab { background: linear-gradient(135deg,#ff8a5c,#ff5c7a); box-shadow: 0 14px 30px -8px rgba(255,92,122,.6); }
+  .calai .tabbar span.on { color: #ff5c7a; }
+
+  /* ============ 2 · APPLE HEALTH ============ */
+  .apple { background: #f2f2f7; color: #000; }
+  .apple h2 { font-size: 30px; font-weight: 800; letter-spacing: -.6px; margin: 2px 0; }
+  .apple .date { font-size: 14px; color: #8a8a8e; font-weight: 600; }
+  .apple .card { background: #fff; border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+  .apple .rings { display: flex; align-items: center; gap: 20px; }
+  .apple .rw { position: relative; width: 116px; height: 116px; flex-shrink: 0; }
+  .apple .leg { display: flex; flex-direction: column; gap: 10px; }
+  .apple .leg .row b { font-size: 15px; font-weight: 800; display: block; }
+  .apple .leg .row span { font-size: 11px; color: #8a8a8e; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .apple .leg .g { color: #30d158; } .apple .leg .a { color: #ff9f0a; } .apple .leg .r { color: #ff375f; }
+  .apple .sec { font-size: 20px; font-weight: 800; letter-spacing: -.3px; margin: 4px 0 -6px; }
+  .apple .list { display: flex; flex-direction: column; gap: 9px; }
+  .apple .row2 { background: #fff; border-radius: 16px; padding: 13px 15px; display: flex; align-items: center; gap: 13px; }
+  .apple .row2 .th { font-size: 24px; }
+  .apple .row2 .nm { font-weight: 600; font-size: 15px; }
+  .apple .row2 .mt { font-size: 12px; color: #8a8a8e; }
+  .apple .row2 .chev { margin-left: auto; color: #c4c4c9; font-size: 18px; }
+  .apple .row2 .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .apple .tabbar span.on { color: #007aff; }
+
+  /* ============ 3 · NOTION / THINGS 3 (clean minimal) ============ */
+  .notion { background: #ffffff; color: #37352f; }
+  .notion h2 { font-size: 28px; font-weight: 800; letter-spacing: -.5px; margin-top: 4px; }
+  .notion .date { font-size: 13px; color: #9b9a97; font-weight: 500; margin-bottom: 2px; }
+  .notion .quick { display: flex; gap: 18px; font-size: 13px; font-weight: 600; color: #6b7280; padding: 4px 0 8px; border-bottom: 1px solid #efeeec; }
+  .notion .quick .d { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+  .notion .lbl { font-size: 12px; font-weight: 700; color: #9b9a97; text-transform: uppercase; letter-spacing: .6px; margin-top: 8px; }
+  .notion .task { display: flex; align-items: center; gap: 13px; padding: 12px 2px; border-bottom: 1px solid #f4f3f1; }
+  .notion .task .ck { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #d4d3ce; flex-shrink: 0; }
+  .notion .task .ck.due { border-color: #eb5757; } .notion .task .ck.soon { border-color: #e6a532; }
+  .notion .task .nm { font-weight: 500; font-size: 15px; }
+  .notion .task .tag { font-size: 11px; color: #9b9a97; margin-top: 2px; }
+  .notion .task .rt { margin-left: auto; font-size: 12px; font-weight: 600; }
+  .notion .fab { background: #2f80ed; box-shadow: 0 14px 30px -8px rgba(47,128,237,.5); border-radius: 50%; }
+  .notion .tabbar span.on { color: #2f80ed; }
+
+  /* ============ 4 · STRIPE (light SaaS dashboard) ============ */
+  .stripe { background: #f6f9fc; color: #0a2540; }
+  .stripe .top { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+  .stripe .top h2 { font-size: 22px; font-weight: 800; letter-spacing: -.4px; }
+  .stripe .top .ava { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg,#635bff,#8b7dff); color:#fff; display:grid; place-items:center; font-weight:700; font-size:12px; }
+  .stripe .metric { background: #fff; border-radius: 18px; padding: 18px; box-shadow: 0 10px 30px rgba(50,50,93,.09); }
+  .stripe .metric .lbl { font-size: 12px; color: #8898aa; font-weight: 600; }
+  .stripe .metric .big { font-size: 30px; font-weight: 800; letter-spacing: -.5px; margin-top: 3px; }
+  .stripe .metric .big em { font-style: normal; font-size: 13px; color: #3ecf8e; font-weight: 700; margin-left: 6px; }
+  .stripe .metric svg { display: block; margin-top: 10px; width: 100%; height: 46px; }
+  .stripe .tiles { display: flex; gap: 11px; }
+  .stripe .tile { flex: 1; background: #fff; border-radius: 14px; padding: 13px; box-shadow: 0 6px 18px rgba(50,50,93,.06); }
+  .stripe .tile b { font-size: 21px; font-weight: 800; }
+  .stripe .tile span { font-size: 10px; color: #8898aa; text-transform: uppercase; letter-spacing: .5px; display: block; margin-top: 3px; }
+  .stripe .lbl2 { font-size: 12px; font-weight: 700; color: #8898aa; text-transform: uppercase; letter-spacing: .5px; margin-top: 6px; }
+  .stripe .row3 { background: #fff; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 14px rgba(50,50,93,.05); }
+  .stripe .row3 .th { font-size: 21px; }
+  .stripe .row3 .nm { font-weight: 600; font-size: 14px; }
+  .stripe .row3 .mt { font-size: 11px; color: #8898aa; }
+  .stripe .row3 .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 6px; }
+  .stripe .list { display: flex; flex-direction: column; gap: 8px; }
+  .stripe .fab { background: #635bff; box-shadow: 0 14px 30px -8px rgba(99,91,255,.55); border-radius: 16px; }
+  .stripe .tabbar span.on { color: #635bff; }
+
+  /* ============ 5 · AIRBNB (warm cards) ============ */
+  .bnb { background: #fff; color: #222; }
+  .bnb .search { display: flex; align-items: center; gap: 12px; border: 1px solid #ebebeb; border-radius: 99px; padding: 13px 18px; box-shadow: 0 6px 18px rgba(0,0,0,.08); margin: 6px 0; font-weight: 600; }
+  .bnb .search .ph small { display: block; font-weight: 500; color: #888; font-size: 11px; }
+  .bnb .chips { display: flex; gap: 22px; border-bottom: 1px solid #ededed; padding-bottom: 10px; }
+  .bnb .chips span { font-size: 12px; font-weight: 700; color: #999; padding-bottom: 8px; }
+  .bnb .chips span.on { color: #222; border-bottom: 2px solid #222; }
+  .bnb .bigcard { border-radius: 22px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.1); }
+  .bnb .bigcard .img { height: 116px; display: grid; place-items: center; font-size: 50px; position: relative; }
+  .bnb .bigcard .heart { position: absolute; top: 12px; right: 14px; font-size: 20px; }
+  .bnb .bigcard .body { padding: 13px 15px; }
+  .bnb .bigcard .r1 { display: flex; justify-content: space-between; align-items: center; }
+  .bnb .bigcard .nm { font-weight: 700; font-size: 15px; }
+  .bnb .bigcard .st { font-size: 13px; font-weight: 600; }
+  .bnb .bigcard .mt { color: #888; font-size: 13px; margin-top: 3px; }
+  .bnb .mini { display: flex; gap: 12px; }
+  .bnb .mini .c { flex: 1; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+  .bnb .mini .c .img { height: 64px; display: grid; place-items: center; font-size: 30px; }
+  .bnb .mini .c .body { padding: 9px 11px; }
+  .bnb .mini .c .nm { font-weight: 700; font-size: 12px; }
+  .bnb .mini .c .mt { font-size: 10px; color: #ff385c; font-weight: 700; margin-top: 2px; }
+  .bnb .fab { background: #ff385c; box-shadow: 0 14px 30px -8px rgba(255,56,92,.6); border-radius: 50%; }
+  .bnb .tabbar span.on { color: #ff385c; }
+
+  /* ============ 6 · HEADSPACE (warm playful) ============ */
+  .head { background: linear-gradient(180deg,#fff3e0,#ffe8cc); color: #3a2a18; font-family: 'Nunito','Inter',sans-serif; }
+  .head .top { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; font-weight: 800; }
+  .head .top .streak { background: #fff; border-radius: 99px; padding: 6px 13px; font-size: 12px; box-shadow: 0 4px 12px rgba(255,150,60,.25); }
+  .head .bubble { align-self: center; position: relative; width: 158px; height: 158px; margin: 6px 0; }
+  .head .bubble .glow { position: absolute; inset: 8px; border-radius: 50%; background: radial-gradient(circle at 35% 30%,#ffd08a,#ff9f45); box-shadow: 0 20px 40px -10px rgba(255,140,50,.6); display: grid; place-items: center; font-size: 54px; }
+  .head .headline { text-align: center; font-size: 21px; font-weight: 900; margin-top: 2px; }
+  .head .headline span { color: #ff7a00; }
+  .head .subh { text-align: center; font-size: 13px; color: #a5835c; font-weight: 700; margin-top: 3px; }
+  .head .item { background: #fff; border-radius: 22px; padding: 13px; display: flex; align-items: center; gap: 13px; box-shadow: 0 8px 20px rgba(255,150,60,.12); }
+  .head .item .th { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; font-size: 24px; }
+  .head .item .nm { font-weight: 800; font-size: 15px; }
+  .head .item .mt { font-size: 12px; font-weight: 700; }
+  .head .item .badge { margin-left: auto; font-size: 20px; }
+  .head .cta { border: none; background: #ff7a00; color: #fff; font-weight: 900; font-size: 15px; padding: 16px; border-radius: 99px; box-shadow: 0 12px 26px -6px rgba(255,122,0,.6); font-family: inherit; margin-top: 2px; }
+  .head .tabbar { border-top-color: rgba(0,0,0,.05); } .head .tabbar span.on { color: #ff7a00; }
+
+  /* ============ 7 · INSTACART (fresh grocery green) ============ */
+  .cart { background: #fff; color: #1c2b1c; }
+  .cart .top { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .cart .top h2 { font-size: 22px; font-weight: 800; }
+  .cart .top .ava { margin-left: auto; width: 36px; height: 36px; border-radius: 50%; background: #0aad0a; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+  .cart .search { display: flex; align-items: center; gap: 10px; background: #f2f4f2; border-radius: 14px; padding: 12px 15px; font-size: 13px; color: #7a897a; font-weight: 600; }
+  .cart .chips { display: flex; gap: 9px; overflow: hidden; }
+  .cart .chips span { font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: 99px; background: #eef4ee; color: #3a5a3a; white-space: nowrap; }
+  .cart .chips span.on { background: #0aad0a; color: #fff; }
+  .cart .banner { background: linear-gradient(135deg,#eafbe7,#d3f5cf); border-radius: 18px; padding: 15px 18px; display: flex; align-items: center; gap: 12px; }
+  .cart .banner .e { font-size: 30px; }
+  .cart .banner .nm { font-weight: 800; font-size: 15px; color: #0a7d0a; }
+  .cart .banner .mt { font-size: 12px; color: #4a6a4a; margin-top: 2px; }
+  .cart .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .cart .pc { border: 1px solid #eef0ee; border-radius: 18px; padding: 12px; position: relative; }
+  .cart .pc .img { height: 62px; display: grid; place-items: center; font-size: 34px; }
+  .cart .pc .nm { font-weight: 700; font-size: 13px; }
+  .cart .pc .mt { font-size: 11px; margin-top: 2px; font-weight: 600; }
+  .cart .pc .add { position: absolute; right: 10px; bottom: 10px; width: 30px; height: 30px; border-radius: 50%; background: #0aad0a; color: #fff; border: none; font-size: 18px; display: grid; place-items: center; }
+  .cart .fab { display: none; }
+  .cart .tabbar span.on { color: #0aad0a; }
+
+  /* ============ 8 · MATERIAL YOU (light tonal) ============ */
+  .mat { background: #fef7ff; color: #1d1b20; }
+  .mat .top { display: flex; align-items: center; gap: 12px; margin-top: 4px; }
+  .mat .top .mic { font-size: 20px; }
+  .mat .top h2 { font-size: 22px; font-weight: 700; }
+  .mat .top .ava { margin-left: auto; width: 38px; height: 38px; border-radius: 50%; background: #6750a4; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .mat .hero { background: #e8def8; border-radius: 28px; padding: 20px; display: flex; align-items: center; gap: 16px; }
+  .mat .rw { position: relative; width: 84px; height: 84px; flex-shrink: 0; }
+  .mat .rw .cx { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 19px; color: #4a3a7a; }
+  .mat .hero .t { font-size: 15px; font-weight: 700; color: #21005d; }
+  .mat .hero .s { font-size: 12px; color: #4a4458; margin-top: 4px; line-height: 1.4; }
+  .mat .seg { display: flex; background: #ece6f0; border-radius: 99px; padding: 4px; }
+  .mat .seg span { flex: 1; text-align: center; font-size: 12px; font-weight: 600; padding: 8px; border-radius: 99px; color: #49454f; }
+  .mat .seg span.on { background: #6750a4; color: #fff; }
+  .mat .item { background: #fff; border-radius: 22px; padding: 13px 14px; display: flex; align-items: center; gap: 13px; }
+  .mat .item .th { width: 44px; height: 44px; border-radius: 50%; background: #e8def8; display: grid; place-items: center; font-size: 22px; }
+  .mat .item .nm { font-weight: 600; font-size: 14px; }
+  .mat .item .mt { font-size: 11px; color: #6b5f6e; margin-top: 2px; }
+  .mat .item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 5px 11px; border-radius: 99px; }
+  .mat .list { display: flex; flex-direction: column; gap: 9px; }
+  .mat .fab { background: #6750a4; border-radius: 20px; box-shadow: 0 14px 30px -8px rgba(103,80,164,.5); width: auto; padding: 0 20px; gap: 8px; font-size: 15px; font-weight: 600; }
+  .mat .tabbar span.on { color: #6750a4; }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="kicker">Larder · Light Mode</div>
+    <h1>Eight <span>light themes</span></h1>
+    <p>Bright, clean, premium — each still modeled on a real, recognizable app. The reference is labeled on every screen.</p>
+    <div class="hint">👉 Tell Claude which to build (e.g. “ship the Cal AI light one”) and I’ll implement it for real.</div>
+  </header>
+
+  <main class="grid">
+
+    <!-- 1 CAL AI -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Cal AI</span><b>Coral Scan Card</b><small>Warm coral hero, freshness ring, category bars, recent list.</small></div>
+      <div class="dev calai">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="title"><h2>Your Pantry</h2><div class="ava">CS</div></div>
+          <div class="hcard">
+            <div>
+              <div class="lbl">Freshness score</div>
+              <div class="big">78<span style="font-size:16px">/100</span></div>
+              <div class="sub">5 items need attention<br>in the next 3 days</div>
+            </div>
+            <div class="rw">
+              <svg class="ring-svg" viewBox="0 0 100 100" width="88" height="88">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="9"/>
+                <circle class="fg" cx="50" cy="50" r="40" fill="none" stroke="#fff" stroke-width="9" stroke-dasharray="251.3" stroke-dashoffset="55.3"/>
+              </svg><div class="cx">78%</div>
+            </div>
+          </div>
+          <div class="cats">
+            <div class="cat"><span class="nm">Produce</span><span class="bar"><i style="width:60%;background:#34c759"></i></span><span class="v">9</span></div>
+            <div class="cat"><span class="nm">Dairy</span><span class="bar"><i style="width:40%;background:#ff9f0a"></i></span><span class="v">6</span></div>
+            <div class="cat"><span class="nm">Meat</span><span class="bar"><i style="width:26%;background:#ff375f"></i></span><span class="v">4</span></div>
+          </div>
+          <div class="sec">Expiring soon</div>
+          <div class="item"><div class="th">🥬</div><div><div class="nm">Baby Spinach</div><div class="mt">Produce</div></div><span class="pill" style="background:#ffe1e1;color:#ff375f">Today</span></div>
+          <div class="item"><div class="th">🥛</div><div><div class="nm">Whole Milk</div><div class="mt">Dairy</div></div><span class="pill" style="background:#fff0d6;color:#c47a00">2 days</span></div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">🏠</span><span>🍎</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 2 APPLE HEALTH -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Apple Health</span><b>Activity Rings</b><small>Concentric Fresh / Soon / Expired rings, iOS cards.</small></div>
+      <div class="dev apple">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="date">Wednesday, 27 Aug</div>
+          <h2>Summary</h2>
+          <div class="card">
+            <div class="rings">
+              <div class="rw">
+                <svg class="ring-svg" viewBox="0 0 120 120" width="116" height="116">
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(48,209,88,.18)" stroke-width="11"/>
+                  <circle class="fg" cx="60" cy="60" r="52" fill="none" stroke="#30d158" stroke-width="11" stroke-dasharray="326.7" stroke-dashoffset="65"/>
+                  <circle cx="60" cy="60" r="39" fill="none" stroke="rgba(255,159,10,.18)" stroke-width="11"/>
+                  <circle class="fg" cx="60" cy="60" r="39" fill="none" stroke="#ff9f0a" stroke-width="11" stroke-dasharray="245" stroke-dashoffset="110"/>
+                  <circle cx="60" cy="60" r="26" fill="none" stroke="rgba(255,55,95,.18)" stroke-width="11"/>
+                  <circle class="fg" cx="60" cy="60" r="26" fill="none" stroke="#ff375f" stroke-width="11" stroke-dasharray="163.4" stroke-dashoffset="122"/>
+                </svg>
+              </div>
+              <div class="leg">
+                <div class="row g"><b>24 Fresh</b><span>Good to go</span></div>
+                <div class="row a"><b>5 Soon</b><span>≤ 3 days</span></div>
+                <div class="row r"><b>2 Expired</b><span>Use or toss</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="sec">Expiring Soon</div>
+          <div class="list">
+            <div class="row2"><span class="dot" style="background:#ff375f"></span><span class="th">🥬</span><div><div class="nm">Baby Spinach</div><div class="mt">Produce · today</div></div><span class="chev">›</span></div>
+            <div class="row2"><span class="dot" style="background:#ff9f0a"></span><span class="th">🥛</span><div><div class="nm">Whole Milk</div><div class="mt">Dairy · 2 days</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+        <div class="tabbar"><span class="on">❤️</span><span>📊</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 3 NOTION / THINGS -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Notion / Things 3</span><b>Clean Checklist</b><small>Whitespace, round checkboxes, quiet color, blue accent.</small></div>
+      <div class="dev notion">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="date">Wednesday, 27 August</div>
+          <h2>Pantry</h2>
+          <div class="quick"><span><span class="d" style="background:#0f9d58"></span>24 fresh</span><span><span class="d" style="background:#e6a532"></span>5 soon</span><span><span class="d" style="background:#eb5757"></span>2 expired</span></div>
+          <div class="lbl">Expiring soon</div>
+          <div class="task"><span class="ck due"></span><div><div class="nm">Baby Spinach</div><div class="tag">Produce</div></div><span class="rt" style="color:#eb5757">Today</span></div>
+          <div class="task"><span class="ck soon"></span><div><div class="nm">Whole Milk</div><div class="tag">Dairy</div></div><span class="rt" style="color:#e6a532">2 days</span></div>
+          <div class="task"><span class="ck soon"></span><div><div class="nm">Strawberries</div><div class="tag">Produce</div></div><span class="rt" style="color:#e6a532">3 days</span></div>
+          <div class="lbl">Fresh</div>
+          <div class="task"><span class="ck"></span><div><div class="nm">Chicken Breast</div><div class="tag">Meat</div></div><span class="rt" style="color:#9b9a97">5 days</span></div>
+          <div class="task" style="border:none"><span class="ck"></span><div><div class="nm">Aged Cheddar</div><div class="tag">Dairy</div></div><span class="rt" style="color:#9b9a97">3 wks</span></div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">📋</span><span>🔍</span><span>📷</span><span>🔔</span><span>⚙️</span></div>
+      </div>
+    </div>
+
+    <!-- 4 STRIPE -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Stripe Dashboard</span><b>Analytics Light</b><small>Metric card with sparkline, stat tiles, precise SaaS spacing.</small></div>
+      <div class="dev stripe">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><h2>Overview</h2><div class="ava">CS</div></div>
+          <div class="metric">
+            <div class="lbl">Saved from waste · this year</div>
+            <div class="big">$1,240 <em>▲ 12%</em></div>
+            <svg viewBox="0 0 300 46" preserveAspectRatio="none">
+              <defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#635bff" stop-opacity=".25"/><stop offset="1" stop-color="#635bff" stop-opacity="0"/></linearGradient></defs>
+              <path d="M0,38 C30,34 45,20 75,22 C110,24 120,10 150,12 C185,14 200,26 230,20 C260,15 275,6 300,8" fill="none" stroke="#635bff" stroke-width="2.5"/>
+              <path d="M0,38 C30,34 45,20 75,22 C110,24 120,10 150,12 C185,14 200,26 230,20 C260,15 275,6 300,8 L300,46 L0,46 Z" fill="url(#sg)"/>
+            </svg>
+          </div>
+          <div class="tiles">
+            <div class="tile"><b>24</b><span>Fresh</span></div>
+            <div class="tile"><b style="color:#f5a623">5</b><span>Expiring</span></div>
+            <div class="tile"><b style="color:#e25950">2</b><span>Expired</span></div>
+          </div>
+          <div class="lbl2">Expiring soon</div>
+          <div class="list">
+            <div class="row3"><span class="th">🥬</span><div><div class="nm">Baby Spinach</div><div class="mt">Produce</div></div><span class="pill" style="background:#fdeaea;color:#e25950">Today</span></div>
+            <div class="row3"><span class="th">🥛</span><div><div class="nm">Whole Milk</div><div class="mt">Dairy</div></div><span class="pill" style="background:#fef3e0;color:#b7791f">2 days</span></div>
+          </div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">📊</span><span>🔍</span><span>📷</span><span>🔔</span><span>⚙️</span></div>
+      </div>
+    </div>
+
+    <!-- 5 AIRBNB -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Airbnb</span><b>Warm Discover Cards</b><small>Pill search, rounded photo-cards, favorite hearts, coral accent.</small></div>
+      <div class="dev bnb">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="search"><span>🔍</span><span class="ph">Search your pantry<small>24 items · 5 expiring</small></span></div>
+          <div class="chips"><span class="on">All</span><span>Produce</span><span>Dairy</span><span>Meat</span><span>Pantry</span></div>
+          <div class="bigcard">
+            <div class="img" style="background:linear-gradient(135deg,#d8f3c4,#a8e063)">🥬<span class="heart">🤍</span></div>
+            <div class="body">
+              <div class="r1"><span class="nm">Baby Spinach</span><span class="st" style="color:#ff385c">● Today</span></div>
+              <div class="mt">Produce · added 6 days ago</div>
+            </div>
+          </div>
+          <div class="mini">
+            <div class="c"><div class="img" style="background:linear-gradient(135deg,#eaf4ff,#cfe4ff)">🥛</div><div class="body"><div class="nm">Whole Milk</div><div class="mt">2 days left</div></div></div>
+            <div class="c"><div class="img" style="background:linear-gradient(135deg,#ffe0ea,#ffc2d6)">🍓</div><div class="body"><div class="nm">Strawberries</div><div class="mt">3 days left</div></div></div>
+          </div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">🔍</span><span>🤍</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 6 HEADSPACE -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Headspace</span><b>Warm & Playful</b><small>Soft cream gradient, glowing orb, rounded pill CTA, friendly copy.</small></div>
+      <div class="dev head">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><span>🧺 Larder</span><span class="streak">🔥 5-day streak</span></div>
+          <div class="bubble"><div class="glow">🧺</div></div>
+          <div class="headline">Your pantry is <span>78% fresh</span></div>
+          <div class="subh">Use 5 items soon to keep it up ✨</div>
+          <div class="item"><div class="th" style="background:#ffe1e1">🥬</div><div><div class="nm">Baby Spinach</div><div class="mt" style="color:#ff4b4b">Expires today</div></div><span class="badge">⚠️</span></div>
+          <div class="item"><div class="th" style="background:#fff0d6">🥛</div><div><div class="nm">Whole Milk</div><div class="mt" style="color:#ff9600">2 days left</div></div><span class="badge">⏰</span></div>
+          <button class="cta">Scan a receipt</button>
+        </div>
+        <div class="tabbar"><span class="on">🏠</span><span>🥦</span><span>📷</span><span>🏆</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 7 INSTACART -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Instacart</span><b>Fresh Grocery</b><small>Bright green, category pills, product grid with add buttons.</small></div>
+      <div class="dev cart">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><h2>Your Pantry</h2><div class="ava">CS</div></div>
+          <div class="search"><span>🔍</span><span>Search 24 items…</span></div>
+          <div class="chips"><span class="on">All</span><span>Produce</span><span>Dairy</span><span>Meat</span></div>
+          <div class="banner"><span class="e">⏰</span><div><div class="nm">5 items expiring soon</div><div class="mt">Use them in the next 3 days</div></div></div>
+          <div class="grid2">
+            <div class="pc"><div class="img">🥬</div><div class="nm">Baby Spinach</div><div class="mt" style="color:#e0443e">Today</div><button class="add">＋</button></div>
+            <div class="pc"><div class="img">🥛</div><div class="nm">Whole Milk</div><div class="mt" style="color:#c47a00">2 days</div><button class="add">＋</button></div>
+            <div class="pc"><div class="img">🍓</div><div class="nm">Strawberries</div><div class="mt" style="color:#c47a00">3 days</div><button class="add">＋</button></div>
+            <div class="pc"><div class="img">🍗</div><div class="nm">Chicken</div><div class="mt" style="color:#0a7d0a">5 days</div><button class="add">＋</button></div>
+          </div>
+        </div>
+        <div class="tabbar"><span class="on">🏠</span><span>🔍</span><span>📷</span><span>🛒</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 8 MATERIAL YOU -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Material You</span><b>Tonal Light</b><small>Soft purple surfaces, big radii, segmented control, extended FAB.</small></div>
+      <div class="dev mat">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><span class="mic">☰</span><h2>Larder</h2><div class="ava">CS</div></div>
+          <div class="hero">
+            <div class="rw">
+              <svg class="ring-svg" viewBox="0 0 100 100" width="84" height="84">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#d0bcff" stroke-width="9"/>
+                <circle class="fg" cx="50" cy="50" r="42" fill="none" stroke="#6750a4" stroke-width="9" stroke-dasharray="263.9" stroke-dashoffset="58"/>
+              </svg><div class="cx">78%</div>
+            </div>
+            <div><div class="t">Pantry freshness</div><div class="s">Looking good — 5 items need attention soon.</div></div>
+          </div>
+          <div class="seg"><span class="on">Expiring</span><span>All items</span><span>Fresh</span></div>
+          <div class="list">
+            <div class="item"><div class="th">🥬</div><div><div class="nm">Baby Spinach</div><div class="mt">Produce</div></div><span class="pill" style="background:#f9dedc;color:#b3261e">Today</span></div>
+            <div class="item"><div class="th">🥛</div><div><div class="nm">Whole Milk</div><div class="mt">Dairy</div></div><span class="pill" style="background:#ffdcc2;color:#8a5000">2 days</span></div>
+            <div class="item"><div class="th">🍓</div><div><div class="nm">Strawberries</div><div class="mt">Produce</div></div><span class="pill" style="background:#ffdcc2;color:#8a5000">3 days</span></div>
+          </div>
+        </div>
+        <button class="fab">＋ Scan</button>
+        <div class="tabbar"><span class="on">🏠</span><span>🥦</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>
