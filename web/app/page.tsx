@@ -20,92 +20,74 @@ type PantryItem = {
 
 type SortBy = "expiry" | "name" | "recent";
 
-const CATEGORY_EMOJI: Record<string, string> = {
-  produce: "🥦", dairy: "🥛", meat: "🥩", seafood: "🐟",
-  bakery: "🍞", pantry: "🥫", frozen: "🧊", beverage: "🧃",
-  snack: "🍿", household: "🧻", other: "📦",
-};
-
-const IconBox = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-  </svg>
-);
-const IconClock = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
-  </svg>
-);
-const IconGrid = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" />
-    <rect x="14" y="14" width="7" height="7" /><rect x="3" y="14" width="7" height="7" />
-  </svg>
-);
-const IconDollar = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="1" x2="12" y2="23" /><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-  </svg>
-);
-const IconPencil = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-  </svg>
-);
-const IconTrash = () => (
-  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" />
-    <path d="M9 6V4h6v2" />
-  </svg>
-);
-const IconCamera = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-    <circle cx="12" cy="13" r="4" />
-  </svg>
-);
-
 const CATEGORIES = ["produce","dairy","meat","seafood","bakery","pantry","frozen","beverage","snack","household","other"] as const;
+
+/* ── Hand-drawn line icons ── */
+function Ico({ children, size = 20 }: { children: React.ReactNode; size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth={1.7} strokeLinecap="round" strokeLinejoin="round">{children}</svg>
+  );
+}
+function CatIcon({ cat, size = 20 }: { cat: string; size?: number }) {
+  const paths: Record<string, React.ReactNode> = {
+    produce: <><path d="M11 20A7 7 0 0 1 4 13C4 7 12 4 20 4c0 8-3 16-9 16Z" /><path d="M4 20c3-4 7-6 11-7" /></>,
+    dairy: <path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11Z" />,
+    meat: <path d="M14 4a6 6 0 0 1 6 6c0 3-2 5-5 5l-6 4-3-3 4-6c0-3 2-6 4-6Z" />,
+    seafood: <><path d="M3 12c3-4 9-6 14-4 3 1 4 3 4 4s-1 3-4 4c-5 2-11 0-14-4Z" /><circle cx="8" cy="11" r=".9" fill="currentColor" stroke="none" /></>,
+    bakery: <path d="M6 14c-2 0-3-2-2-4 1-3 5-5 8-5s7 2 8 5c1 2 0 4-2 4Z" />,
+    pantry: <><path d="M6 3h12v4H6z" /><path d="M7 7h10l-1 14H8L7 7Z" /></>,
+    frozen: <><path d="M12 2v20" /><path d="M4 6l16 12" /><path d="M20 6 4 18" /></>,
+    beverage: <path d="M7 4h10l-1.4 16H8.4L7 4Z" />,
+    snack: <><circle cx="12" cy="12" r="8" /><circle cx="10" cy="10" r=".8" fill="currentColor" stroke="none" /><circle cx="14" cy="13" r=".8" fill="currentColor" stroke="none" /></>,
+    household: <path d="M5 21V9l7-5 7 5v12" />,
+    other: <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />,
+  };
+  return <Ico size={size}>{paths[cat] ?? paths.other}</Ico>;
+}
+const IcoPlus = () => <Ico size={15}><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></Ico>;
+const IcoSearch = () => <Ico size={14}><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.5" y2="16.5" /></Ico>;
+const IcoPencil = () => <Ico size={13}><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></Ico>;
+const IcoTrash = () => <Ico size={13}><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v6" /><path d="M14 11v6" /><path d="M9 6V4h6v2" /></Ico>;
+const IcoCamera = () => <Ico size={22}><path d="M3 8h3.5l1.8-2h7.4l1.8 2H21v12H3z" /><circle cx="12" cy="13" r="3.5" /></Ico>;
+const IcoBell = () => <Ico size={18}><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.7 21a2 2 0 0 1-3.4 0" /></Ico>;
+const IcoGrid = () => <Ico size={14}><rect x="4" y="4" width="7" height="7" rx="1.5" /><rect x="13" y="4" width="7" height="7" rx="1.5" /><rect x="4" y="13" width="7" height="7" rx="1.5" /><rect x="13" y="13" width="7" height="7" rx="1.5" /></Ico>;
+const IcoClose = () => <Ico size={16}><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></Ico>;
 
 function daysLeft(expiry: string) {
   return Math.floor((new Date(expiry).getTime() - Date.now()) / 86400000);
 }
-
-function ExpiryBadge({ expiry }: { expiry: string }) {
+function tierOf(expiry: string): "alert" | "soon" | "ok" {
   const d = daysLeft(expiry);
-  if (d < 0)  return <span className="text-[10px] font-semibold bg-(--color-urgent-bg) text-(--color-urgent-text) px-2 py-0.5 rounded-full border border-red-200">Expired</span>;
-  if (d === 0) return <span className="text-[10px] font-semibold bg-(--color-urgent-bg) text-(--color-urgent-text) px-2 py-0.5 rounded-full border border-red-200">Today</span>;
-  if (d <= 2) return <span className="text-[10px] font-semibold bg-(--color-urgent-bg) text-(--color-urgent-text) px-2 py-0.5 rounded-full border border-red-200">in {d}d</span>;
-  if (d <= 5) return <span className="text-[10px] font-semibold bg-(--color-warn-bg) text-(--color-warn-text) px-2 py-0.5 rounded-full border border-amber-200">in {d}d</span>;
-  return       <span className="text-[10px] font-semibold bg-(--color-safe-bg) text-(--color-safe-text) px-2 py-0.5 rounded-full border border-green-200">{d}d left</span>;
+  if (d <= 1) return "alert";
+  if (d <= 3) return "soon";
+  return "ok";
+}
+const TIER_VAR: Record<string, string> = {
+  alert: "var(--color-alert)",
+  soon: "var(--color-soon)",
+  ok: "var(--color-ok)",
+};
+function expiryLabel(expiry: string) {
+  const d = daysLeft(expiry);
+  if (d < 0) return "expired";
+  if (d === 0) return "expires today";
+  if (d === 1) return "1 day left";
+  return `${d} days left`;
 }
 
-function urgencyBarColor(expiry: string) {
-  const d = daysLeft(expiry);
-  if (d <= 2) return "bg-red-400";
-  if (d <= 5) return "bg-amber-400";
-  return "bg-emerald-400";
-}
-
-function urgencyBarWidth(item: PantryItem) {
+/* Segmented freshness meter (5 ticks) */
+function Segments({ item }: { item: PantryItem }) {
   const d = daysLeft(item.est_expiry);
-  if (d < 0) return 100;
   const shelf = item.shelf_life_days || 14;
-  return Math.min(100, (d / shelf) * 100);
-}
-
-function StatStrip({ label, value, icon, urgent }: { label: string; value: string | number; icon: React.ReactNode; urgent?: boolean }) {
+  const filled = d < 0 ? 1 : Math.max(1, Math.min(5, Math.ceil((d / shelf) * 5)));
+  const color = TIER_VAR[tierOf(item.est_expiry)];
   return (
-    <div className="flex items-center gap-3 px-4 py-3.5">
-      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0
-        ${urgent ? "bg-red-50 text-red-500" : "bg-(--color-brand-xlight) text-(--color-brand)"}`}>
-        {icon}
-      </div>
-      <div>
-        <p className={`text-xl font-bold tabular-nums leading-tight ${urgent ? "text-red-600" : "text-(--color-text-primary)"}`}>{value}</p>
-        <p className="text-[11px] text-(--color-text-faint) font-medium">{label}</p>
-      </div>
+    <div className="flex gap-[3px] shrink-0" aria-hidden>
+      {[0, 1, 2, 3, 4].map((k) => (
+        <span key={k} className="w-[5px] h-4 rounded-[2px]"
+          style={{ background: k < filled ? color : "var(--color-border)" }} />
+      ))}
     </div>
   );
 }
@@ -113,32 +95,16 @@ function StatStrip({ label, value, icon, urgent }: { label: string; value: strin
 function Skeleton() {
   return (
     <div className="animate-pulse px-4 md:px-8 py-4">
-      <div className="grid grid-cols-2 gap-3 mb-6">
-        {[...Array(4)].map((_, i) => <div key={i} className="h-20 rounded-2xl bg-stone-100" />)}
-      </div>
-      {[...Array(2)].map((_, g) => (
-        <div key={g} className="mb-5">
-          <div className="h-3 w-20 bg-stone-100 rounded mb-2" />
-          <div className="rounded-2xl bg-white border border-(--color-border) divide-y divide-(--color-border) overflow-hidden">
-            {[...Array(3)].map((_, r) => (
-              <div key={r} className="flex justify-between items-center px-4 py-3">
-                <div className="space-y-1.5">
-                  <div className="h-3 w-32 bg-stone-100 rounded" />
-                  <div className="h-2 w-16 bg-stone-50 rounded" />
-                </div>
-                <div className="h-5 w-12 bg-stone-100 rounded-full" />
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
+      <div className="h-28 rounded-3xl bg-(--color-card-warm) mb-4" />
+      <div className="flex gap-2 mb-4">{[...Array(3)].map((_, i) => <div key={i} className="h-9 w-24 rounded-full bg-(--color-card-warm)" />)}</div>
+      {[...Array(4)].map((_, r) => <div key={r} className="h-16 rounded-2xl bg-(--color-card-warm) mb-2.5" />)}
     </div>
   );
 }
 
 function Toast({ message }: { message: string }) {
   return (
-    <div className="fixed bottom-28 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-stone-800 text-white text-sm px-4 py-2 rounded-full shadow-lg whitespace-nowrap pointer-events-none animate-fade-in">
+    <div className="fixed bottom-28 md:bottom-6 left-1/2 -translate-x-1/2 z-50 bg-(--color-text-primary) text-(--color-surface) text-sm px-4 py-2 rounded-full shadow-lg whitespace-nowrap pointer-events-none animate-fade-in">
       {message}
     </div>
   );
@@ -194,7 +160,7 @@ function EditModal({ item, onSave, onClose }: {
           </div>
         </div>
         <div className="flex gap-2 mt-5">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) transition-colors">
             Cancel
           </button>
           <button onClick={handleSave} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm disabled:opacity-50">
@@ -206,10 +172,7 @@ function EditModal({ item, onSave, onClose }: {
   );
 }
 
-function AddItemModal({
-  onSave,
-  onClose,
-}: {
+function AddItemModal({ onSave, onClose }: {
   onSave: (fields: Omit<PantryItem, "id">) => Promise<void>;
   onClose: () => void;
 }) {
@@ -253,13 +216,7 @@ function AddItemModal({
         <div className="space-y-3">
           <div>
             <label className="block text-xs font-medium text-(--color-text-muted) mb-1">Name</label>
-            <input
-              autoFocus
-              value={name}
-              onChange={e => setName(e.target.value)}
-              placeholder="e.g. Whole milk"
-              className={inputCls}
-            />
+            <input autoFocus value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Whole milk" className={inputCls} />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -282,11 +239,11 @@ function AddItemModal({
             <input type="date" value={expiry} onChange={e => setExpiry(e.target.value)} className={inputCls} />
           </div>
           {error && (
-            <p className="text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2 rounded-lg border border-red-200">{error}</p>
+            <p className="text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2 rounded-lg border border-(--color-border)">{error}</p>
           )}
         </div>
         <div className="flex gap-2 mt-5">
-          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 transition-colors">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) transition-colors">
             Cancel
           </button>
           <button onClick={handleSave} disabled={saving} className="flex-1 py-2.5 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm disabled:opacity-50">
@@ -298,13 +255,7 @@ function AddItemModal({
   );
 }
 
-function DetailModal({
-  item,
-  onClose,
-  onEdit,
-  onDelete,
-  onUsed,
-}: {
+function DetailModal({ item, onClose, onEdit, onDelete, onUsed }: {
   item: PantryItem;
   onClose: () => void;
   onEdit: () => void;
@@ -323,57 +274,39 @@ function DetailModal({
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center p-4" onClick={onClose}>
       <div className="bg-(--color-card) rounded-2xl w-full max-w-sm shadow-xl overflow-hidden" onClick={e => e.stopPropagation()}>
-        {/* Header */}
         <div className="px-5 pt-5 pb-4 border-b border-(--color-border)">
           <div className="flex items-start gap-3">
-            <div className="text-2xl">{CATEGORY_EMOJI[item.category] ?? "📦"}</div>
+            <div className="w-10 h-10 rounded-xl bg-(--color-surface) flex items-center justify-center text-(--color-brand) shrink-0"><CatIcon cat={item.category} /></div>
             <div className="flex-1 min-w-0">
               <h3 className="font-semibold text-(--color-text-primary) text-base capitalize leading-snug">{item.canonical_name}</h3>
               <p className="text-xs text-(--color-text-faint) capitalize mt-0.5">{item.category}</p>
             </div>
-            <button onClick={onClose} className="text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors -mt-1 -mr-1 p-1">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
+            <button onClick={onClose} className="text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors -mt-1 -mr-1 p-1"><IcoClose /></button>
           </div>
         </div>
 
-        {/* Details */}
         <dl className="px-5 py-4 space-y-3">
           <Row label="Quantity" value={`${item.quantity} ${item.unit}`} />
           {item.price != null && <Row label="Price" value={`$${item.price.toFixed(2)}`} />}
-          <Row
-            label="Expires"
-            value={
-              <span className="flex items-center gap-2">
-                {expiryDate}
-                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${
-                  d < 0 ? "bg-(--color-urgent-bg) text-(--color-urgent-text) border-red-200"
-                  : d <= 2 ? "bg-(--color-urgent-bg) text-(--color-urgent-text) border-red-200"
-                  : d <= 5 ? "bg-(--color-warn-bg) text-(--color-warn-text) border-amber-200"
-                  : "bg-(--color-safe-bg) text-(--color-safe-text) border-green-200"
-                }`}>
-                  {d < 0 ? "Expired" : d === 0 ? "Today" : `in ${d}d`}
-                </span>
+          <Row label="Expires" value={
+            <span className="flex items-center gap-2">
+              {expiryDate}
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-white"
+                style={{ background: TIER_VAR[tierOf(item.est_expiry)] }}>
+                {d < 0 ? "Expired" : d === 0 ? "Today" : `in ${d}d`}
               </span>
-            }
-          />
+            </span>
+          } />
           {purchasedDate && (
             <Row label="Added" value={`${purchasedDate}${daysSincePurchase != null ? ` (${daysSincePurchase}d ago)` : ""}`} />
           )}
           <Row label="Shelf life" value={`${item.shelf_life_days} days`} />
         </dl>
 
-        {/* Actions */}
         <div className="px-5 pb-5 grid grid-cols-3 gap-2">
-          <button onClick={onEdit} className="py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-text-primary) transition-colors">
-            Edit
-          </button>
-          <button onClick={onUsed} className="py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-stone-50 hover:text-(--color-text-primary) transition-colors">
-            Used
-          </button>
-          <button onClick={onDelete} className="py-2.5 rounded-xl border border-red-200 bg-red-50 text-sm font-medium text-red-600 hover:bg-red-100 transition-colors">
-            Delete
-          </button>
+          <button onClick={onEdit} className="py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) hover:text-(--color-text-primary) transition-colors">Edit</button>
+          <button onClick={onUsed} className="py-2.5 rounded-xl border border-(--color-border) text-sm font-medium text-(--color-text-muted) hover:bg-(--color-card-warm) hover:text-(--color-text-primary) transition-colors">Used</button>
+          <button onClick={onDelete} className="py-2.5 rounded-xl border border-(--color-border) bg-(--color-urgent-bg) text-sm font-medium text-(--color-urgent-text) hover:brightness-95 transition">Delete</button>
         </div>
       </div>
     </div>
@@ -383,7 +316,7 @@ function DetailModal({
 function Row({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center justify-between gap-3">
-      <dt className="text-xs font-medium text-(--color-text-faint) uppercase tracking-wide">{label}</dt>
+      <dt className="font-mono text-[10px] font-medium text-(--color-text-faint) uppercase tracking-wider">{label}</dt>
       <dd className="text-sm text-(--color-text-primary) text-right">{value}</dd>
     </div>
   );
@@ -402,13 +335,13 @@ export default function Home() {
   const [addingItem, setAddingItem] = useState(false);
   const [sortBy, setSortBy] = useState<SortBy>("expiry");
   const [viewing, setViewing] = useState<PantryItem | null>(null);
+  const [email, setEmail] = useState<string>("");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       const token = session?.access_token ?? "";
-      fetch(`${API}/pantry`, {
-        headers: { "Authorization": `Bearer ${token}` },
-      })
+      setEmail(session?.user?.email ?? "");
+      fetch(`${API}/pantry`, { headers: { "Authorization": `Bearer ${token}` } })
         .then((r) => { if (!r.ok) throw new Error(); return r.json(); })
         .then(setItems)
         .catch(() => setError(true))
@@ -426,10 +359,7 @@ export default function Home() {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? "";
     try {
-      await fetch(`${API}/pantry/${item.id}/consumed`, {
-        method: "PATCH",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
+      await fetch(`${API}/pantry/${item.id}/consumed`, { method: "PATCH", headers: { "Authorization": `Bearer ${token}` } });
       setItems(prev => prev.filter(i => i.id !== item.id));
       showToast("Marked as used");
     } finally {
@@ -442,10 +372,7 @@ export default function Home() {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? "";
     try {
-      const res = await fetch(`${API}/pantry/${item.id}/decrement`, {
-        method: "PATCH",
-        headers: { "Authorization": `Bearer ${token}` },
-      });
+      const res = await fetch(`${API}/pantry/${item.id}/decrement`, { method: "PATCH", headers: { "Authorization": `Bearer ${token}` } });
       if (!res.ok) return;
       const data = await res.json();
       if (data.consumed) {
@@ -477,10 +404,7 @@ export default function Home() {
   async function deleteItem(item: PantryItem) {
     const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token ?? "";
-    await fetch(`${API}/pantry/${item.id}`, {
-      method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` },
-    });
+    await fetch(`${API}/pantry/${item.id}`, { method: "DELETE", headers: { "Authorization": `Bearer ${token}` } });
     setItems(prev => prev.filter(i => i.id !== item.id));
     showToast("Item removed");
   }
@@ -495,9 +419,7 @@ export default function Home() {
     });
     if (!res.ok) throw new Error("Failed to add item");
     const newItem = await res.json();
-    setItems(prev => [...prev, newItem].sort((a, b) =>
-      new Date(a.est_expiry).getTime() - new Date(b.est_expiry).getTime()
-    ));
+    setItems(prev => [...prev, newItem].sort((a, b) => new Date(a.est_expiry).getTime() - new Date(b.est_expiry).getTime()));
     showToast("Item added");
   }
 
@@ -515,9 +437,8 @@ export default function Home() {
     if (sortBy === "recent") {
       const ta = a.purchased_at ? new Date(a.purchased_at).getTime() : 0;
       const tb = b.purchased_at ? new Date(b.purchased_at).getTime() : 0;
-      return tb - ta; // most recent first
+      return tb - ta;
     }
-    // expiry: soonest first
     return new Date(a.est_expiry).getTime() - new Date(b.est_expiry).getTime();
   });
 
@@ -530,248 +451,155 @@ export default function Home() {
     ? byDisplayCategory
     : byDisplayCategory[activeFilter] ? { [activeFilter]: byDisplayCategory[activeFilter] } : {};
 
-  const urgentItems  = items.filter(i => daysLeft(i.est_expiry) <= 3);
+  const urgentItems = items.filter(i => daysLeft(i.est_expiry) <= 3);
   const expiredCount = items.filter(i => daysLeft(i.est_expiry) < 0).length;
-  const totalValue   = items.reduce((s, i) => s + (i.price ?? 0), 0);
 
-  const urgentNames = urgentItems.slice(0, 4).map(i => i.canonical_name);
-  const urgentExtra = urgentItems.length > 4 ? ` +${urgentItems.length - 4} more` : "";
+  const freshPct = items.length ? Math.round((items.filter(i => daysLeft(i.est_expiry) > 3).length / items.length) * 100) : 100;
+
+  // 7-day expiry week strip
+  const weekDots = Array.from({ length: 7 }, (_, i) => {
+    const hit = items.some(it => daysLeft(it.est_expiry) === i);
+    const tier = hit ? (i <= 1 ? "alert" : i <= 3 ? "soon" : "ok") : null;
+    const dt = new Date(); dt.setDate(dt.getDate() + i);
+    return { tier, letter: dt.toLocaleDateString("en-US", { weekday: "narrow" }) };
+  });
+
+  const initials = email ? email.slice(0, 2).toUpperCase() : "LA";
+  const greeting = (() => {
+    const h = new Date().getHours();
+    return h < 12 ? "Good morning" : h < 18 ? "Good afternoon" : "Good evening";
+  })();
 
   return (
     <main className="min-h-full bg-(--color-surface)">
       {/* Header */}
-      <div className="px-4 md:px-8 pt-6 pb-3 flex items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold text-(--color-text-primary) tracking-tight">Pantry</h1>
-          <p className="text-sm text-(--color-text-muted) mt-0.5">
-            {loading ? "Loading…" : error ? "Could not load pantry" : `${items.length} item${items.length !== 1 ? "s" : ""} tracked${expiredCount > 0 ? ` · ${expiredCount} expired` : ""}`}
-          </p>
+      <div className="px-4 md:px-8 pt-6 pb-2 flex items-center gap-3">
+        <div className="w-11 h-11 rounded-2xl bg-(--color-text-primary) text-(--color-surface) grid place-items-center font-bold text-[15px] shrink-0">
+          {initials}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-mono text-[10px] uppercase tracking-wider text-(--color-text-faint)">{greeting}</p>
+          <h1 className="text-[17px] font-bold text-(--color-text-primary) tracking-tight leading-tight -mt-0.5">Your pantry</h1>
         </div>
         {!loading && !error && (
-          <button
-            onClick={() => setAddingItem(true)}
-            className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Add item
+          <button onClick={() => setAddingItem(true)}
+            className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-(--color-brand) text-white text-sm font-semibold hover:bg-(--color-brand-light) transition-colors shadow-sm">
+            <IcoPlus /> Add
           </button>
         )}
       </div>
 
-      {/* Error state */}
+      {/* Error */}
       {error && !loading && (
-        <div className="mx-4 md:mx-8 mt-4 rounded-xl bg-(--color-urgent-bg) border border-red-200 px-4 py-3 text-sm text-(--color-urgent-text) font-medium">
-          ⚠️ Could not reach the backend. Check your connection and try again.
+        <div className="mx-4 md:mx-8 mt-4 rounded-xl bg-(--color-urgent-bg) border border-(--color-border) px-4 py-3 text-sm text-(--color-urgent-text) font-medium">
+          Could not reach the backend. Check your connection and try again.
         </div>
       )}
 
-      {loading ? <Skeleton /> : !error && (
+      {loading ? <Skeleton /> : !error && items.length > 0 && (
         <>
-          {/* Stat strip */}
-          <div className="mx-4 md:mx-8 my-3 bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.06)] grid grid-cols-2 md:grid-cols-4">
-            <div className="border-r border-b md:border-b-0 border-(--color-border)">
-              <StatStrip label="Total Items"   value={items.length}                   icon={<IconBox />} />
+          {/* Freshness + week-strip panel */}
+          <section className="px-4 md:px-8 my-3">
+            <div className="rounded-3xl border border-(--color-border) bg-(--color-card) p-5 flex items-center gap-5 shadow-[0_10px_26px_-18px_rgba(90,70,30,.5)]">
+              <div className="shrink-0">
+                <div className="text-[46px] leading-[0.85] font-bold tracking-tight tabular-nums text-(--color-text-primary)">
+                  {freshPct}<span className="text-lg">%</span>
+                </div>
+                <div className="font-mono text-[10px] uppercase tracking-wider text-(--color-brand) mt-1.5">fresh</div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-mono text-[10px] uppercase tracking-wider text-(--color-text-faint) mb-2.5">This week</div>
+                <div className="flex justify-between">
+                  {weekDots.map((d, i) => (
+                    <div key={i} className="flex flex-col items-center gap-1.5">
+                      <span className="w-[9px] h-[9px] rounded-full"
+                        style={{ background: d.tier ? TIER_VAR[d.tier] : "var(--color-border)" }} />
+                      <span className="font-mono text-[9px] text-(--color-text-faint)">{d.letter}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-            <div className="border-b md:border-b-0 md:border-r border-(--color-border)">
-              <StatStrip label="Expiring Soon" value={urgentItems.length}             icon={<IconClock />} urgent={urgentItems.length > 0} />
+          </section>
+
+          {/* Search + sort */}
+          <div className="px-4 md:px-8 pb-2">
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) pointer-events-none"><IcoSearch /></span>
+                <input type="text" placeholder="Search your pantry…" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
+                  className="w-full pl-9 pr-8 py-2.5 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-primary) text-sm placeholder:text-(--color-text-faint) focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition" />
+                {searchQuery && (
+                  <button onClick={() => setSearchQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) hover:text-(--color-text-muted)"><IcoClose /></button>
+                )}
+              </div>
+              <select value={sortBy} onChange={e => setSortBy(e.target.value as SortBy)} title="Sort items"
+                className="shrink-0 px-3 py-2.5 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-muted) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition cursor-pointer">
+                <option value="expiry">Expiry ↑</option>
+                <option value="name">Name A→Z</option>
+                <option value="recent">Recent first</option>
+              </select>
             </div>
-            <div className="border-r border-(--color-border)">
-              <StatStrip label="Categories"   value={Object.keys(byCategory).length} icon={<IconGrid />} />
-            </div>
-            <div>
-              <StatStrip label="Est. Value"   value={`$${totalValue.toFixed(2)}`}    icon={<IconDollar />} />
-            </div>
+            {searchQuery && (
+              <p className="font-mono text-[10px] text-(--color-text-faint) mt-2 px-1">
+                {displayItems.length} result{displayItems.length !== 1 ? "s" : ""} for “{searchQuery}”
+              </p>
+            )}
           </div>
 
-          {/* Search bar + sort */}
-          {items.length > 0 && (
-            <div className="px-4 md:px-8 pb-3">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) pointer-events-none">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                  </span>
-                  <input
-                    type="text"
-                    placeholder="Search items…"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-9 pr-8 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-primary) text-sm placeholder:text-(--color-text-faint) focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery("")}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-(--color-text-faint) hover:text-(--color-text-muted) transition-colors"
-                    >
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    </button>
-                  )}
-                </div>
-                <select
-                  value={sortBy}
-                  onChange={e => setSortBy(e.target.value as SortBy)}
-                  title="Sort items"
-                  className="shrink-0 px-3 py-2 rounded-xl border border-(--color-border) bg-(--color-card) text-(--color-text-muted) text-sm focus:outline-none focus:ring-2 focus:ring-(--color-brand) focus:border-transparent transition cursor-pointer hover:text-(--color-text-primary)"
-                >
-                  <option value="expiry">Expiry ↑</option>
-                  <option value="name">Name A→Z</option>
-                  <option value="recent">Recent first</option>
-                </select>
-              </div>
-              {searchQuery && (
-                <p className="text-xs text-(--color-text-faint) mt-1.5 px-1">
-                  {displayItems.length} result{displayItems.length !== 1 ? "s" : ""} for &ldquo;{searchQuery}&rdquo;
-                </p>
-              )}
-            </div>
-          )}
+          {/* Filter chips */}
+          <div className="flex gap-2 px-4 md:px-8 pb-3 overflow-x-auto scrollbar-none">
+            {["all", ...Object.keys(byCategory)].map(cat => (
+              <button key={cat} onClick={() => setActiveFilter(cat)}
+                className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs font-semibold capitalize transition-colors border-[1.5px]
+                  ${activeFilter === cat
+                    ? "bg-(--color-text-primary) text-(--color-surface) border-(--color-text-primary)"
+                    : "bg-(--color-card) text-(--color-text-muted) border-(--color-border) hover:border-(--color-brand)"}`}>
+                {cat === "all" ? <IcoGrid /> : <CatIcon cat={cat} size={14} />}
+                {cat === "all" ? "All" : cat}
+              </button>
+            ))}
+          </div>
 
-          {/* Alert strip */}
-          {urgentItems.length > 0 && (
-            <div className="mx-4 md:mx-8 mb-2 rounded-xl bg-(--color-urgent-bg) border border-red-200 px-4 py-3 flex items-start gap-3">
-              <span className="shrink-0 text-red-400 mt-0.5">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-              </span>
-              <div>
-                <p className="text-sm font-semibold text-(--color-urgent-text)">
-                  Use soon: {urgentNames.join(", ")}{urgentExtra}
-                </p>
-                <p className="text-xs text-red-400 mt-0.5">
-                  {urgentItems.length} item{urgentItems.length !== 1 ? "s" : ""} expiring or expired
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Filter pills */}
-          {items.length > 0 && (
-            <div className="flex gap-2 px-4 md:px-8 pb-3 overflow-x-auto scrollbar-none">
-              {["all", ...Object.keys(byCategory)].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveFilter(cat)}
-                  className={`shrink-0 px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150
-                    ${activeFilter === cat
-                      ? "bg-(--color-brand) text-white shadow-sm"
-                      : "bg-(--color-card) text-(--color-text-muted) border border-(--color-border) hover:border-(--color-brand-light) hover:text-(--color-brand-light)"
-                    }`}
-                >
-                  {CATEGORY_EMOJI[cat] ?? "📦"} {cat === "all" ? "All" : cat}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Empty state */}
-          {items.length === 0 && (
-            <div className="px-4 md:px-8 py-10 max-w-2xl mx-auto">
-              <div className="text-center mb-8">
-                <div className="w-20 h-20 rounded-full bg-(--color-card-warm) border-2 border-dashed border-(--color-border) flex items-center justify-center text-stone-300 mb-5 mx-auto">
-                  <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                    <polyline points="3.27 6.96 12 12.01 20.73 6.96" /><line x1="12" y1="22.08" x2="12" y2="12" />
-                  </svg>
-                </div>
-                <h2 className="text-xl font-semibold text-(--color-text-primary) mb-1">
-                  Welcome to Larder
-                </h2>
-                <p className="text-sm text-(--color-text-muted) max-w-sm mx-auto">
-                  Track everything in your kitchen so nothing goes to waste. Get started in seconds.
-                </p>
-              </div>
-
-              {/* Two CTA cards */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-                <Link href="/scan" className="group bg-(--color-card) rounded-2xl border border-(--color-border) p-5 hover:border-(--color-brand-light) hover:shadow-md transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-(--color-brand-xlight) text-(--color-brand) flex items-center justify-center mb-3">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                  </div>
-                  <p className="font-semibold text-(--color-text-primary) text-sm mb-0.5">Scan a receipt</p>
-                  <p className="text-xs text-(--color-text-muted) leading-snug">Snap a grocery receipt — Claude AI reads every item in seconds.</p>
-                  <p className="text-xs text-(--color-brand) font-medium mt-2 group-hover:underline">Open scanner →</p>
-                </Link>
-
-                <button onClick={() => setAddingItem(true)} className="group text-left bg-(--color-card) rounded-2xl border border-(--color-border) p-5 hover:border-(--color-brand-light) hover:shadow-md transition-all">
-                  <div className="w-10 h-10 rounded-xl bg-(--color-brand-xlight) text-(--color-brand) flex items-center justify-center mb-3">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                  </div>
-                  <p className="font-semibold text-(--color-text-primary) text-sm mb-0.5">Add an item</p>
-                  <p className="text-xs text-(--color-text-muted) leading-snug">Type it in manually — name, quantity, category, and expiry date.</p>
-                  <p className="text-xs text-(--color-brand) font-medium mt-2 group-hover:underline">Add item →</p>
-                </button>
-              </div>
-
-              {/* Tips */}
-              <div className="bg-(--color-card-warm) rounded-2xl border border-(--color-border) p-4">
-                <p className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest mb-2">A few things to know</p>
-                <ul className="text-sm text-(--color-text-muted) space-y-1.5">
-                  <li className="flex gap-2"><span className="text-(--color-brand) shrink-0">·</span>Larder estimates expiry dates — adjust them anytime by clicking an item.</li>
-                  <li className="flex gap-2"><span className="text-(--color-brand) shrink-0">·</span>The colored bar shows freshness: green is fresh, red means use soon.</li>
-                  <li className="flex gap-2"><span className="text-(--color-brand) shrink-0">·</span>Click <strong className="text-(--color-text-primary)">Used</strong> when you finish something — it tracks what you actually consume.</li>
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {/* Category groups */}
+          {/* Category groups → crafted rows */}
           {Object.entries(visibleDisplayCategories).map(([cat, catItems]) => (
-            <section key={cat} className="mb-5">
-              <div className="px-4 md:px-8 mb-1 mt-5 flex items-center gap-2">
-                <div className="w-0.5 h-3.5 rounded-full bg-(--color-brand) opacity-60 shrink-0" />
-                <span className="text-xs font-semibold text-(--color-text-muted) uppercase tracking-widest">{cat}</span>
-                <span className="ml-auto text-xs font-medium text-(--color-text-faint) bg-stone-100 px-1.5 py-0.5 rounded-md">{catItems.length}</span>
+            <section key={cat} className="mb-4">
+              <div className="px-4 md:px-8 mb-2 mt-4 flex items-baseline gap-2">
+                <span className="font-mono text-[10px] font-semibold text-(--color-text-muted) uppercase tracking-widest">{cat}</span>
+                <span className="ml-auto font-mono text-[10px] text-(--color-text-faint)">{catItems.length}</span>
               </div>
-              <div className="mx-4 md:mx-8 bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_1px_4px_rgba(0,0,0,0.04)] divide-y divide-(--color-border) overflow-hidden">
+              <div className="px-4 md:px-8 flex flex-col gap-2.5">
                 {catItems.map((item) => (
-                  <div key={item.id} className="px-4 py-3.5 group hover:bg-(--color-card-warm) transition-colors duration-100">
-                    {/* Top row: name + expiry badge (inline) + actions far right */}
-                    <div className="flex items-center gap-2 mb-2">
-                      <button
-                        onClick={() => setViewing(item)}
-                        className="font-medium text-(--color-text-primary) capitalize text-sm leading-snug text-left hover:text-(--color-brand) transition-colors"
-                      >
-                        {item.canonical_name}
+                  <div key={item.id}
+                    className="relative overflow-hidden rounded-2xl border border-(--color-border) bg-(--color-card) pl-4 pr-3.5 py-3 shadow-[0_5px_16px_-12px_rgba(90,70,30,.5)] group">
+                    <span className="absolute left-0 top-0 bottom-0 w-1" style={{ background: TIER_VAR[tierOf(item.est_expiry)] }} />
+                    {/* identity */}
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-(--color-surface) flex items-center justify-center text-(--color-brand) shrink-0">
+                        <CatIcon cat={item.category} />
+                      </div>
+                      <button onClick={() => setViewing(item)} className="flex-1 min-w-0 text-left">
+                        <p className="font-bold text-sm text-(--color-text-primary) capitalize leading-snug truncate group-hover:text-(--color-brand) transition-colors">{item.canonical_name}</p>
+                        <p className="font-mono text-[10px] text-(--color-text-faint) mt-0.5 capitalize">{item.category} · {expiryLabel(item.est_expiry)}</p>
                       </button>
-                      <ExpiryBadge expiry={item.est_expiry} />
-                      <div className="ml-auto flex items-center gap-1">
-                        <button
-                          onClick={() => setEditing(item)}
-                          title="Edit"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6 rounded-md flex items-center justify-center text-(--color-text-faint) hover:text-(--color-brand) hover:bg-stone-100"
-                        ><IconPencil /></button>
-                        <button
-                          onClick={() => deleteItem(item)}
-                          title="Delete"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity w-6 h-6 rounded-md flex items-center justify-center text-(--color-text-faint) hover:text-red-500 hover:bg-red-50"
-                        ><IconTrash /></button>
+                      <Segments item={item} />
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button onClick={() => setEditing(item)} title="Edit"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity w-7 h-7 rounded-lg flex items-center justify-center text-(--color-text-faint) hover:text-(--color-brand) hover:bg-(--color-surface)"><IcoPencil /></button>
+                        <button onClick={() => deleteItem(item)} title="Delete"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity w-7 h-7 rounded-lg flex items-center justify-center text-(--color-text-faint) hover:text-(--color-alert) hover:bg-(--color-urgent-bg)"><IcoTrash /></button>
                       </div>
                     </div>
-                    {/* Bottom row: decrement + qty + freshness bar + used */}
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => decrementItem(item)}
-                        disabled={decrementing === item.id || consuming === item.id}
-                        title="Use one"
-                        className="shrink-0 text-xs w-5 h-5 rounded-full border border-(--color-border) flex items-center justify-center text-(--color-text-faint) hover:border-(--color-brand) hover:text-(--color-brand) disabled:opacity-30 transition-colors"
-                      >−</button>
-                      <p className="text-xs text-(--color-text-faint) shrink-0">
+                    {/* controls */}
+                    <div className="flex items-center gap-2 mt-2.5 pl-[52px]">
+                      <button onClick={() => decrementItem(item)} disabled={decrementing === item.id || consuming === item.id} title="Use one"
+                        className="shrink-0 w-6 h-6 rounded-full border border-(--color-border) flex items-center justify-center text-(--color-text-faint) hover:border-(--color-brand) hover:text-(--color-brand) disabled:opacity-30 transition-colors leading-none">−</button>
+                      <span className="font-mono text-[11px] text-(--color-text-muted) shrink-0">
                         {decrementing === item.id ? "…" : `${item.quantity} ${item.unit}`}
-                      </p>
-                      <div className="flex-1 h-2 rounded-full bg-stone-200 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full transition-all ${urgencyBarColor(item.est_expiry)}`}
-                          style={{ width: `${urgencyBarWidth(item)}%` }}
-                        />
-                      </div>
-                      <button
-                        onClick={() => markUsed(item)}
-                        disabled={consuming === item.id || decrementing === item.id}
-                        title="Mark all used"
-                        className="shrink-0 text-xs px-2 py-0.5 rounded-full border border-(--color-border) text-(--color-text-faint) hover:border-red-200 hover:text-red-500 hover:bg-(--color-urgent-bg) disabled:opacity-30 transition-colors"
-                      >
+                      </span>
+                      <span className="flex-1" />
+                      <button onClick={() => markUsed(item)} disabled={consuming === item.id || decrementing === item.id} title="Mark all used"
+                        className="shrink-0 font-mono text-[10px] uppercase tracking-wide px-3 py-1.5 rounded-full border border-(--color-border) text-(--color-text-muted) hover:border-(--color-ok) hover:text-(--color-ok) disabled:opacity-30 transition-colors">
                         {consuming === item.id ? "…" : "Used"}
                       </button>
                     </div>
@@ -783,38 +611,52 @@ export default function Home() {
         </>
       )}
 
+      {/* Empty state */}
+      {!loading && !error && items.length === 0 && (
+        <div className="px-4 md:px-8 py-8 max-w-2xl mx-auto">
+          <div className="text-center mb-8">
+            <div className="w-20 h-20 rounded-3xl bg-(--color-card) border border-(--color-border) flex items-center justify-center text-(--color-brand) mb-5 mx-auto shadow-[0_10px_26px_-18px_rgba(90,70,30,.5)]">
+              <CatIcon cat="other" size={34} />
+            </div>
+            <h2 className="text-xl font-bold text-(--color-text-primary) mb-1">Welcome to Larder</h2>
+            <p className="text-sm text-(--color-text-muted) max-w-sm mx-auto">Track everything in your kitchen so nothing goes to waste. Get started in seconds.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <Link href="/scan" className="group bg-(--color-card) rounded-2xl border border-(--color-border) p-5 hover:border-(--color-brand) transition-all">
+              <div className="w-10 h-10 rounded-xl bg-(--color-surface) text-(--color-brand) flex items-center justify-center mb-3"><IcoCamera /></div>
+              <p className="font-bold text-(--color-text-primary) text-sm mb-0.5">Scan a receipt</p>
+              <p className="text-xs text-(--color-text-muted) leading-snug">Snap a grocery receipt — Claude AI reads every item in seconds.</p>
+            </Link>
+            <button onClick={() => setAddingItem(true)} className="group text-left bg-(--color-card) rounded-2xl border border-(--color-border) p-5 hover:border-(--color-brand) transition-all">
+              <div className="w-10 h-10 rounded-xl bg-(--color-surface) text-(--color-brand) flex items-center justify-center mb-3"><IcoPlus /></div>
+              <p className="font-bold text-(--color-text-primary) text-sm mb-0.5">Add an item</p>
+              <p className="text-xs text-(--color-text-muted) leading-snug">Type it in manually — name, quantity, category, and expiry date.</p>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Alert note */}
+      {!loading && !error && urgentItems.length > 0 && (
+        <p className="px-4 md:px-8 pb-24 md:pb-8 font-mono text-[10px] text-(--color-text-faint)">
+          {urgentItems.length} item{urgentItems.length !== 1 ? "s" : ""} need attention{expiredCount > 0 ? ` · ${expiredCount} expired` : ""}
+        </p>
+      )}
+
       {/* Mobile scan FAB */}
       <Link href="/scan"
-        className="md:hidden fixed bottom-20 right-5 z-50 w-14 h-14 rounded-full bg-(--color-brand) text-white flex items-center justify-center shadow-lg hover:bg-(--color-brand-light) transition-all active:scale-95">
-        <IconCamera />
+        className="md:hidden fixed bottom-20 right-5 z-50 w-14 h-14 rounded-2xl bg-(--color-brand) text-white flex items-center justify-center shadow-lg hover:bg-(--color-brand-light) transition-all active:scale-95">
+        <IcoCamera />
       </Link>
 
-      {/* Edit modal */}
       {viewing && (
-        <DetailModal
-          item={viewing}
-          onClose={() => setViewing(null)}
+        <DetailModal item={viewing} onClose={() => setViewing(null)}
           onEdit={() => { setEditing(viewing); setViewing(null); }}
           onDelete={() => { deleteItem(viewing); setViewing(null); }}
-          onUsed={() => { markUsed(viewing); setViewing(null); }}
-        />
+          onUsed={() => { markUsed(viewing); setViewing(null); }} />
       )}
-
-      {editing && (
-        <EditModal
-          item={editing}
-          onSave={editItem}
-          onClose={() => setEditing(null)}
-        />
-      )}
-
-      {addingItem && (
-        <AddItemModal
-          onSave={addItem}
-          onClose={() => setAddingItem(false)}
-        />
-      )}
-
+      {editing && <EditModal item={editing} onSave={editItem} onClose={() => setEditing(null)} />}
+      {addingItem && <AddItemModal onSave={addItem} onClose={() => setAddingItem(false)} />}
       {toast && <Toast message={toast} />}
     </main>
   );
