@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · Premium Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:wght@600;700;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(80% 60% at 50% -10%, #1c1c2a 0%, transparent 60%),
+      radial-gradient(60% 50% at 90% 10%, #201826 0%, transparent 55%),
+      #0b0b10;
+    color: #eaeaf2;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .hero { padding: 64px 32px 26px; text-align: center; }
+  .hero .kicker { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #7a7a92; margin-bottom: 14px; }
+  .hero h1 { font-size: 46px; margin: 0 0 14px; font-weight: 800; letter-spacing: -1px; }
+  .hero h1 span { background: linear-gradient(100deg,#5eead4,#818cf8,#f0abfc,#fca5a5); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { margin: 0 auto; max-width: 640px; color: #a2a2b6; font-size: 15.5px; line-height: 1.65; }
+  .hero .hint { margin-top: 20px; display: inline-block; font-size: 13px; color: #ffd08a; border: 1px solid #45412f; background: rgba(255,208,138,.05); padding: 10px 20px; border-radius: 99px; }
+
+  .grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+    gap: 56px 40px; padding: 44px 40px 80px; max-width: 1560px; margin: 0 auto; justify-items: center;
+  }
+  .show { display: flex; flex-direction: column; align-items: center; gap: 18px; width: 100%; }
+  .show-cap { width: 400px; max-width: 100%; }
+  .show-cap .n { font-size: 13px; font-weight: 700; color: #6f6f88; letter-spacing: 1px; }
+  .show-cap b { font-size: 20px; font-weight: 700; display: block; margin-top: 2px; }
+  .show-cap small { color: #8f8fa6; font-size: 13px; }
+
+  /* ============ Device frame (premium base) ============ */
+  .pdev {
+    --cta-text: #fff;
+    width: 400px; max-width: 100%; border-radius: 46px; padding: 28px 22px 22px;
+    background: var(--bg); color: var(--text);
+    position: relative; overflow: hidden;
+    box-shadow: 0 50px 100px -20px rgba(0,0,0,.7), inset 0 0 0 1px rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.12);
+    display: flex; flex-direction: column; gap: 16px;
+    opacity: 0; transform: translateY(20px); animation: rise .8s cubic-bezier(.2,.75,.25,1) forwards;
+  }
+  @keyframes rise { to { opacity: 1; transform: none; } }
+  .pdev::before, .pdev::after { content: ''; position: absolute; border-radius: 50%; pointer-events: none; }
+  .pdev::before { width: 280px; height: 280px; background: var(--a1); filter: blur(75px); opacity: .38; top: -90px; right: -70px; }
+  .pdev::after  { width: 260px; height: 260px; background: var(--a2); filter: blur(85px); opacity: .30; bottom: -70px; left: -80px; }
+  .pdev--light { box-shadow: 0 50px 100px -24px rgba(70,90,160,.4), inset 0 0 0 1px rgba(255,255,255,.7); }
+  .pdev--light::before { opacity: .3; } .pdev--light::after { opacity: .24; }
+
+  .glass { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--stroke); }
+
+  .p-head { display: flex; align-items: center; justify-content: space-between; position: relative; z-index: 1; }
+  .p-hi { font-size: 12px; color: var(--muted); }
+  .p-name { font-size: 19px; font-weight: 700; margin-top: 2px; }
+  .p-ava { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--a1), var(--a2)); padding: 2px; box-shadow: 0 6px 18px -4px var(--a1); }
+  .p-ava span { display: grid; place-items: center; width: 100%; height: 100%; border-radius: 50%; background: var(--solid); font-size: 13px; font-weight: 700; color: var(--text); }
+
+  .p-hero { display: flex; align-items: center; gap: 16px; padding: 18px; border-radius: 26px; position: relative; z-index: 1; }
+  .ringwrap { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+  .ring { width: 92px; height: 92px; }
+  .ring .bg { fill: none; stroke: var(--ring-track); stroke-width: 9; }
+  .ring .fg { fill: none; stroke-width: 9; stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; stroke-dasharray: 276.46; stroke-dashoffset: 276.46; transition: stroke-dashoffset 1.5s cubic-bezier(.2,.8,.2,1); filter: drop-shadow(0 0 5px var(--a1)); }
+  .ringval { position: absolute; inset: 0; display: grid; place-items: center; font-size: 25px; font-weight: 800; color: var(--text); }
+  .ringval small { font-size: 12px; opacity: .55; margin-left: 1px; font-weight: 600; }
+  .p-htitle { font-size: 15px; font-weight: 700; }
+  .p-hsub { font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+  .p-trend { margin-top: 10px; display: inline-block; font-size: 10px; font-weight: 700; color: var(--a1); background: rgba(255,255,255,.06); border: 1px solid var(--stroke); padding: 4px 10px; border-radius: 99px; }
+
+  .p-stats { display: flex; gap: 11px; position: relative; z-index: 1; }
+  .p-chip { flex: 1; padding: 14px 12px; border-radius: 20px; display: flex; flex-direction: column; gap: 5px; }
+  .p-chip .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.ok { background: #43e0a0; box-shadow: 0 0 9px #43e0a0; }
+  .dot.warn { background: #ffc06b; box-shadow: 0 0 9px #ffc06b; }
+  .dot.bad { background: #ff7a86; box-shadow: 0 0 9px #ff7a86; }
+  .p-chip b { font-size: 25px; font-weight: 800; line-height: 1; color: var(--text); }
+  .p-chip em { font-style: normal; font-size: 9.5px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); }
+
+  .p-sec { display: flex; justify-content: space-between; align-items: baseline; position: relative; z-index: 1; margin-top: 2px; }
+  .p-sec b { font-size: 14px; font-weight: 700; }
+  .p-sec a { font-size: 11px; color: var(--a1); text-decoration: none; font-weight: 600; }
+
+  .p-list { display: flex; flex-direction: column; gap: 10px; position: relative; z-index: 1; }
+  .p-item { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border-radius: 20px; }
+  .p-thumb { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; font-size: 23px; background: var(--thumb); border: 1px solid var(--stroke); flex-shrink: 0; }
+  .p-info { flex: 1; min-width: 0; }
+  .p-itop { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .p-iname { font-weight: 600; font-size: 14px; }
+  .p-pill { font-size: 9.5px; font-weight: 700; padding: 3px 9px; border-radius: 99px; white-space: nowrap; }
+  .p-pill.bad { background: rgba(255,90,100,.16); color: #ff8a95; }
+  .p-pill.warn { background: rgba(255,180,80,.16); color: #ffc06b; }
+  .p-pill.ok { background: rgba(70,220,160,.16); color: #4fe0a5; }
+  .p-track { height: 6px; border-radius: 99px; background: var(--ring-track); margin-top: 10px; overflow: hidden; }
+  .p-track i { display: block; height: 100%; border-radius: 99px; }
+  .p-track i.bad { background: linear-gradient(90deg,#ff5f6d,#ff9558); }
+  .p-track i.warn { background: linear-gradient(90deg,#ffb347,#ffd36b); }
+  .p-track i.ok { background: linear-gradient(90deg, var(--a1), var(--a2)); }
+
+  .p-cta { position: relative; z-index: 1; margin-top: 4px; border: none; border-radius: 20px; padding: 16px; font-weight: 700; font-size: 14px; color: var(--cta-text); background: linear-gradient(135deg, var(--a1), var(--a2)); box-shadow: 0 16px 38px -10px var(--a1); cursor: pointer; font-family: inherit; overflow: hidden; }
+  .p-cta::after { content: ''; position: absolute; top: 0; left: -70%; width: 45%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent); transform: skewX(-20deg); animation: sheen 4s ease-in-out infinite; }
+  @keyframes sheen { 0%, 55% { left: -70%; } 100% { left: 140%; } }
+
+  .p-tabs { display: flex; justify-content: space-around; align-items: center; position: relative; z-index: 1; padding-top: 6px; }
+  .p-tabs span { font-size: 19px; filter: grayscale(1); opacity: .4; }
+  .p-tabs span.on { filter: none; opacity: 1; }
+
+  /* ============ Light-theme legibility tweaks ============ */
+  .pdev--light .p-trend { background: rgba(0,0,0,.04); }
+  .pdev--light .p-pill.bad { background: rgba(214,59,71,.14); color: #c33341; }
+  .pdev--light .p-pill.warn { background: rgba(190,130,20,.16); color: #a9741a; }
+  .pdev--light .p-pill.ok { background: rgba(16,140,95,.16); color: #0f8a5f; }
+
+  /* ============ THEMES ============ */
+  .pdev--aurora   { --bg: radial-gradient(130% 110% at 15% -10%, #16263f, #0a111e 55%); --solid:#0b1220; --text:#eaf0ff; --muted:#8ea0c0; --a1:#35e0c8; --a2:#7b6cff; --glass:rgba(255,255,255,.055); --stroke:rgba(255,255,255,.1); --ring-track:rgba(255,255,255,.09); --thumb:rgba(255,255,255,.06); }
+  .pdev--midnight { --bg: radial-gradient(130% 110% at 82% -10%, #1a1140, #07070f 55%); --solid:#07070f; --text:#ecebff; --muted:#9a97c8; --a1:#6a5cff; --a2:#ff4d9d; --glass:rgba(255,255,255,.05); --stroke:rgba(255,255,255,.1); --ring-track:rgba(255,255,255,.08); --thumb:rgba(255,255,255,.05); }
+  .pdev--emerald  { --bg: radial-gradient(130% 110% at 18% -10%, #0f2a1d, #07130d 55%); --solid:#07130d; --text:#e8f6ee; --muted:#7fae95; --a1:#2fe08a; --a2:#b6ff5c; --glass:rgba(255,255,255,.05); --stroke:rgba(255,255,255,.09); --ring-track:rgba(255,255,255,.08); --thumb:rgba(255,255,255,.05); }
+  .pdev--coral    { --bg: radial-gradient(130% 110% at 82% -10%, #3a1730, #140a14 55%); --solid:#140a14; --text:#ffeef0; --muted:#c79aa8; --a1:#ff6b6b; --a2:#ffa94d; --glass:rgba(255,255,255,.05); --stroke:rgba(255,255,255,.1); --ring-track:rgba(255,255,255,.09); --thumb:rgba(255,255,255,.06); }
+  .pdev--amethyst { --bg: radial-gradient(130% 110% at 18% -10%, #2a0f4d, #100522 55%); --solid:#100522; --text:#f2e9ff; --muted:#b09ad0; --a1:#a855f7; --a2:#f5c451; --glass:rgba(255,255,255,.05); --stroke:rgba(255,255,255,.1); --ring-track:rgba(255,255,255,.08); --thumb:rgba(255,255,255,.06); }
+  .pdev--frost    { --bg: radial-gradient(130% 110% at 15% -10%, #f2f7ff, #dbe7fb 60%); --solid:#eef4ff; --text:#16233a; --muted:#5f7392; --a1:#3b82f6; --a2:#22d3ee; --glass:rgba(255,255,255,.6); --stroke:rgba(255,255,255,.85); --ring-track:rgba(30,60,110,.12); --thumb:rgba(255,255,255,.75); }
+  .pdev--cream    { --bg: radial-gradient(130% 110% at 82% -10%, #fbf6ec, #efe6d4 60%); --solid:#f6f1e7; --text:#2a241a; --muted:#8a7c62; --a1:#c9a227; --a2:#e6c15a; --glass:rgba(255,255,255,.5); --stroke:rgba(180,160,110,.35); --ring-track:rgba(120,100,50,.15); --thumb:rgba(255,255,255,.6); --cta-text:#3a2e12; }
+  .pdev--cream .p-name, .pdev--cream .p-htitle, .pdev--cream .p-sec b, .pdev--cream .ringval, .pdev--cream .p-chip b { font-family: 'Playfair Display', Georgia, serif; }
+  .pdev--cream .p-sec a, .pdev--cream .p-trend { color: #a5811a; }
+  .pdev--arctic   { --bg: radial-gradient(130% 110% at 50% -10%, #ffffff, #eceff3 60%); --solid:#f7f8fa; --text:#101418; --muted:#6b7280; --a1:#0f172a; --a2:#3b4a63; --glass:rgba(255,255,255,.7); --stroke:rgba(15,23,42,.08); --ring-track:rgba(15,23,42,.08); --thumb:rgba(15,23,42,.04); }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="kicker">Larder · High-Fidelity</div>
+    <h1>Premium <span>Design Concepts</span></h1>
+    <p>Eight fully-crafted directions — ambient gradient lighting, glassmorphism, an animated freshness ring, gradient type, and glowing CTAs. This is production-grade UI, not wireframes.</p>
+    <div class="hint">👉 Tell Claude which one to build (e.g. “ship #1 Aurora Glass”) and I’ll implement it in the real Next.js app.</div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+<script>
+  const C = 2 * Math.PI * 44; // ring circumference
+
+  const items = [
+    { emoji:'🥬', name:'Baby Spinach',   pct:8,  tier:'bad',  pill:'Today'   },
+    { emoji:'🥛', name:'Whole Milk',     pct:24, tier:'warn', pill:'2 days'  },
+    { emoji:'🍓', name:'Strawberries',   pct:38, tier:'warn', pill:'3 days'  },
+    { emoji:'🍗', name:'Chicken Breast', pct:60, tier:'ok',   pill:'5 days'  },
+  ];
+
+  // [class, name, description, freshness%, isLight]
+  const concepts = [
+    ['aurora',   'Aurora Glass',    'Frosted panels floating over a living teal→violet aurora. Deep, calm, high-end.', 78, false],
+    ['midnight', 'Midnight Neon',   'Pure black canvas with electric indigo & magenta glow. Bold and futuristic.',    64, false],
+    ['emerald',  'Emerald Wealth',  'Deep green luxe with luminous lime — the “money app” treatment for your pantry.', 82, false],
+    ['coral',    'Sunset Coral',    'Warm plum night graded with coral-to-amber. Inviting and appetizing.',           57, false],
+    ['amethyst', 'Royal Amethyst',  'Regal purple with gold accents. Rich, dramatic, and unmistakably premium.',      69, false],
+    ['frost',    'Frosted Light',   'Airy light glassmorphism with sky-blue depth. Clean, modern, Apple-grade.',       88, true ],
+    ['cream',    'Editorial Cream', 'Serif luxury — cream, charcoal & brushed gold. Boutique, timeless, refined.',     73, true ],
+    ['arctic',   'Arctic Mono',     'Ultra-minimal near-white with quiet contrast. Expensive-feeling restraint.',      91, true ],
+  ];
+
+  const grid = document.getElementById('grid');
+
+  grid.innerHTML = concepts.map(([cls, name, desc, fresh, light], i) => {
+    const offset = C * (1 - fresh / 100);
+    const list = items.map(it => `
+      <div class="p-item glass">
+        <div class="p-thumb">${it.emoji}</div>
+        <div class="p-info">
+          <div class="p-itop"><span class="p-iname">${it.name}</span><span class="p-pill ${it.tier}">${it.pill}</span></div>
+          <div class="p-track"><i class="${it.tier}" style="width:${it.pct}%"></i></div>
+        </div>
+      </div>`).join('');
+
+    return `
+      <div class="show">
+        <div class="show-cap">
+          <span class="n">${String(i+1).padStart(2,'0')}</span>
+          <b>${name}</b>
+          <small>${desc}</small>
+        </div>
+        <div class="pdev pdev--${cls} ${light ? 'pdev--light' : ''}" style="animation-delay:${i*70}ms">
+          <div class="p-head">
+            <div>
+              <div class="p-hi">Good evening 🌙</div>
+              <div class="p-name">Chinmay’s Pantry</div>
+            </div>
+            <div class="p-ava"><span>CS</span></div>
+          </div>
+
+          <div class="p-hero glass">
+            <div class="ringwrap">
+              <svg class="ring" viewBox="0 0 100 100">
+                <defs>
+                  <linearGradient id="grad${i}" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0" style="stop-color:var(--a1)"/>
+                    <stop offset="1" style="stop-color:var(--a2)"/>
+                  </linearGradient>
+                </defs>
+                <circle class="bg" cx="50" cy="50" r="44"/>
+                <circle class="fg" cx="50" cy="50" r="44" stroke="url(#grad${i})" data-off="${offset.toFixed(1)}"/>
+              </svg>
+              <div class="ringval">${fresh}<small>%</small></div>
+            </div>
+            <div>
+              <div class="p-htitle">Pantry freshness</div>
+              <div class="p-hsub">Looking good — 5 items need attention soon</div>
+              <div class="p-trend">▲ 12% less waste this month</div>
+            </div>
+          </div>
+
+          <div class="p-stats">
+            <div class="p-chip glass"><span class="dot ok"></span><b>24</b><em>Fresh</em></div>
+            <div class="p-chip glass"><span class="dot warn"></span><b>5</b><em>Expiring</em></div>
+            <div class="p-chip glass"><span class="dot bad"></span><b>2</b><em>Expired</em></div>
+          </div>
+
+          <div class="p-sec"><b>Expiring soon</b><a>See all →</a></div>
+          <div class="p-list">${list}</div>
+
+          <button class="p-cta">＋  Scan a receipt</button>
+
+          <div class="p-tabs">
+            <span class="on">🏠</span><span>🔍</span><span>➕</span><span>🔔</span><span>⚙️</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Animate the freshness rings after mount
+  requestAnimationFrame(() => setTimeout(() => {
+    document.querySelectorAll('.ring .fg').forEach(el => {
+      el.style.strokeDashoffset = el.getAttribute('data-off');
+    });
+  }, 250));
+</script>
+</body>
+</html>
