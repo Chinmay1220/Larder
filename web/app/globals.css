@@ -1,24 +1,34 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-brand:        #92400e;
-  --color-brand-light:  #d97706;
-  --color-brand-xlight: #fef3c7;
-  --color-surface:      #fffbf5;
-  --color-card:         #ffffff;
-  --color-card-warm:    #fef9f0;
-  --color-border:       #e8d5b7;
-  --color-text-primary: #1c1410;
-  --color-text-muted:   #78716c;
-  --color-text-faint:   #a8a29e;
-  --color-urgent-bg:    #fef2f2;
-  --color-urgent-text:  #991b1b;
-  --color-warn-bg:      #fffbeb;
-  --color-warn-text:    #92400e;
-  --color-safe-bg:      #f0fdf4;
-  --color-safe-text:    #166534;
-  --font-sans:          var(--font-inter);
-  --font-display:       var(--font-dm-serif);
+  /* ── Cream · Techno palette ── */
+  --color-brand:        #b7791f;   /* ochre accent */
+  --color-brand-light:  #cf8a2a;
+  --color-brand-xlight: #f3ead2;
+  --color-surface:      #f7f2e7;   /* paper */
+  --color-card:         #fffaf0;   /* raised surface */
+  --color-card-warm:    #f3ead6;
+  --color-border:       #e7dcc6;   /* hairline */
+  --color-text-primary: #2a2418;   /* ink */
+  --color-text-muted:   #6b6250;
+  --color-text-faint:   #9a917c;
+
+  /* urgency (soft backgrounds + readable text) */
+  --color-urgent-bg:    #f7e6df;
+  --color-urgent-text:  #9a3b25;
+  --color-warn-bg:      #f4ead2;
+  --color-warn-text:    #8a5e12;
+  --color-safe-bg:      #e7efdd;
+  --color-safe-text:    #3f5a2e;
+
+  /* urgency (solid signal colors) */
+  --color-alert:        #b5533a;
+  --color-soon:         #b7791f;
+  --color-ok:           #4f6b3a;
+
+  --font-sans:          var(--font-space);
+  --font-display:       var(--font-space);
+  --font-mono:          var(--font-plex-mono);
 }
 
 :root {
@@ -28,4 +38,5 @@
 body {
   background-color: var(--color-surface);
   color: var(--color-text-primary);
+  font-family: var(--font-sans);
 }

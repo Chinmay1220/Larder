@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · 50 Light Options</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e9ebf0; color: #1a1a22; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .hero { padding: 56px 32px 14px; text-align: center; }
+  .hero .kicker { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #8b93a7; margin-bottom: 12px; }
+  .hero h1 { font-size: 44px; font-weight: 900; letter-spacing: -1.2px; margin-bottom: 12px; color: #12121a; }
+  .hero h1 span { background: linear-gradient(100deg,#ff7a59,#ff5c8a,#7c6cff,#22c1c3); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { max-width: 660px; margin: 0 auto; color: #616a7d; font-size: 15px; line-height: 1.6; }
+  .hero .hint { margin-top: 16px; display: inline-block; font-size: 13px; color: #9a6300; border: 1px solid #e6d3a8; background: #fbf3df; padding: 9px 18px; border-radius: 99px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 44px 28px; padding: 36px 32px 80px; max-width: 1640px; margin: 0 auto; justify-items: center; }
+  .show { display: flex; flex-direction: column; align-items: center; gap: 13px; }
+  .cap { width: 340px; }
+  .cap .ref { font-size: 10.5px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; color: #98701a; }
+  .cap b { display: block; font-size: 17px; margin-top: 2px; color: #14141c; }
+
+  /* ---- device (light, brand-driven) ---- */
+  .dev {
+    --bg:#f4f5f7; --surface:#ffffff; --text:#1a1a22; --muted:#8b8f9c;
+    --heroInk:#fff; --heroTrack:rgba(255,255,255,.32); --ink:var(--a1);
+    width: 340px; border-radius: 42px; overflow: hidden; position: relative;
+    background: var(--bg); color: var(--text);
+    box-shadow: 0 34px 74px -26px rgba(50,60,110,.5), inset 0 0 0 1px rgba(0,0,0,.04);
+    display: flex; flex-direction: column;
+  }
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 14px 26px 4px; font-size: 12px; font-weight: 700; }
+  .sb .r { font-size: 10px; letter-spacing: 1px; }
+  .scr { padding: 8px 17px 0; display: flex; flex-direction: column; gap: 13px; }
+  .hd { display: flex; align-items: center; justify-content: space-between; }
+  .hd .hi { font-size: 11px; color: var(--muted); font-weight: 600; }
+  .hd .nm { font-size: 18px; font-weight: 800; letter-spacing: -.4px; }
+  .hd .ava { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg,var(--a1),var(--a2)); color: var(--heroInk); display: grid; place-items: center; font-weight: 800; font-size: 12px; }
+
+  .hcard { background: linear-gradient(135deg,var(--a1),var(--a2)); color: var(--heroInk); border-radius: 26px; padding: 18px; display: flex; align-items: center; gap: 14px; box-shadow: 0 16px 32px -14px color-mix(in srgb, var(--a1) 70%, transparent); }
+  .hcard .lbl { font-size: 12px; opacity: .92; font-weight: 600; }
+  .hcard .big { font-size: 27px; font-weight: 800; margin-top: 2px; line-height: 1; }
+  .hcard .sub { font-size: 11px; opacity: .82; margin-top: 6px; line-height: 1.35; }
+  .rw { position: relative; width: 74px; height: 74px; flex-shrink: 0; margin-left: auto; }
+  .ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--heroInk) 280deg, var(--heroTrack) 0); -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 calc(100% - 8px)); mask: radial-gradient(farthest-side, #0000 calc(100% - 9px), #000 calc(100% - 8px)); }
+  .rv { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 18px; color: var(--heroInk); }
+
+  .stats { display: flex; gap: 9px; }
+  .stat { flex: 1; background: var(--surface); border-radius: 16px; padding: 11px 12px; box-shadow: 0 5px 14px rgba(30,40,80,.05); }
+  .stat b { font-size: 20px; font-weight: 800; }
+  .stat span { font-size: 9px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); display: block; margin-top: 2px; }
+
+  .sec { display: flex; justify-content: space-between; align-items: baseline; margin-top: 2px; }
+  .sec b { font-size: 13px; font-weight: 700; }
+  .sec a { font-size: 11px; color: var(--ink); font-weight: 600; }
+  .item { background: var(--surface); border-radius: 17px; padding: 10px 12px; display: flex; align-items: center; gap: 11px; box-shadow: 0 5px 14px rgba(30,40,80,.05); }
+  .item .th { width: 40px; height: 40px; border-radius: 13px; background: var(--bg); display: grid; place-items: center; font-size: 20px; }
+  .item .nm { font-weight: 700; font-size: 13px; }
+  .item .mt { font-size: 10px; color: var(--muted); margin-top: 1px; }
+  .item .pill { margin-left: auto; font-size: 10px; font-weight: 700; padding: 4px 10px; border-radius: 99px; }
+  .pill.bad { background: #ffe4e4; color: #e0443e; } .pill.warn { background: #fff0d6; color: #b7791f; } .pill.ok { background: #e2f6e9; color: #178a4e; }
+
+  .fab { position: absolute; right: 18px; bottom: 76px; width: 54px; height: 54px; border-radius: 18px; display: grid; place-items: center; font-size: 24px; color: var(--heroInk); border: none; background: linear-gradient(135deg,var(--a1),var(--a2)); box-shadow: 0 12px 26px -8px color-mix(in srgb, var(--a1) 75%, transparent); }
+  .tabbar { margin-top: 15px; display: flex; justify-content: space-around; align-items: center; padding: 12px 8px 15px; border-top: 1px solid rgba(0,0,0,.06); }
+  .tabbar span { font-size: 18px; opacity: .35; filter: grayscale(1); }
+  .tabbar span.on { opacity: 1; filter: none; color: var(--ink); }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="kicker">Larder · Light Mode</div>
+    <h1>50 <span>light options</span></h1>
+    <p>Fifty bright, clean directions — each modeled on a real, recognizable app’s brand &amp; design language, applied to your pantry. The reference app is labeled on every card.</p>
+    <div class="hint">👉 Tell Claude the number(s) you like (e.g. “build #4 &amp; #19”) and I’ll implement it for real.</div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+<script>
+  // [ref app, display name, accent1, accent2, options]
+  const T = [
+    ['Cal AI',        'Coral Scan',      '#ff8a5c', '#ff5c7a'],
+    ['Apple Health',  'Activity Blue',   '#0a84ff', '#5ac8fa'],
+    ['Notion',        'Graphite',        '#3b3a34', '#6a6558'],
+    ['Things 3',      'Clean Sky',       '#3f7ff5', '#6aa6ff'],
+    ['Stripe',        'Indigo Dash',     '#635bff', '#8b7dff'],
+    ['Airbnb',        'Rausch Coral',    '#ff385c', '#ff7a8f'],
+    ['Headspace',     'Warm Orange',     '#ff7a00', '#ffb347'],
+    ['Instacart',     'Fresh Green',     '#0aad0a', '#43d143'],
+    ['Material You',  'Tonal Purple',    '#6750a4', '#9a82db'],
+    ['Robinhood',     'Neon Money',      '#00c805', '#7ee787'],
+    ['Wise',          'Bright Lime',     '#9fe870', '#7bd44e', { lightHero:true, ink:'#2e7d32' }],
+    ['Monzo',         'Hot Coral',       '#ff4f40', '#ff7d6b'],
+    ['Venmo',         'Social Blue',     '#008cff', '#3aa8ff'],
+    ['Cash App',      'Cash Green',      '#00d54b', '#00b843'],
+    ['Revolut',       'Electric Blue',   '#0666eb', '#6c5ce7'],
+    ['Klarna',        'Soft Pink',       '#ffb3c7', '#ff8fb1', { lightHero:true, ink:'#d6547e' }],
+    ['Chime',         'Mint Money',      '#1ec677', '#5fe0a3'],
+    ['Duolingo',      'Owl Green',       '#58cc02', '#89e219'],
+    ['Todoist',       'Task Red',        '#e44332', '#ff6f61'],
+    ['Asana',         'Coral Amber',     '#f06a6a', '#f9a03f'],
+    ['Linear',        'Violet Cyan',     '#7c6cff', '#4cc9f0'],
+    ['Superhuman',    'Deep Purple',     '#6a5cff', '#b06cff'],
+    ['Calm',          'Calm Blue',       '#2f5fd0', '#4a90e2'],
+    ['Flo',           'Blossom Pink',    '#ff4d8d', '#ff85b3'],
+    ['Oura',          'Aura Purple',     '#6b4eff', '#a389ff'],
+    ['Whoop',         'Recovery Teal',   '#00c9a7', '#06d6a0'],
+    ['MyFitnessPal',  'Track Blue',      '#0070e0', '#3aa0ff'],
+    ['Noom',          'Sunny Yellow',    '#f8c630', '#ff9f45', { lightHero:true, ink:'#c78a1e' }],
+    ['DoorDash',      'Delivery Red',    '#ff3008', '#ff6a3d'],
+    ['Uber Eats',     'Eats Green',      '#06c167', '#34e08a'],
+    ['HelloFresh',    'Garden Green',    '#91c11e', '#b6e02a', { lightHero:true, ink:'#5a7d0a' }],
+    ['Too Good To Go','Rescue Green',    '#12a05c', '#4fd18a'],
+    ['Getir',         'Purple Zap',      '#5d3ebc', '#ffd300'],
+    ['Weee',          'Market Red',      '#ff5a5f', '#ff8a8f'],
+    ['Yuka',          'Scan Green',      '#4caf50', '#8bc34a'],
+    ['Flighty',       'Flight Blue',     '#1d6ff2', '#4a9bff'],
+    ['Hopper',        'Bunny Purple',    '#6f2dbd', '#a86ee0'],
+    ['Pinterest',     'Pin Red',         '#e60023', '#ff4d63'],
+    ['Snapchat',      'Snap Yellow',     '#fffc00', '#ffe600', { lightHero:true, ink:'#b59f00' }],
+    ['Google Pay',    'Material Multi',  '#4285f4', '#34a853'],
+    ['Spotify',       'Play Green',      '#1db954', '#1ed760'],
+    ['N26',           'Cool Teal',       '#36c5b0', '#5fe0cf'],
+    ['Mercury',       'Fintech Indigo',  '#5266eb', '#8a9bff'],
+    ['Ramp',          'Acid Lime',       '#c6f24e', '#a8e02a', { lightHero:true, ink:'#6f8f14' }],
+    ['Acorns',        'Grow Green',      '#2e7d32', '#66bb6a'],
+    ['Affirm',        'Pay Indigo',      '#4a4af4', '#7a7aff'],
+    ['Current',       'Neo Purple',      '#7a3cff', '#b06cff'],
+    ['Craft',         'Ember Orange',    '#f04e36', '#ff7a5c'],
+    ['Sunsama',       'Amber Calm',      '#ffb238', '#ffd07a', { lightHero:true, ink:'#b77c12' }],
+    ['Bear',          'Ink Red',         '#d9534f', '#ff7a6b'],
+  ];
+
+  const items = [
+    ['🥬','Baby Spinach','Produce','Today','bad'],
+    ['🥛','Whole Milk','Dairy','2 days','warn'],
+    ['🍓','Strawberries','Produce','3 days','warn'],
+  ];
+
+  document.getElementById('grid').innerHTML = T.map(([ref, name, a1, a2, opt], i) => {
+    const o = opt || {};
+    const vars = `--a1:${a1};--a2:${a2};` +
+      (o.lightHero ? '--heroInk:#1a1a1a;--heroTrack:rgba(0,0,0,.14);' : '') +
+      (o.ink ? `--ink:${o.ink};` : '');
+    const list = items.map(([e,n,c,d,t]) => `
+      <div class="item"><div class="th">${e}</div><div><div class="nm">${n}</div><div class="mt">${c}</div></div><span class="pill ${t}">${d}</span></div>`).join('');
+    return `
+      <div class="show">
+        <div class="cap"><span class="ref">${String(i+1).padStart(2,'0')} · Modeled on ${ref}</span><b>${name}</b></div>
+        <div class="dev" style="${vars}">
+          <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+          <div class="scr">
+            <div class="hd"><div><div class="hi">Good evening 🌙</div><div class="nm">Your Pantry</div></div><div class="ava">CS</div></div>
+            <div class="hcard">
+              <div>
+                <div class="lbl">Freshness score</div>
+                <div class="big">78<span style="font-size:14px;opacity:.8">/100</span></div>
+                <div class="sub">5 items need attention<br>in the next 3 days</div>
+              </div>
+              <div class="rw"><div class="ring"></div><div class="rv">78%</div></div>
+            </div>
+            <div class="stats">
+              <div class="stat"><b>24</b><span>Fresh</span></div>
+              <div class="stat"><b style="color:#b7791f">5</b><span>Expiring</span></div>
+              <div class="stat"><b style="color:#e0443e">2</b><span>Expired</span></div>
+            </div>
+            <div class="sec"><b>Expiring soon</b><a>See all →</a></div>
+            ${list}
+          </div>
+          <button class="fab">＋</button>
+          <div class="tabbar"><span class="on">🏠</span><span>🔍</span><span>📷</span><span>🔔</span><span>👤</span></div>
+        </div>
+      </div>`;
+  }).join('');
+</script>
+</body>
+</html>

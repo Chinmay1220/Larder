@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · Crafted Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e4e1da; color: #1c1a17; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
+  .head { padding: 60px 40px 8px; max-width: 1200px; margin: 0 auto; }
+  .head .k { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #8a8578; margin-bottom: 14px; }
+  .head h1 { font-family: 'Fraunces', serif; font-size: 46px; font-weight: 600; letter-spacing: -.5px; line-height: 1.02; }
+  .head h1 em { font-style: italic; font-weight: 500; }
+  .head p { max-width: 620px; margin-top: 16px; color: #5f5b52; font-size: 15px; line-height: 1.6; }
+  .head .hint { margin-top: 18px; display: inline-block; font-size: 13px; color: #6b5a2a; border: 1px solid #cabf9f; background: #f0e9d3; padding: 9px 18px; border-radius: 4px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); gap: 60px 40px; padding: 44px 40px 90px; max-width: 1500px; margin: 0 auto; justify-items: center; }
+  .show { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; width: 380px; }
+  .note .idx { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #a09a8c; }
+  .note b { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; display: block; margin: 2px 0 6px; }
+  .note small { color: #6b665c; font-size: 13.5px; line-height: 1.5; display: block; }
+
+  /* ---------- device shell ---------- */
+  .dev { width: 380px; overflow: hidden; position: relative; display: flex; flex-direction: column; box-shadow: 0 40px 80px -30px rgba(40,36,28,.5); }
+  .sb { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
+  .ic { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; display: block; }
+  .ic-sm { width: 16px; height: 16px; }
+  .navbar { display: flex; justify-content: space-between; align-items: center; }
+
+  /* ============================================================
+     A · EDITORIAL  — Kinfolk/magazine restraint, Fraunces display
+     ============================================================ */
+  .edi { background: #f4efe4; color: #1f1c17; border-radius: 34px; padding: 26px 26px 20px; }
+  .edi .sb { color: #1f1c17; padding: 2px 2px 20px; }
+  .edi .over { display: flex; align-items: center; gap: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #a1988364; color: #9a9182; }
+  .edi .over .sp { flex: 1; height: 1px; background: #d8cfbd; }
+  .edi .dh { font-family: 'Fraunces', serif; font-weight: 600; font-size: 38px; line-height: 1.02; letter-spacing: -.8px; margin: 20px 0 18px; }
+  .edi .dh em { font-style: italic; font-weight: 500; color: #a24b30; }
+  .edi .rule { height: 1px; background: #1f1c17; opacity: .85; }
+  .edi .fresh { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 16px 0 20px; }
+  .edi .fresh .num { font-family: 'Fraunces', serif; font-size: 52px; font-weight: 600; line-height: .8; letter-spacing: -1px; }
+  .edi .fresh .num span { font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 1px; color: #9a9182; margin-left: 8px; }
+  .edi .fresh .meter { flex: 1; margin-bottom: 8px; }
+  .edi .fresh .meter .t { height: 3px; background: #ddd4c2; position: relative; }
+  .edi .fresh .meter .t i { position: absolute; left: 0; top: 0; bottom: 0; background: #1f1c17; }
+  .edi .fresh .meter .cap { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 1px; color: #9a9182; margin-top: 6px; text-transform: uppercase; }
+  .edi .ih { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #9a9182; margin: 4px 0 2px; }
+  .edi ol { list-style: none; }
+  .edi li { display: flex; align-items: baseline; gap: 14px; padding: 15px 0; border-bottom: 1px solid #e2d9c8; }
+  .edi li .n { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #b7ad98; width: 20px; }
+  .edi li .nm { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; flex: 1; }
+  .edi li .meta { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .5px; text-transform: uppercase; }
+  .edi li .meta.due { color: #a24b30; } .edi li .meta.soon { color: #97721f; }
+  .edi .cta { display: inline-flex; align-items: center; gap: 8px; font-family: 'Fraunces', serif; font-style: italic; font-size: 17px; margin-top: 20px; color: #1f1c17; }
+  .edi .cta .ic { stroke-width: 1.5; }
+  .edi .foot { display: flex; gap: 26px; margin-top: 22px; padding-top: 16px; border-top: 1px solid #1f1c17; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: #b0a692; }
+  .edi .foot .on { color: #1f1c17; }
+
+  /* ============================================================
+     B · SWISS FUNCTIONAL — grid, mono numerals, expiry timeline
+     ============================================================ */
+  .swi { background: #fbfbf9; color: #111; border-radius: 20px; padding: 24px 22px 18px; border: 1px solid #ececea; }
+  .swi .sb { color: #111; padding-bottom: 22px; }
+  .swi .wm { display: flex; align-items: baseline; gap: 8px; font-family: 'Space Grotesk', sans-serif; }
+  .swi .wm b { font-size: 18px; font-weight: 700; letter-spacing: -.5px; }
+  .swi .wm span { font-size: 11px; color: #9a9a9a; letter-spacing: 2px; text-transform: uppercase; }
+  .swi .wm em { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-style: normal; font-size: 11px; letter-spacing: 1px; color: #9a9a9a; }
+  .swi .band { display: grid; grid-template-columns: 1fr 1fr 1fr; margin: 22px 0; border-top: 1.5px solid #111; border-bottom: 1.5px solid #111; }
+  .swi .band > div { padding: 14px 0; border-right: 1px solid #e6e6e4; }
+  .swi .band > div:last-child { border-right: none; }
+  .swi .band b { font-family: 'IBM Plex Mono', monospace; font-size: 30px; font-weight: 500; letter-spacing: -1px; display: block; }
+  .swi .band b.sig { color: #e8482f; }
+  .swi .band span { font-family: 'Space Grotesk', sans-serif; font-size: 9.5px; letter-spacing: 2px; text-transform: uppercase; color: #9a9a9a; }
+  .swi .th { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #9a9a9a; margin-bottom: 6px; }
+  .swi .tl { position: relative; height: 78px; margin: 4px 0 20px; }
+  .swi .tl .axis { position: absolute; left: 0; right: 0; top: 50px; height: 1px; background: #d8d8d6; }
+  .swi .tl .gl { position: absolute; top: 44px; width: 1px; height: 12px; background: #d8d8d6; }
+  .swi .tl .gt { position: absolute; top: 62px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 1px; color: #b0b0ae; transform: translateX(-50%); }
+  .swi .tl .pt { position: absolute; top: 50px; transform: translate(-50%,-50%); }
+  .swi .tl .pt .d { width: 9px; height: 9px; border-radius: 50%; background: #111; margin: 0 auto; }
+  .swi .tl .pt.due .d { background: #e8482f; } .swi .tl .pt.soon .d { background: #f0a020; }
+  .swi .tl .pt .lb { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-family: 'Space Grotesk', sans-serif; font-size: 9px; white-space: nowrap; color: #555; }
+  .swi .rowh { display: grid; grid-template-columns: 22px 1fr auto 42px; font-family: 'Space Grotesk', sans-serif; font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; color: #b0b0ae; padding-bottom: 8px; border-bottom: 1px solid #ececea; }
+  .swi .rowh span:last-child, .swi .row span:last-child { text-align: right; }
+  .swi .row { display: grid; grid-template-columns: 22px 1fr auto 42px; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0ee; font-size: 13px; }
+  .swi .row .i { font-family: 'IBM Plex Mono', monospace; color: #c0c0be; font-size: 11px; }
+  .swi .row .nm { font-weight: 600; }
+  .swi .row .ct { font-family: 'Space Grotesk', sans-serif; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: #9a9a9a; }
+  .swi .row .dd { font-family: 'IBM Plex Mono', monospace; font-weight: 500; }
+  .swi .row .dd.due { color: #e8482f; } .swi .row .dd.soon { color: #cf8410; }
+  .swi .foot { display: flex; gap: 4px; margin-top: 20px; }
+  .swi .foot span { font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #b0b0ae; padding: 8px 12px; }
+  .swi .foot span.on { color: #111; border-bottom: 2px solid #e8482f; }
+
+  /* ============================================================
+     C · WARM CRAFT — Bricolage display, week-strip, line icons
+     ============================================================ */
+  .craft { background: #faf5ee; color: #211d1a; border-radius: 40px; padding: 24px 20px 18px; }
+  .craft .sb { color: #211d1a; padding-bottom: 8px; }
+  .craft .navbar { padding: 6px 2px 16px; }
+  .craft .navbar .who { display: flex; align-items: center; gap: 11px; }
+  .craft .navbar .mono { width: 42px; height: 42px; border-radius: 13px; background: #211d1a; color: #faf5ee; display: grid; place-items: center; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; }
+  .craft .navbar .hi { font-size: 11px; color: #9a8f80; }
+  .craft .navbar .nm { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 16px; letter-spacing: -.3px; }
+  .craft .navbar .bell { width: 42px; height: 42px; border-radius: 13px; border: 1.5px solid #e5dccd; display: grid; place-items: center; color: #6b6055; }
+  .craft .panel { background: #fff; border: 1.5px solid #efe6d7; border-radius: 26px; padding: 20px; display: flex; align-items: center; gap: 18px; }
+  .craft .panel .big { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 46px; letter-spacing: -2px; line-height: .85; }
+  .craft .panel .big small { font-size: 13px; font-weight: 700; color: #c65f3f; letter-spacing: 0; display: block; margin-top: 6px; }
+  .craft .panel .week { flex: 1; }
+  .craft .panel .week .lab { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #9a8f80; margin-bottom: 9px; }
+  .craft .panel .week .days { display: flex; justify-content: space-between; }
+  .craft .panel .week .day { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .craft .panel .week .day .dot { width: 8px; height: 8px; border-radius: 50%; background: #eadfce; }
+  .craft .panel .week .day .dot.due { background: #c65f3f; } .craft .panel .week .day .dot.soon { background: #d99a2b; } .craft .panel .week .day .dot.ok { background: #6b7250; }
+  .craft .panel .week .day .l { font-size: 9px; color: #b3a794; font-weight: 600; }
+  .craft .chips { display: flex; gap: 8px; }
+  .craft .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 8px 13px; border-radius: 99px; border: 1.5px solid #e5dccd; color: #6b6055; }
+  .craft .chip.on { background: #211d1a; color: #faf5ee; border-color: #211d1a; }
+  .craft .sec { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 15px; margin: 4px 2px -2px; }
+  .craft .row { display: flex; align-items: center; gap: 13px; background: #fff; border: 1.5px solid #efe6d7; border-radius: 20px; padding: 12px; position: relative; overflow: hidden; }
+  .craft .row .tick { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .craft .row .tick.due { background: #c65f3f; } .craft .row .tick.soon { background: #d99a2b; }
+  .craft .row .th { width: 42px; height: 42px; border-radius: 13px; background: #f4ede0; display: grid; place-items: center; color: #6b7250; margin-left: 4px; }
+  .craft .row .nm { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; }
+  .craft .row .mt { font-size: 11px; color: #9a8f80; margin-top: 1px; }
+  .craft .row .seg { display: flex; gap: 3px; margin-left: auto; }
+  .craft .row .seg i { width: 5px; height: 16px; border-radius: 2px; background: #eadfce; }
+  .craft .row .seg i.on-due { background: #c65f3f; } .craft .row .seg i.on-soon { background: #d99a2b; } .craft .row .seg i.on-ok { background: #6b7250; }
+  .craft .cta { display: flex; align-items: center; justify-content: center; gap: 9px; background: #c65f3f; color: #fff; border: none; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 14px; padding: 15px; border-radius: 18px; box-shadow: 0 12px 24px -10px rgba(198,95,63,.7); margin-top: 2px; }
+  .craft .tabs { display: flex; justify-content: space-around; align-items: center; padding: 14px 6px 6px; margin-top: 8px; border-top: 1.5px solid #efe6d7; color: #b3a794; }
+  .craft .tabs .on { color: #c65f3f; }
+
+  @media (max-width: 520px) { .show, .dev { width: 340px; } }
+</style>
+</head>
+<body>
+
+  <!-- SVG icon sprite -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+      <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13C4 7 12 4 20 4c0 8-3 16-9 16Z"/><path d="M4 20c3-4 7-6 11-7"/></symbol>
+      <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11Z"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></symbol>
+      <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8h3.5l1.8-2h7.4l1.8 2H21v12H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+      <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="16" x2="20" y2="16"/><circle cx="9" cy="8" r="2.4" fill="currentColor" stroke="none"/><circle cx="15" cy="16" r="2.4" fill="currentColor" stroke="none"/></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
+    </defs>
+  </svg>
+
+  <header class="head">
+    <div class="k">Larder · Studio</div>
+    <h1>Three <em>crafted</em> directions.</h1>
+    <p>Not template swaps. Each has its own typographic voice, hand-drawn line icons, an intentional (often asymmetric) layout, and one clear idea. Presented with the reasoning, the way a designer would.</p>
+    <div class="hint">👉 Tell Claude which direction to develop (e.g. “push the Editorial one”) and I’ll refine it, then build it for real.</div>
+  </header>
+
+  <main class="grid">
+
+    <!-- A · EDITORIAL -->
+    <div class="show">
+      <div class="note"><span class="idx">A — DIRECTION</span><b>The Editorial Pantry</b><small>Concept: your kitchen as a quiet magazine. Fraunces display serif, a real headline instead of a hero card, hairline rules, mono captions, and a numbered index rather than chunky cards. Restraint does the work.</small></div>
+      <div class="dev edi">
+        <div class="sb"><span>9:41</span><svg class="ic ic-sm"><use href="#i-sliders"/></svg></div>
+        <div class="scr">
+          <div class="over"><span>Pantry</span><span class="sp"></span><span>Wed 27 Aug</span></div>
+          <h1 class="dh">Five things<br>need using<br><em>this week.</em></h1>
+          <div class="rule"></div>
+          <div class="fresh">
+            <div class="num">78<span>% FRESH</span></div>
+            <div class="meter"><div class="t"><i style="width:78%"></i></div><div class="cap">24 fresh · 5 soon · 2 gone</div></div>
+          </div>
+          <div class="ih">Use soon</div>
+          <ol>
+            <li><span class="n">01</span><span class="nm">Baby spinach</span><span class="meta due">Today</span></li>
+            <li><span class="n">02</span><span class="nm">Whole milk</span><span class="meta soon">2 days</span></li>
+            <li><span class="n">03</span><span class="nm">Strawberries</span><span class="meta soon">3 days</span></li>
+          </ol>
+          <a class="cta">Scan a receipt <svg class="ic ic-sm"><use href="#i-arrow"/></svg></a>
+        </div>
+        <div class="foot"><span class="on">Pantry</span><span>Scan</span><span>Expiring</span><span>You</span></div>
+      </div>
+    </div>
+
+    <!-- B · SWISS -->
+    <div class="show">
+      <div class="note"><span class="idx">B — DIRECTION</span><b>Swiss Functional</b><small>Concept: treat freshness as data. A strict grid, Space Grotesk + tabular mono numerals, one signal red, and the hero is an actual expiry timeline — items plotted from today to +7 days. Engineered, precise, calm.</small></div>
+      <div class="dev swi">
+        <div class="sb"><span>9:41</span><svg class="ic ic-sm"><use href="#i-search"/></svg></div>
+        <div class="scr">
+          <div class="wm"><b>Larder</b><span>Pantry</span><em>24 items</em></div>
+          <div class="band">
+            <div><b>24</b><span>Fresh</span></div>
+            <div><b class="sig">05</b><span>Soon</span></div>
+            <div><b>02</b><span>Expired</span></div>
+          </div>
+          <div class="th">Expiry timeline</div>
+          <div class="tl">
+            <div class="axis"></div>
+            <div class="gl" style="left:4%"></div><div class="gt" style="left:4%">TODAY</div>
+            <div class="gl" style="left:40%"></div><div class="gt" style="left:40%">+3D</div>
+            <div class="gl" style="left:76%"></div><div class="gt" style="left:76%">+7D</div>
+            <div class="pt due" style="left:4%"><span class="lb">Spinach</span><span class="d"></span></div>
+            <div class="pt soon" style="left:27%"><span class="lb">Milk</span><span class="d"></span></div>
+            <div class="pt soon" style="left:40%"><span class="lb">Berries</span><span class="d"></span></div>
+            <div class="pt" style="left:64%"><span class="lb">Chicken</span><span class="d"></span></div>
+          </div>
+          <div class="rowh"><span>#</span><span>Item</span><span>Cat</span><span>Exp</span></div>
+          <div class="row"><span class="i">01</span><span class="nm">Baby Spinach</span><span class="ct">Prod</span><span class="dd due">0d</span></div>
+          <div class="row"><span class="i">02</span><span class="nm">Whole Milk</span><span class="ct">Dairy</span><span class="dd soon">2d</span></div>
+          <div class="row"><span class="i">03</span><span class="nm">Strawberries</span><span class="ct">Prod</span><span class="dd soon">3d</span></div>
+          <div class="row"><span class="i">04</span><span class="nm">Chicken Breast</span><span class="ct">Meat</span><span class="dd">5d</span></div>
+        </div>
+        <div class="foot"><span class="on">Home</span><span>Scan</span><span>Alerts</span></div>
+      </div>
+    </div>
+
+    <!-- C · WARM CRAFT -->
+    <div class="show">
+      <div class="note"><span class="idx">C — DIRECTION</span><b>Warm Craft</b><small>Concept: a friendly product with real personality. Bricolage Grotesque display, a monogram tile (not a gradient blob), a 7-day “what expires when” strip, outlined chips, urgency shown as segmented ticks + a colored edge. Warm but disciplined.</small></div>
+      <div class="dev craft">
+        <div class="sb"><span>9:41</span><svg class="ic ic-sm"><use href="#i-search"/></svg></div>
+        <div class="scr">
+          <div class="navbar">
+            <div class="who"><div class="mono">CS</div><div><div class="hi">Good evening</div><div class="nm">Chinmay’s pantry</div></div></div>
+            <div class="bell"><svg class="ic"><use href="#i-bell"/></svg></div>
+          </div>
+          <div class="panel">
+            <div class="big">78%<small>fresh</small></div>
+            <div class="week">
+              <div class="lab">This week</div>
+              <div class="days">
+                <div class="day"><span class="dot due"></span><span class="l">M</span></div>
+                <div class="day"><span class="dot soon"></span><span class="l">T</span></div>
+                <div class="day"><span class="dot soon"></span><span class="l">W</span></div>
+                <div class="day"><span class="dot"></span><span class="l">T</span></div>
+                <div class="day"><span class="dot ok"></span><span class="l">F</span></div>
+                <div class="day"><span class="dot"></span><span class="l">S</span></div>
+                <div class="day"><span class="dot ok"></span><span class="l">S</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="chips">
+            <span class="chip on"><svg class="ic ic-sm"><use href="#i-grid"/></svg>All</span>
+            <span class="chip"><svg class="ic ic-sm"><use href="#i-leaf"/></svg>Produce</span>
+            <span class="chip"><svg class="ic ic-sm"><use href="#i-drop"/></svg>Dairy</span>
+          </div>
+          <div class="sec">Expiring soon</div>
+          <div class="row"><span class="tick due"></span><div class="th"><svg class="ic"><use href="#i-leaf"/></svg></div><div><div class="nm">Baby spinach</div><div class="mt">Produce · expires today</div></div><div class="seg"><i class="on-due"></i><i></i><i></i><i></i><i></i></div></div>
+          <div class="row"><span class="tick soon"></span><div class="th"><svg class="ic"><use href="#i-drop"/></svg></div><div><div class="nm">Whole milk</div><div class="mt">Dairy · 2 days left</div></div><div class="seg"><i class="on-soon"></i><i class="on-soon"></i><i></i><i></i><i></i></div></div>
+          <div class="row"><span class="tick soon"></span><div class="th"><svg class="ic"><use href="#i-leaf"/></svg></div><div><div class="nm">Strawberries</div><div class="mt">Produce · 3 days left</div></div><div class="seg"><i class="on-soon"></i><i class="on-soon"></i><i class="on-soon"></i><i></i><i></i></div></div>
+          <button class="cta"><svg class="ic ic-sm"><use href="#i-camera"/></svg>Scan a receipt</button>
+        </div>
+        <div class="tabs">
+          <svg class="ic on"><use href="#i-home"/></svg>
+          <svg class="ic"><use href="#i-search"/></svg>
+          <svg class="ic"><use href="#i-camera"/></svg>
+          <svg class="ic"><use href="#i-bell"/></svg>
+          <svg class="ic"><use href="#i-user"/></svg>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>

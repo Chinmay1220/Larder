@@ -79,7 +79,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-dvh bg-(--color-surface) flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
           <div className="bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-8 text-center">
-            <div className="w-14 h-14 rounded-full bg-red-50 border border-red-200 flex items-center justify-center mx-auto mb-5 text-red-500">
+            <div className="w-14 h-14 rounded-full bg-(--color-urgent-bg) border border-(--color-border) flex items-center justify-center mx-auto mb-5 text-(--color-alert)">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
               </svg>
@@ -103,7 +103,7 @@ export default function ResetPasswordPage() {
       <div className="min-h-dvh bg-(--color-surface) flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-sm">
           <div className="bg-(--color-card) rounded-2xl border border-(--color-border) shadow-[0_2px_16px_rgba(0,0,0,0.07)] p-8 text-center">
-            <div className="w-14 h-14 rounded-full bg-green-50 border border-green-200 flex items-center justify-center mx-auto mb-5 text-green-600">
+            <div className="w-14 h-14 rounded-full bg-(--color-safe-bg) border border-(--color-border) flex items-center justify-center mx-auto mb-5 text-(--color-ok)">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
@@ -125,8 +125,8 @@ export default function ResetPasswordPage() {
 
         {/* Branding */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-(--color-brand) flex items-center justify-center text-2xl mx-auto mb-4 shadow-md">
-            🧺
+          <div className="w-12 h-12 rounded-2xl bg-(--color-brand) flex items-center justify-center mx-auto mb-4 shadow-md text-white font-bold text-xl">
+            L
           </div>
           <h1 className="text-2xl font-semibold text-(--color-text-primary) tracking-tight">
             Set a new password
@@ -183,7 +183,7 @@ export default function ResetPasswordPage() {
 
             {/* Error */}
             {error && (
-              <div className="flex items-start gap-2 text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2.5 rounded-lg border border-red-200">
+              <div className="flex items-start gap-2 text-xs text-(--color-urgent-text) bg-(--color-urgent-bg) px-3 py-2.5 rounded-lg border border-(--color-border)">
                 <svg className="shrink-0 mt-0.5" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
                 </svg>

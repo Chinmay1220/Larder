@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · 50 Live Designs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=DM+Serif+Display&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&family=Manrope:wght@500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Sora:wght@500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Space+Mono&family=Syne:wght@600;700;800&family=Unbounded:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: #e4e1da; color: #1c1a17; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  .head { padding: 56px 40px 6px; max-width: 1200px; margin: 0 auto; }
+  .head .k { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #8a8578; margin-bottom: 14px; }
+  .head h1 { font-family: 'Fraunces', serif; font-size: 46px; font-weight: 600; letter-spacing: -.5px; line-height: 1.02; }
+  .head h1 em { font-style: italic; font-weight: 500; }
+  .head p { max-width: 640px; margin-top: 16px; color: #5f5b52; font-size: 15px; line-height: 1.6; }
+  .head .hint { margin-top: 18px; display: inline-block; font-size: 13px; color: #6b5a2a; border: 1px solid #cabf9f; background: #f0e9d3; padding: 9px 18px; border-radius: 4px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 46px 30px; padding: 40px 34px 90px; max-width: 1640px; margin: 0 auto; justify-items: center; }
+  .show { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; width: 340px; }
+  .cap .idx { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #a39a88; }
+  .cap b { display: block; font-size: 15px; margin-top: 2px; color: #14141c; font-weight: 700; }
+  .cap span.arch { color: #8a8578; font-weight: 500; }
+
+  /* ---------- device shell (all vars set inline per treatment) ---------- */
+  .dev { width: 340px; background: var(--paper); color: var(--ink); border-radius: var(--radius, 30px); overflow: hidden; position: relative; display: flex; flex-direction: column; min-height: 620px; box-shadow: 0 34px 72px -28px rgba(40,36,28,.55), inset 0 0 0 1px rgba(0,0,0,.04); font-family: var(--body); }
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 13px 22px 2px; font-size: 11px; font-weight: 500; font-family: var(--mono); }
+  .scr { padding: 16px 18px 0; display: flex; flex-direction: column; gap: 13px; flex: 1; }
+  .disp { font-family: var(--disp); }
+  .mono { font-family: var(--mono); }
+  .kick { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); }
+  .hair { height: 1px; background: var(--line); }
+  .ic { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; display: block; }
+  .ic-sm { width: 15px; height: 15px; }
+  .nav { display: flex; justify-content: space-around; align-items: center; padding: 13px 8px 15px; margin-top: auto; border-top: 1px solid var(--line); color: var(--muted); }
+  .nav .on { color: var(--accent); }
+  .nav-txt { justify-content: flex-start; gap: 22px; padding-left: 20px; }
+  .nav-txt span { font-size: 10px; letter-spacing: 1.5px; }
+  .nav-txt span.on { color: var(--ink); }
+
+  /* generic list row used by several archetypes */
+  .grow { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+  .grow .nm { font-weight: 600; font-size: 14px; }
+  .grow .mt { font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .grow .dd { margin-left: auto; font-family: var(--mono); font-size: 12px; }
+
+  /* A1 editorial */
+  .eh { font-weight: 600; font-size: 33px; line-height: 1.03; letter-spacing: -.6px; margin: 14px 0 14px; }
+  .eh em { font-style: italic; color: var(--accent); }
+  .ed-fresh { display: flex; align-items: flex-end; gap: 16px; padding: 14px 0 16px; }
+  .ed-fresh .n { font-size: 46px; font-weight: 600; line-height: .8; letter-spacing: -1px; }
+  .ed-fresh .n s { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--muted); margin-left: 7px; text-decoration: none; }
+  .ed-fresh .m { flex: 1; margin-bottom: 7px; }
+  .ed-fresh .m .t { height: 3px; background: var(--line); position: relative; }
+  .ed-fresh .m .t i { position: absolute; inset: 0 auto 0 0; background: var(--ink); }
+  .ed-list { list-style: none; }
+  .ed-list li { display: flex; align-items: baseline; gap: 13px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .ed-list .nn { font-family: var(--mono); font-size: 11px; color: var(--muted); width: 18px; }
+  .ed-list .nm { font-size: 18px; font-weight: 500; flex: 1; }
+  .ed-list .dd { font-family: var(--mono); font-size: 10.5px; letter-spacing: .5px; text-transform: uppercase; }
+  .edcta { display: inline-flex; align-items: center; gap: 8px; font-style: italic; font-size: 16px; margin-top: 16px; color: var(--ink); }
+
+  /* A2 swiss */
+  .sw-wm { display: flex; align-items: baseline; gap: 8px; }
+  .sw-wm b { font-size: 18px; font-weight: 700; letter-spacing: -.4px; }
+  .sw-wm em { margin-left: auto; font-style: normal; font-size: 10px; letter-spacing: 1px; color: var(--muted); }
+  .sw-band { display: grid; grid-template-columns: 1fr 1fr 1fr; margin: 6px 0; border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink); }
+  .sw-band > div { padding: 12px 0; border-right: 1px solid var(--line); }
+  .sw-band > div:last-child { border-right: none; }
+  .sw-band b { font-family: var(--mono); font-size: 27px; font-weight: 500; letter-spacing: -1px; display: block; }
+  .sw-tl { position: relative; height: 74px; margin: 2px 0 8px; }
+  .sw-axis { position: absolute; left: 0; right: 0; top: 48px; height: 1px; background: var(--line); }
+  .sw-gl { position: absolute; top: 42px; width: 1px; height: 12px; background: var(--line); }
+  .sw-gt { position: absolute; top: 60px; font-size: 8px; letter-spacing: 1px; color: var(--muted); transform: translateX(-50%); }
+  .sw-pt { position: absolute; top: 48px; transform: translate(-50%,-50%); }
+  .sw-pt .sw-d { width: 9px; height: 9px; border-radius: 50%; }
+  .sw-pt .sw-lb { position: absolute; bottom: 13px; left: 50%; transform: translateX(-50%); font-size: 8.5px; white-space: nowrap; color: var(--muted); }
+  .sw-tbl .r { display: grid; grid-template-columns: 20px 1fr auto 40px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+  .sw-tbl .r .i { font-family: var(--mono); color: var(--muted); font-size: 10px; }
+  .sw-tbl .r .nm { font-weight: 600; }
+  .sw-tbl .r .ct { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .sw-tbl .r .dd { font-family: var(--mono); text-align: right; }
+
+  /* A3 warm week */
+  .wk-top { display: flex; align-items: center; gap: 11px; }
+  .wk-mono { width: 40px; height: 40px; border-radius: 12px; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+  .wk-nm { font-weight: 800; font-size: 15px; letter-spacing: -.3px; }
+  .wk-bell { margin-left: auto; width: 40px; height: 40px; border-radius: 12px; border: 1.5px solid var(--line); display: grid; place-items: center; color: var(--muted); }
+  .wk-panel { background: var(--surface); border: 1.5px solid var(--line); border-radius: 22px; padding: 18px; display: flex; align-items: center; gap: 16px; }
+  .wk-big { font-weight: 800; font-size: 40px; letter-spacing: -2px; line-height: .85; }
+  .wk-big small { font-size: 12px; font-weight: 700; color: var(--accent); display: block; margin-top: 5px; letter-spacing: 0; }
+  .wk-week { flex: 1; }
+  .wk-days { display: flex; justify-content: space-between; margin-top: 8px; }
+  .wk-day { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .wk-day .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--line); }
+  .wk-day .l { font-size: 8px; color: var(--muted); font-weight: 600; }
+  .wk-chips { display: flex; gap: 7px; }
+  .wk-chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 7px 12px; border-radius: 99px; border: 1.5px solid var(--line); color: var(--muted); }
+  .wk-chip.on { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .wk-row { display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 11px 12px; position: relative; overflow: hidden; }
+  .wk-row .tick { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+  .wk-row .th { width: 40px; height: 40px; border-radius: 12px; background: var(--paper); display: grid; place-items: center; color: var(--accent2); margin-left: 3px; }
+  .wk-row .nm { font-weight: 700; font-size: 13.5px; }
+  .wk-row .mt { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .wk-seg { display: flex; gap: 3px; margin-left: auto; }
+  .wk-seg i { width: 5px; height: 15px; border-radius: 2px; background: var(--line); }
+  .wk-cta { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: #fff; border: none; font-weight: 700; font-size: 13.5px; padding: 14px; border-radius: 16px; margin-top: 2px; }
+
+  /* A4 big stat */
+  .bs-big { font-weight: 800; font-size: 62px; letter-spacing: -2.5px; line-height: .9; margin: 6px 0 2px; }
+  .bs-tr { font-size: 12px; color: var(--ok); }
+  .bs-sub { font-size: 13px; color: var(--muted); line-height: 1.5; margin-top: 4px; }
+
+  /* A5 minimal list */
+  .ml-h { display: flex; align-items: baseline; justify-content: space-between; }
+  .ml-t { font-size: 26px; font-weight: 600; letter-spacing: -.5px; }
+  .ml-row { display: flex; align-items: center; gap: 13px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .ml-row .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ml-row .nm { font-size: 15px; font-weight: 500; }
+  .ml-row .ct { font-size: 11px; color: var(--muted); margin-left: 6px; }
+  .ml-row .dd { margin-left: auto; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+
+  /* A6 magazine */
+  .mg-h { font-size: 34px; font-weight: 600; line-height: 1; letter-spacing: -.5px; margin: 8px 0 16px; }
+  .mg-grid { display: grid; grid-template-columns: 54px 1fr; gap: 14px; }
+  .mg-rail { border-top: 2px solid var(--ink); padding-top: 8px; }
+  .mg-rail .n { font-family: var(--mono); font-size: 22px; display: block; }
+  .mg-rail .k { font-family: var(--mono); font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+  .mg-body { border-top: 2px solid var(--ink); padding-top: 4px; }
+
+  /* A7 card grid */
+  .cg-h { display: flex; align-items: baseline; justify-content: space-between; }
+  .cg-t { font-size: 24px; font-weight: 600; letter-spacing: -.4px; }
+  .cg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .cg-tile { background: var(--surface); border: 1.5px solid var(--line); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 8px; min-height: 82px; }
+  .cg-tile .ico { color: var(--accent2); }
+  .cg-tile b { font-size: 24px; font-weight: 700; }
+  .cg-tile span { font-size: 11px; color: var(--muted); }
+  .cg-tile.alert { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .cg-tile.alert span, .cg-tile.alert .ico { color: rgba(255,255,255,.85); }
+
+  /* A8 dashboard */
+  .db-h { display: flex; align-items: center; justify-content: space-between; }
+  .db-t { font-size: 22px; font-weight: 700; letter-spacing: -.3px; }
+  .db-ava { width: 34px; height: 34px; border-radius: 10px; background: var(--accent); color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 12px; }
+  .db-tiles { display: flex; gap: 9px; }
+  .db-tile { flex: 1; background: var(--surface); border: 1.5px solid var(--line); border-radius: 14px; padding: 11px; }
+  .db-tile b { font-size: 20px; font-weight: 700; }
+  .db-tile span { font-size: 9px; letter-spacing: .5px; text-transform: uppercase; color: var(--muted); display: block; margin-top: 2px; }
+  .db-bars { display: flex; flex-direction: column; gap: 9px; }
+  .db-bar { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+  .db-bar .l { width: 52px; color: var(--muted); }
+  .db-bar .t { flex: 1; height: 7px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .db-bar .t i { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
+
+  /* A9 progress ring */
+  .ph-ring { position: relative; width: 150px; height: 150px; align-self: center; margin: 6px 0; }
+  .ph-ring .ring { position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(var(--accent) 281deg, var(--line) 0); -webkit-mask: radial-gradient(farthest-side, #0000 calc(100% - 12px), #000 calc(100% - 11px)); mask: radial-gradient(farthest-side, #0000 calc(100% - 12px), #000 calc(100% - 11px)); }
+  .ph-v { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: 40px; letter-spacing: -1px; }
+  .ph-v span { font-size: 15px; color: var(--muted); }
+  .ph-sub { text-align: center; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+
+  /* A10 bold type */
+  .bt-h { font-weight: 800; font-size: 46px; line-height: .92; letter-spacing: -1.5px; text-transform: uppercase; margin: 8px 0 14px; }
+  .bt-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 2px solid var(--ink); }
+  .bt-row .nm { font-weight: 700; font-size: 16px; }
+  .bt-row .dd { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; text-transform: uppercase; }
+  .bt-cta { width: 100%; background: var(--ink); color: var(--paper); border: none; font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; padding: 15px; border-radius: 4px; margin-top: 12px; }
+</style>
+</head>
+<body>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 4 13C4 7 12 4 20 4c0 8-3 16-9 16Z"/><path d="M4 20c3-4 7-6 11-7"/></symbol>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s6 6 6 11a6 6 0 0 1-12 0c0-5 6-11 6-11Z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3 8h3.5l1.8-2h7.4l1.8 2H21v12H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7"/><path d="M6 10v10h12V10"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="i-meat" viewBox="0 0 24 24"><path d="M14 4a6 6 0 0 1 6 6c0 3-2 5-5 5l-6 4-3-3 4-6c0-3 2-6 4-6Z"/></symbol>
+  </defs></svg>
+
+  <header class="head">
+    <div class="k">Larder · Studio · 50</div>
+    <h1>Fifty <em>live</em> designs.</h1>
+    <p>Ten different layout architectures — editorial, Swiss timeline, week-strip, big-stat, minimal, magazine, card-grid, dashboard, progress-ring, bold-type — each in five typographic &amp; color treatments. Real display fonts, hand-drawn icons, no emoji.</p>
+    <div class="hint">👉 Tell Claude the number(s) you like (e.g. “build #7 &amp; #33”) and I’ll refine and ship it for real.</div>
+  </header>
+
+  <main class="grid" id="grid"></main>
+
+<script>
+  const items = [
+    { nm:'Baby spinach',   short:'Spinach', cat:'Produce', d:'Today',  dd:'0d', t:'due',  ic:'i-leaf', pos:4,  seg:1 },
+    { nm:'Whole milk',     short:'Milk',    cat:'Dairy',   d:'2 days', dd:'2d', t:'soon', ic:'i-drop', pos:27, seg:2 },
+    { nm:'Strawberries',   short:'Berries', cat:'Produce', d:'3 days', dd:'3d', t:'soon', ic:'i-leaf', pos:40, seg:3 },
+    { nm:'Chicken breast', short:'Chicken', cat:'Meat',    d:'5 days', dd:'5d', t:'ok',   ic:'i-meat', pos:64, seg:4 },
+  ];
+  const col = t => t==='due' ? 'var(--alert)' : t==='soon' ? 'var(--warn)' : 'var(--ok)';
+  const iconNav = a => `<div class="nav">${['i-home','i-search','i-camera','i-bell','i-user'].map((n,i)=>`<svg class="ic ${i===a?'on':''}"><use href="#${n}"/></svg>`).join('')}</div>`;
+  const textNav = ls => `<div class="nav nav-txt">${ls.map((l,i)=>`<span class="kick ${i===0?'on':''}">${l}</span>`).join('')}</div>`;
+
+  // ---- 10 layout archetypes ----
+  const A = [
+    // 1 Editorial
+    () => `<div class="scr">
+      <div style="display:flex;justify-content:space-between"><span class="kick">Pantry</span><span class="kick">Wed 27 Aug</span></div>
+      <h1 class="disp eh">Five things need using <em>soon.</em></h1>
+      <div class="hair"></div>
+      <div class="ed-fresh"><div class="disp n">78<s>% FRESH</s></div><div class="m"><div class="t"><i style="width:78%"></i></div><div class="kick" style="margin-top:6px">24 fresh · 5 soon · 2 gone</div></div></div>
+      <div class="kick">Use soon</div>
+      <ol class="ed-list">${items.slice(0,3).map((it,i)=>`<li><span class="nn">0${i+1}</span><span class="disp nm">${it.nm}</span><span class="dd" style="color:${col(it.t)}">${it.d}</span></li>`).join('')}</ol>
+      <a class="disp edcta">Scan a receipt <svg class="ic ic-sm"><use href="#i-arrow"/></svg></a>
+    </div>${textNav(['Pantry','Scan','Expiring','You'])}`,
+
+    // 2 Swiss timeline
+    () => `<div class="scr">
+      <div class="sw-wm"><b class="disp">Larder</b><span class="kick">Pantry</span><em class="mono">24 items</em></div>
+      <div class="sw-band"><div><b class="mono">24</b><span class="kick">Fresh</span></div><div><b class="mono" style="color:var(--alert)">05</b><span class="kick">Soon</span></div><div><b class="mono">02</b><span class="kick">Expired</span></div></div>
+      <div class="kick">Expiry timeline</div>
+      <div class="sw-tl"><div class="sw-axis"></div>
+        <div class="sw-gl" style="left:4%"></div><div class="sw-gt mono" style="left:4%">TODAY</div>
+        <div class="sw-gl" style="left:40%"></div><div class="sw-gt mono" style="left:40%">+3D</div>
+        <div class="sw-gl" style="left:76%"></div><div class="sw-gt mono" style="left:76%">+7D</div>
+        ${items.map(it=>`<div class="sw-pt" style="left:${it.pos}%"><span class="sw-lb">${it.short}</span><span class="sw-d" style="background:${col(it.t)}"></span></div>`).join('')}
+      </div>
+      <div class="sw-tbl">${items.map((it,i)=>`<div class="r"><span class="i">0${i+1}</span><span class="nm">${it.nm}</span><span class="ct">${it.cat}</span><span class="dd" style="color:${col(it.t)}">${it.dd}</span></div>`).join('')}</div>
+    </div>${textNav(['Home','Scan','Alerts'])}`,
+
+    // 3 Warm week
+    () => `<div class="scr">
+      <div class="wk-top"><div class="wk-mono disp">CS</div><div><div class="kick">Good evening</div><div class="disp wk-nm">Your pantry</div></div><div class="wk-bell"><svg class="ic"><use href="#i-bell"/></svg></div></div>
+      <div class="wk-panel"><div class="disp wk-big">78%<small>fresh</small></div><div class="wk-week"><div class="kick">This week</div><div class="wk-days">${['due','soon','soon','','ok','','ok'].map((s,i)=>`<div class="wk-day"><span class="dot" style="${s?`background:${col(s==='ok'?'ok':s)}`:''}"></span><span class="l">${'MTWTFSS'[i]}</span></div>`).join('')}</div></div></div>
+      <div class="wk-chips"><span class="wk-chip on"><svg class="ic ic-sm"><use href="#i-grid"/></svg>All</span><span class="wk-chip"><svg class="ic ic-sm"><use href="#i-leaf"/></svg>Produce</span><span class="wk-chip"><svg class="ic ic-sm"><use href="#i-drop"/></svg>Dairy</span></div>
+      <div class="kick">Expiring soon</div>
+      ${items.slice(0,3).map(it=>`<div class="wk-row"><span class="tick" style="background:${col(it.t)}"></span><div class="th"><svg class="ic"><use href="#${it.ic}"/></svg></div><div><div class="disp nm">${it.nm}</div><div class="mt">${it.cat} · ${it.d} left</div></div><div class="wk-seg">${[0,1,2,3,4].map(k=>`<i style="${k<it.seg?`background:${col(it.t)}`:''}"></i>`).join('')}</div></div>`).join('')}
+      <button class="wk-cta"><svg class="ic ic-sm"><use href="#i-camera"/></svg>Scan a receipt</button>
+    </div>${iconNav(0)}`,
+
+    // 4 Big stat
+    () => `<div class="scr">
+      <div class="kick">Saved from waste · 2026</div>
+      <div class="disp bs-big">$1,240</div>
+      <div class="bs-tr mono">▲ 12% vs last year</div>
+      <div class="bs-sub">You’ve rescued 38 items from the bin. Five more need using this week.</div>
+      <div class="hair" style="margin:6px 0"></div>
+      <div class="kick">Expiring soon</div>
+      ${items.slice(0,3).map(it=>`<div class="grow"><div><div class="nm">${it.nm}</div><div class="mt">${it.cat}</div></div><span class="dd" style="color:${col(it.t)}">${it.d}</span></div>`).join('')}
+    </div>${iconNav(0)}`,
+
+    // 5 Minimal list
+    () => `<div class="scr">
+      <div class="ml-h"><span class="disp ml-t">Pantry</span><span class="kick">24 items</span></div>
+      <div class="kick" style="margin-top:6px">Expiring soon</div>
+      ${items.map(it=>`<div class="ml-row"><span class="dot" style="background:${col(it.t)}"></span><span class="nm">${it.nm}</span><span class="ct">${it.cat}</span><span class="dd">${it.d}</span></div>`).join('')}
+      <div class="kick" style="margin-top:10px">Fresh · 24 more</div>
+    </div>${iconNav(0)}`,
+
+    // 6 Magazine
+    () => `<div class="scr">
+      <div class="kick">The Larder · Issue 27</div>
+      <h1 class="disp mg-h">What to<br>eat next</h1>
+      <div class="mg-grid"><div class="mg-rail"><span class="disp n">05</span><span class="k">to use</span></div><div class="mg-body">${items.slice(0,3).map(it=>`<div class="grow"><div><div class="disp nm" style="font-size:16px">${it.nm}</div><div class="mt">${it.cat}</div></div><span class="dd" style="color:${col(it.t)}">${it.d}</span></div>`).join('')}</div></div>
+    </div>${textNav(['Read','Scan','Saved'])}`,
+
+    // 7 Card grid
+    () => `<div class="scr">
+      <div class="cg-h"><span class="disp cg-t">Pantry</span><span class="kick">Wed 27</span></div>
+      <div class="cg-grid">
+        <div class="cg-tile alert"><svg class="ic ico"><use href="#i-clock"/></svg><b>5</b><span>Expiring soon</span></div>
+        <div class="cg-tile"><svg class="ic ico"><use href="#i-leaf"/></svg><b>9</b><span>Produce</span></div>
+        <div class="cg-tile"><svg class="ic ico"><use href="#i-drop"/></svg><b>6</b><span>Dairy</span></div>
+        <div class="cg-tile"><svg class="ic ico"><use href="#i-meat"/></svg><b>4</b><span>Meat</span></div>
+      </div>
+      <div class="kick">Expiring soon</div>
+      ${items.slice(0,2).map(it=>`<div class="grow"><div><div class="nm">${it.nm}</div><div class="mt">${it.cat}</div></div><span class="dd" style="color:${col(it.t)}">${it.d}</span></div>`).join('')}
+    </div>${iconNav(0)}`,
+
+    // 8 Dashboard
+    () => `<div class="scr">
+      <div class="db-h"><span class="disp db-t">Overview</span><span class="db-ava">CS</span></div>
+      <div class="db-tiles"><div class="db-tile"><b>24</b><span>Fresh</span></div><div class="db-tile"><b style="color:var(--warn)">5</b><span>Soon</span></div><div class="db-tile"><b style="color:var(--alert)">2</b><span>Expired</span></div></div>
+      <div class="kick">By category</div>
+      <div class="db-bars">${[['Produce',72],['Dairy',48],['Meat',32],['Pantry',60]].map(([l,w])=>`<div class="db-bar"><span class="l">${l}</span><span class="t"><i style="width:${w}%"></i></span></div>`).join('')}</div>
+      <div class="kick">Expiring soon</div>
+      ${items.slice(0,2).map(it=>`<div class="grow"><div><div class="nm">${it.nm}</div><div class="mt">${it.cat}</div></div><span class="dd" style="color:${col(it.t)}">${it.d}</span></div>`).join('')}
+    </div>${iconNav(0)}`,
+
+    // 9 Progress ring
+    () => `<div class="scr">
+      <div class="kick">Pantry freshness</div>
+      <div class="ph-ring"><div class="ring"></div><div class="disp ph-v">78<span>%</span></div></div>
+      <div class="ph-sub">5 items need using in the next 3 days</div>
+      <div class="hair" style="margin:4px 0"></div>
+      ${items.slice(0,3).map(it=>`<div class="grow"><svg class="ic" style="color:var(--accent2)"><use href="#${it.ic}"/></svg><div><div class="nm">${it.nm}</div><div class="mt">${it.cat}</div></div><span class="dd" style="color:${col(it.t)}">${it.d}</span></div>`).join('')}
+    </div>${iconNav(0)}`,
+
+    // 10 Bold type
+    () => `<div class="scr">
+      <div class="kick">Larder — 27 Aug</div>
+      <h1 class="disp bt-h">Use<br>five<br>items.</h1>
+      ${items.slice(0,3).map(it=>`<div class="bt-row"><span class="disp nm">${it.nm}</span><span class="dd" style="color:${col(it.t)}">${it.d}</span></div>`).join('')}
+      <button class="disp bt-cta">Scan receipt</button>
+    </div>${iconNav(0)}`,
+  ];
+  const archNames = ['Editorial','Swiss timeline','Week-strip','Big-stat','Minimal','Magazine','Card-grid','Dashboard','Progress-ring','Bold-type'];
+
+  // ---- typographic pairings ----
+  const F = [
+    ['Editorial',  `'Fraunces',serif`,            `'Inter',sans-serif`,           `'IBM Plex Mono',monospace`],
+    ['Luxe',       `'Playfair Display',serif`,     `'Manrope',sans-serif`,         `'IBM Plex Mono',monospace`],
+    ['Techno',     `'Space Grotesk',sans-serif`,   `'Space Grotesk',sans-serif`,   `'IBM Plex Mono',monospace`],
+    ['Craft',      `'Bricolage Grotesque',sans-serif`, `'Inter',sans-serif`,       `'IBM Plex Mono',monospace`],
+    ['Arty',       `'Syne',sans-serif`,            `'Inter',sans-serif`,           `'Space Mono',monospace`],
+    ['Magazine',   `'DM Serif Display',serif`,     `'Manrope',sans-serif`,         `'IBM Plex Mono',monospace`],
+    ['Loud',       `'Unbounded',sans-serif`,       `'Manrope',sans-serif`,         `'IBM Plex Mono',monospace`],
+    ['Refined',    `'Instrument Serif',serif`,     `'Inter',sans-serif`,           `'IBM Plex Mono',monospace`],
+    ['Geometric',  `'Sora',sans-serif`,            `'Sora',sans-serif`,            `'IBM Plex Mono',monospace`],
+    ['Grotesk',    `'Archivo',sans-serif`,         `'Inter',sans-serif`,           `'IBM Plex Mono',monospace`],
+  ];
+
+  // ---- palettes: name, paper, surface, ink, muted, line, accent, accent2, alert, warn, ok, radius ----
+  const P = [
+    ['Paper','#f4efe4','#fffdf7','#1f1c17','#9a9182','#e2d9c8','#a24b30','#5f6b4f','#b5533a','#97721f','#5f6b4f','30px'],
+    ['Bone','#faf7f1','#ffffff','#211d1a','#9a8f80','#efe6d7','#c65f3f','#6b7250','#c65f3f','#d99a2b','#6b7250','36px'],
+    ['Snow','#fbfbf9','#ffffff','#111111','#9a9a9a','#ececea','#e8482f','#111111','#e8482f','#cf8410','#178a4e','20px'],
+    ['Mist','#f2f4f5','#ffffff','#182028','#7c8896','#e2e6e9','#2f6f8f','#2f6f8f','#d0452f','#b7791f','#2b7a5b','28px'],
+    ['Sage','#eef0ea','#f7f8f3','#23291f','#7f887a','#dfe3d8','#4f6b3a','#7a5c3a','#a24b30','#97721f','#4f6b3a','30px'],
+    ['Blush','#fbf3f2','#ffffff','#2a1c1f','#a88a8f','#f0dfe0','#c2415e','#6a5acd','#c2415e','#cf8410','#2b7a5b','34px'],
+    ['Ink','#15150f','#1e1e17','#f2efe6','#8f8a7c','#2a2a22','#e0a34a','#9db07a','#e07a5a','#e0a34a','#9db07a','30px'],
+    ['Slate','#14161a','#1c1f26','#eef1f4','#8b95a1','#242830','#6cc0ff','#7c6cff','#ff7a86','#ffcb6b','#4cd497','26px'],
+    ['Cream','#f7f2e7','#fffaf0','#2a2418','#9a917c','#ece2cd','#b7791f','#4f6b3a','#b5533a','#b7791f','#4f6b3a','32px'],
+    ['Cloud','#f5f6f8','#ffffff','#1a1d24','#868d99','#e6e8ec','#5b5bd6','#d6455d','#d6455d','#cf8410','#178a4e','24px'],
+    ['Linen','#f3ece0','#fbf5ea','#241f18','#9b8f79','#e6dbc7','#7a5c3a','#4f6b3a','#a24b30','#b7791f','#4f6b3a','30px'],
+    ['Frost','#eef4f7','#fbfdff','#10242b','#6f8b95','#dbe7ec','#0e7c86','#0e7c86','#d0452f','#b7791f','#0e9c6b','28px'],
+  ];
+
+  const grid = document.getElementById('grid');
+  let html = '';
+  for (let i = 0; i < 50; i++) {
+    const p = P[i % P.length];
+    const f = F[i % F.length];
+    const arch = i % A.length;
+    const vars = `--paper:${p[1]};--surface:${p[2]};--ink:${p[3]};--muted:${p[4]};--line:${p[5]};--accent:${p[6]};--accent2:${p[7]};--alert:${p[8]};--warn:${p[9]};--ok:${p[10]};--radius:${p[11]};--disp:${f[1]};--body:${f[2]};--mono:${f[3]};`;
+    html += `<div class="show">
+      <div class="cap"><span class="idx">${String(i+1).padStart(2,'0')}</span><b>${p[0]} · ${f[0]}</b><span class="arch"> — ${archNames[arch]} layout</span></div>
+      <div class="dev" style="${vars}">
+        <div class="sb"><span>9:41</span><span>Larder</span></div>
+        ${A[arch]()}
+      </div>
+    </div>`;
+  }
+  grid.innerHTML = html;
+</script>
+</body>
+</html>

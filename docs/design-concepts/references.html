@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Larder · Real-App-Grounded Concepts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(80% 60% at 50% -10%, #1b1b26 0%, transparent 60%), #0b0b10;
+    color: #eaeaf2; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+  }
+  .hero { padding: 60px 32px 20px; text-align: center; }
+  .hero .kicker { font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: #7a7a92; margin-bottom: 12px; }
+  .hero h1 { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
+  .hero h1 span { background: linear-gradient(100deg,#5eead4,#818cf8,#fca5a5); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero p { max-width: 640px; margin: 0 auto; color: #a2a2b6; font-size: 15px; line-height: 1.6; }
+  .hero .hint { margin-top: 18px; display: inline-block; font-size: 13px; color: #ffd08a; border: 1px solid #45412f; background: rgba(255,208,138,.05); padding: 9px 18px; border-radius: 99px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); gap: 54px 36px; padding: 40px 36px 80px; max-width: 1500px; margin: 0 auto; justify-items: center; }
+  .show { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+  .cap { width: 390px; }
+  .cap .ref { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #ffd08a; }
+  .cap b { display: block; font-size: 19px; margin-top: 3px; }
+  .cap small { color: #8f8fa6; font-size: 13px; }
+
+  /* ---------- device frame ---------- */
+  .dev { width: 390px; border-radius: 46px; overflow: hidden; position: relative; box-shadow: 0 50px 100px -22px rgba(0,0,0,.65), inset 0 0 0 1px rgba(255,255,255,.06); display: flex; flex-direction: column; }
+  .sb { display: flex; justify-content: space-between; align-items: center; padding: 15px 30px 6px; font-size: 13px; font-weight: 700; }
+  .sb .r { display: flex; gap: 6px; font-size: 11px; letter-spacing: 1px; }
+  .scr { padding: 8px 20px 0; display: flex; flex-direction: column; gap: 16px; }
+  .tabbar { margin-top: 18px; display: flex; justify-content: space-around; align-items: center; padding: 14px 10px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid rgba(128,128,128,.15); }
+  .tabbar span { font-size: 20px; opacity: .4; filter: grayscale(1); }
+  .tabbar span.on { opacity: 1; filter: none; }
+  .fab { position: absolute; right: 22px; bottom: 84px; width: 58px; height: 58px; border-radius: 20px; display: grid; place-items: center; font-size: 26px; color: #fff; border: none; cursor: pointer; }
+  .ring-svg .fg { transform: rotate(-90deg); transform-origin: 50% 50%; stroke-linecap: round; }
+
+  /* ============================================================
+     1 · CAL AI  (AI food scanner)  — coral hero + freshness ring
+     ============================================================ */
+  .calai { background: #f4f4f6; color: #1a1a1f; font-family: 'Inter'; }
+  .calai .sb { color: #1a1a1f; }
+  .calai .title { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; }
+  .calai .title h2 { font-size: 26px; font-weight: 800; letter-spacing: -.5px; }
+  .calai .title .ava { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg,#ff7a59,#ff5c8a); color:#fff; display: grid; place-items: center; font-weight: 700; font-size: 13px; }
+  .calai .hcard { background: linear-gradient(135deg,#ff8a5c,#ff5c7a); border-radius: 30px; padding: 22px; color: #fff; box-shadow: 0 20px 40px -14px rgba(255,92,122,.6); display: flex; align-items: center; gap: 18px; }
+  .calai .hcard .lbl { font-size: 13px; opacity: .9; font-weight: 600; }
+  .calai .hcard .big { font-size: 34px; font-weight: 800; margin-top: 2px; }
+  .calai .hcard .sub { font-size: 12px; opacity: .85; margin-top: 6px; line-height: 1.4; }
+  .calai .rw { position: relative; width: 92px; height: 92px; flex-shrink: 0; margin-left: auto; }
+  .calai .rw .cx { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; font-size: 22px; }
+  .calai .cats { background: #fff; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; gap: 13px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+  .calai .cat { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; }
+  .calai .cat .nm { width: 62px; color: #444; }
+  .calai .cat .bar { flex: 1; height: 8px; background: #eee; border-radius: 99px; overflow: hidden; }
+  .calai .cat .bar i { display: block; height: 100%; border-radius: 99px; }
+  .calai .cat .v { color: #999; font-size: 11px; width: 34px; text-align: right; }
+  .calai .sec { font-size: 15px; font-weight: 700; margin: 2px 0 -4px; }
+  .calai .item { background: #fff; border-radius: 20px; padding: 12px; display: flex; align-items: center; gap: 12px; box-shadow: 0 6px 18px rgba(0,0,0,.04); }
+  .calai .item .th { width: 44px; height: 44px; border-radius: 14px; background: #fff2ec; display: grid; place-items: center; font-size: 22px; }
+  .calai .item .nm { font-weight: 700; font-size: 14px; }
+  .calai .item .mt { font-size: 11px; color: #9a9aa2; margin-top: 2px; }
+  .calai .item .pill { margin-left: auto; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 99px; }
+  .calai .fab { background: linear-gradient(135deg,#ff8a5c,#ff5c7a); box-shadow: 0 14px 30px -8px rgba(255,92,122,.7); }
+  .calai .tabbar span.on { color: #ff5c7a; }
+
+  /* ============================================================
+     2 · APPLE HEALTH / FITNESS — activity rings, iOS cards
+     ============================================================ */
+  .apple { background: #f2f2f7; color: #000; }
+  .apple .sb { color: #000; }
+  .apple h2 { font-size: 30px; font-weight: 800; letter-spacing: -.6px; margin: 2px 0; }
+  .apple .date { font-size: 14px; color: #8a8a8e; font-weight: 600; margin-bottom: 4px; }
+  .apple .card { background: #fff; border-radius: 22px; padding: 18px; box-shadow: 0 8px 24px rgba(0,0,0,.05); }
+  .apple .rings { display: flex; align-items: center; gap: 20px; }
+  .apple .rw { position: relative; width: 116px; height: 116px; flex-shrink: 0; }
+  .apple .leg { display: flex; flex-direction: column; gap: 10px; }
+  .apple .leg .row { display: flex; flex-direction: column; }
+  .apple .leg .row b { font-size: 15px; font-weight: 800; }
+  .apple .leg .row span { font-size: 11px; color: #8a8a8e; font-weight: 600; text-transform: uppercase; letter-spacing: .4px; }
+  .apple .leg .g { color: #30d158; } .apple .leg .a { color: #ff9f0a; } .apple .leg .r { color: #ff375f; }
+  .apple .sec { font-size: 20px; font-weight: 800; letter-spacing: -.3px; margin: 4px 0 -6px; }
+  .apple .row2 { background: #fff; border-radius: 16px; padding: 13px 15px; display: flex; align-items: center; gap: 13px; }
+  .apple .row2 .th { font-size: 24px; }
+  .apple .row2 .nm { font-weight: 600; font-size: 15px; }
+  .apple .row2 .mt { font-size: 12px; color: #8a8a8e; }
+  .apple .row2 .chev { margin-left: auto; color: #c4c4c9; font-size: 18px; }
+  .apple .row2 .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .apple .tabbar span.on { color: #007aff; }
+  .apple .list { display: flex; flex-direction: column; gap: 9px; }
+
+  /* ============================================================
+     3 · CASH APP / REVOLUT — bold dark, huge number, minimal
+     ============================================================ */
+  .cash { background: #0a0a0a; color: #fff; }
+  .cash .sb { color: #fff; }
+  .cash .top { display: flex; justify-content: space-between; align-items: center; margin: 6px 0 8px; }
+  .cash .top .ava { width: 38px; height: 38px; border-radius: 50%; background: #00d54b; color: #000; display: grid; place-items: center; font-weight: 800; font-size: 13px; }
+  .cash .top .bell { font-size: 18px; opacity: .7; }
+  .cash .money { text-align: center; padding: 22px 0 6px; }
+  .cash .money .lbl { font-size: 13px; color: #8a8a8a; font-weight: 600; }
+  .cash .money .big { font-size: 56px; font-weight: 800; letter-spacing: -2px; margin-top: 4px; }
+  .cash .money .big span { color: #00d54b; }
+  .cash .money .tr { display: inline-block; margin-top: 8px; font-size: 12px; font-weight: 700; color: #00d54b; background: rgba(0,213,75,.12); padding: 5px 12px; border-radius: 99px; }
+  .cash .acts { display: flex; gap: 10px; margin: 8px 0 4px; }
+  .cash .acts button { flex: 1; border: none; background: #17171a; color: #fff; font-weight: 700; font-size: 13px; padding: 14px; border-radius: 16px; font-family: inherit; }
+  .cash .acts button.pri { background: #00d54b; color: #000; }
+  .cash .sec { font-size: 13px; color: #8a8a8a; font-weight: 700; margin: 10px 0 -4px; text-transform: uppercase; letter-spacing: .5px; }
+  .cash .item { display: flex; align-items: center; gap: 13px; padding: 11px 0; border-bottom: 1px solid #161616; }
+  .cash .item .th { width: 44px; height: 44px; border-radius: 50%; background: #17171a; display: grid; place-items: center; font-size: 21px; }
+  .cash .item .nm { font-weight: 600; font-size: 15px; }
+  .cash .item .mt { font-size: 12px; color: #7a7a7a; margin-top: 1px; }
+  .cash .item .rt { margin-left: auto; font-weight: 700; font-size: 13px; }
+  .cash .tabbar { border-top-color: #161616; }
+  .cash .tabbar span.on { color: #00d54b; }
+
+  /* ============================================================
+     4 · DUOLINGO / HEADSPACE — playful, rounded, chunky
+     ============================================================ */
+  .duo { background: #fff8ef; color: #3c2a1e; font-family: 'Nunito', 'Inter', sans-serif; }
+  .duo .sb { color: #3c2a1e; }
+  .duo .top { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; font-weight: 800; }
+  .duo .top .streak { background: #fff; border-radius: 99px; padding: 6px 12px; font-size: 13px; box-shadow: 0 3px 0 #f0d9b8; }
+  .duo .big-circle { align-self: center; position: relative; width: 150px; height: 150px; margin: 8px 0; }
+  .duo .big-circle .cx { position: absolute; inset: 0; display: grid; place-items: center; }
+  .duo .big-circle .cx .e { font-size: 46px; }
+  .duo .headline { text-align: center; font-size: 20px; font-weight: 900; margin-top: -4px; }
+  .duo .headline span { color: #ff9600; }
+  .duo .subh { text-align: center; font-size: 13px; color: #a08b76; font-weight: 700; margin-top: 2px; }
+  .duo .item { background: #fff; border-radius: 20px; padding: 13px; display: flex; align-items: center; gap: 13px; box-shadow: 0 4px 0 #f0d9b8; }
+  .duo .item .th { width: 46px; height: 46px; border-radius: 15px; display: grid; place-items: center; font-size: 24px; }
+  .duo .item .nm { font-weight: 800; font-size: 15px; }
+  .duo .item .mt { font-size: 12px; font-weight: 700; }
+  .duo .item .badge { margin-left: auto; font-size: 22px; }
+  .duo .cta { border: none; background: #58cc02; color: #fff; font-weight: 900; font-size: 15px; padding: 16px; border-radius: 18px; box-shadow: 0 5px 0 #46a302; font-family: inherit; letter-spacing: .5px; text-transform: uppercase; margin-top: 4px; }
+  .duo .tabbar span.on { color: #58cc02; }
+
+  /* ============================================================
+     5 · AIRBNB — warm coral, big rounded cards, friendly
+     ============================================================ */
+  .bnb { background: #fff; color: #222; }
+  .bnb .sb { color: #222; }
+  .bnb .search { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #ebebeb; border-radius: 99px; padding: 13px 18px; box-shadow: 0 6px 18px rgba(0,0,0,.08); margin: 6px 0; font-weight: 600; }
+  .bnb .search .mag { font-size: 16px; }
+  .bnb .search .ph { font-size: 14px; }
+  .bnb .search .ph small { display: block; font-weight: 500; color: #888; font-size: 11px; }
+  .bnb .chips { display: flex; gap: 22px; border-bottom: 1px solid #ededed; padding-bottom: 10px; }
+  .bnb .chips span { font-size: 12px; font-weight: 700; color: #999; padding-bottom: 8px; }
+  .bnb .chips span.on { color: #222; border-bottom: 2px solid #222; }
+  .bnb .bigcard { border-radius: 22px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,.1); }
+  .bnb .bigcard .img { height: 120px; display: grid; place-items: center; font-size: 52px; position: relative; }
+  .bnb .bigcard .heart { position: absolute; top: 12px; right: 14px; font-size: 20px; }
+  .bnb .bigcard .body { padding: 13px 15px; }
+  .bnb .bigcard .r1 { display: flex; justify-content: space-between; align-items: center; }
+  .bnb .bigcard .nm { font-weight: 700; font-size: 15px; }
+  .bnb .bigcard .st { font-size: 13px; font-weight: 600; }
+  .bnb .bigcard .mt { color: #888; font-size: 13px; margin-top: 3px; }
+  .bnb .bigcard .px { margin-top: 6px; font-size: 14px; } .bnb .bigcard .px b { font-weight: 800; }
+  .bnb .mini { display: flex; gap: 12px; }
+  .bnb .mini .c { flex: 1; border-radius: 18px; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.08); }
+  .bnb .mini .c .img { height: 66px; display: grid; place-items: center; font-size: 30px; }
+  .bnb .mini .c .body { padding: 9px 11px; }
+  .bnb .mini .c .nm { font-weight: 700; font-size: 12px; }
+  .bnb .mini .c .mt { font-size: 10px; color: #ff385c; font-weight: 700; margin-top: 2px; }
+  .bnb .fab { background: #ff385c; box-shadow: 0 14px 30px -8px rgba(255,56,92,.6); border-radius: 50%; }
+  .bnb .tabbar span.on { color: #ff385c; }
+
+  /* ============================================================
+     6 · LINEAR / VERCEL — ultra-clean dark, one accent
+     ============================================================ */
+  .linear { background: #0c0c0f; color: #e6e6ec; }
+  .linear .sb { color: #e6e6ec; }
+  .linear .top { display: flex; align-items: center; gap: 10px; margin: 6px 0 2px; }
+  .linear .top .logo { font-weight: 700; font-size: 15px; }
+  .linear .top .kbd { margin-left: auto; font-size: 10px; color: #6a6a78; border: 1px solid #23232c; border-radius: 7px; padding: 4px 8px; font-family: monospace; }
+  .linear .top .ava { width: 26px; height: 26px; border-radius: 8px; background: linear-gradient(135deg,#7c6cff,#4cc9f0); }
+  .linear .h { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin-top: 8px; }
+  .linear .h span { color: #7a7a8c; }
+  .linear .stats { display: flex; gap: 10px; margin-top: 4px; }
+  .linear .stats .s { flex: 1; border: 1px solid #1c1c24; border-radius: 14px; padding: 13px; }
+  .linear .stats .s b { font-size: 22px; font-weight: 700; }
+  .linear .stats .s span { font-size: 10px; color: #6a6a78; text-transform: uppercase; letter-spacing: .6px; display: block; margin-top: 3px; }
+  .linear .stats .s .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 5px; }
+  .linear .lbl { font-size: 11px; color: #6a6a78; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin: 12px 0 2px; }
+  .linear .item { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #161620; }
+  .linear .item .pri { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .linear .item .nm { font-weight: 500; font-size: 14px; }
+  .linear .item .tag { font-size: 10px; color: #6a6a78; border: 1px solid #23232c; border-radius: 6px; padding: 2px 7px; margin-left: 6px; }
+  .linear .item .rt { margin-left: auto; font-size: 12px; color: #8a8a98; }
+  .linear .fab { background: #7c6cff; box-shadow: 0 14px 30px -8px rgba(124,108,255,.7); border-radius: 16px; }
+  .linear .tabbar { border-top-color: #161620; }
+  .linear .tabbar span.on { color: #7c6cff; }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="kicker">Larder · Grounded in real shipping apps</div>
+    <h1>Designed from <span>real references</span></h1>
+    <p>Each screen faithfully recreates the design language of a real, recognizable app — layout, hierarchy, color, and components — applied to your pantry. The reference app is labeled on every one.</p>
+    <div class="hint">👉 Tell Claude which to build (e.g. “ship the Cal AI one” or “the Cash App dark one”) and I’ll implement it for real in the Next.js app.</div>
+  </header>
+
+  <main class="grid">
+
+    <!-- 1 CAL AI -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Cal AI</span><b>Coral Scan Card</b><small>Hero freshness ring + category bars + recent list + FAB — the AI-scanner playbook.</small></div>
+      <div class="dev calai">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="title"><h2>Your Pantry</h2><div class="ava">CS</div></div>
+          <div class="hcard">
+            <div>
+              <div class="lbl">Freshness score</div>
+              <div class="big">78<span style="font-size:18px">/100</span></div>
+              <div class="sub">5 items need attention<br>in the next 3 days</div>
+            </div>
+            <div class="rw">
+              <svg class="ring-svg" viewBox="0 0 100 100" width="92" height="92">
+                <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="9"/>
+                <circle class="fg" cx="50" cy="50" r="40" fill="none" stroke="#fff" stroke-width="9" stroke-dasharray="251.3" stroke-dashoffset="55.3"/>
+              </svg>
+              <div class="cx">78%</div>
+            </div>
+          </div>
+          <div class="cats">
+            <div class="cat"><span class="nm">Produce</span><span class="bar"><i style="width:60%;background:#34c759"></i></span><span class="v">9</span></div>
+            <div class="cat"><span class="nm">Dairy</span><span class="bar"><i style="width:40%;background:#ff9f0a"></i></span><span class="v">6</span></div>
+            <div class="cat"><span class="nm">Meat</span><span class="bar"><i style="width:26%;background:#ff375f"></i></span><span class="v">4</span></div>
+          </div>
+          <div class="sec">Expiring soon</div>
+          <div class="item"><div class="th">🥬</div><div><div class="nm">Baby Spinach</div><div class="mt">Produce</div></div><span class="pill" style="background:#ffe1e1;color:#ff375f">Today</span></div>
+          <div class="item"><div class="th">🥛</div><div><div class="nm">Whole Milk</div><div class="mt">Dairy</div></div><span class="pill" style="background:#fff0d6;color:#c47a00">2 days</span></div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">🏠</span><span>🍎</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 2 APPLE HEALTH -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Apple Health / Fitness</span><b>Activity Rings</b><small>Three concentric rings for Fresh / Soon / Expired, iOS cards, SF hierarchy.</small></div>
+      <div class="dev apple">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="date">Wednesday, 27 Aug</div>
+          <h2>Summary</h2>
+          <div class="card">
+            <div class="rings">
+              <div class="rw">
+                <svg class="ring-svg" viewBox="0 0 120 120" width="116" height="116">
+                  <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(48,209,88,.18)" stroke-width="11"/>
+                  <circle class="fg" cx="60" cy="60" r="52" fill="none" stroke="#30d158" stroke-width="11" stroke-dasharray="326.7" stroke-dashoffset="65"/>
+                  <circle cx="60" cy="60" r="39" fill="none" stroke="rgba(255,159,10,.18)" stroke-width="11"/>
+                  <circle class="fg" cx="60" cy="60" r="39" fill="none" stroke="#ff9f0a" stroke-width="11" stroke-dasharray="245" stroke-dashoffset="110"/>
+                  <circle cx="60" cy="60" r="26" fill="none" stroke="rgba(255,55,95,.18)" stroke-width="11"/>
+                  <circle class="fg" cx="60" cy="60" r="26" fill="none" stroke="#ff375f" stroke-width="11" stroke-dasharray="163.4" stroke-dashoffset="122"/>
+                </svg>
+              </div>
+              <div class="leg">
+                <div class="row g"><b>24 Fresh</b><span>Good to go</span></div>
+                <div class="row a"><b>5 Soon</b><span>≤ 3 days</span></div>
+                <div class="row r"><b>2 Expired</b><span>Use or toss</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="sec">Expiring Soon</div>
+          <div class="list">
+            <div class="row2"><span class="dot" style="background:#ff375f"></span><span class="th">🥬</span><div><div class="nm">Baby Spinach</div><div class="mt">Produce · Expires today</div></div><span class="chev">›</span></div>
+            <div class="row2"><span class="dot" style="background:#ff9f0a"></span><span class="th">🥛</span><div><div class="nm">Whole Milk</div><div class="mt">Dairy · 2 days left</div></div><span class="chev">›</span></div>
+            <div class="row2"><span class="dot" style="background:#ff9f0a"></span><span class="th">🍓</span><div><div class="nm">Strawberries</div><div class="mt">Produce · 3 days left</div></div><span class="chev">›</span></div>
+          </div>
+        </div>
+        <div class="tabbar"><span class="on">❤️</span><span>📊</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 3 CASH APP -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Cash App / Revolut</span><b>Bold Dark Money</b><small>Huge hero number (waste saved), one green accent, transaction-style list.</small></div>
+      <div class="dev cash">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><div class="ava">CS</div><span class="bell">🔔</span></div>
+          <div class="money">
+            <div class="lbl">Saved from waste this year</div>
+            <div class="big">$<span>1,240</span></div>
+            <div class="tr">▲ 12% vs last year</div>
+          </div>
+          <div class="acts"><button class="pri">＋ Scan receipt</button><button>Add item</button></div>
+          <div class="sec">Expiring soon</div>
+          <div class="item"><div class="th">🥬</div><div><div class="nm">Baby Spinach</div><div class="mt">Produce</div></div><span class="rt" style="color:#ff5c5c">Today</span></div>
+          <div class="item"><div class="th">🥛</div><div><div class="nm">Whole Milk</div><div class="mt">Dairy</div></div><span class="rt" style="color:#ffb020">2 days</span></div>
+          <div class="item"><div class="th">🍓</div><div><div class="nm">Strawberries</div><div class="mt">Produce</div></div><span class="rt" style="color:#ffb020">3 days</span></div>
+          <div class="item" style="border:none"><div class="th">🍗</div><div><div class="nm">Chicken Breast</div><div class="mt">Meat</div></div><span class="rt" style="color:#00d54b">5 days</span></div>
+        </div>
+        <div class="tabbar"><span class="on">🏠</span><span>🔍</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 4 DUOLINGO -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Duolingo / Headspace</span><b>Playful Streak</b><small>Chunky rounded buttons with 3D shadows, big progress circle, warm & friendly.</small></div>
+      <div class="dev duo">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><span>🧺 Larder</span><span class="streak">🔥 5-day fresh streak</span></div>
+          <div class="big-circle">
+            <svg class="ring-svg" viewBox="0 0 120 120" width="150" height="150">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="#ffe4bf" stroke-width="12"/>
+              <circle class="fg" cx="60" cy="60" r="52" fill="none" stroke="#58cc02" stroke-width="12" stroke-dasharray="326.7" stroke-dashoffset="72"/>
+            </svg>
+            <div class="cx"><span class="e">🧺</span></div>
+          </div>
+          <div class="headline">Nice! Your pantry is <span>78% fresh</span></div>
+          <div class="subh">Use 5 items soon to keep your streak 🔥</div>
+          <div class="item"><div class="th" style="background:#ffe1e1">🥬</div><div><div class="nm">Baby Spinach</div><div class="mt" style="color:#ff4b4b">Expires today!</div></div><span class="badge">⚠️</span></div>
+          <div class="item"><div class="th" style="background:#fff0d6">🥛</div><div><div class="nm">Whole Milk</div><div class="mt" style="color:#ff9600">2 days left</div></div><span class="badge">⏰</span></div>
+          <button class="cta">Scan a receipt</button>
+        </div>
+        <div class="tabbar"><span class="on">🏠</span><span>🥦</span><span>📷</span><span>🏆</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 5 AIRBNB -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Airbnb</span><b>Warm Discover Cards</b><small>Rounded photo-style cards, pill search bar, coral accent, favorite hearts.</small></div>
+      <div class="dev bnb">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="search"><span class="mag">🔍</span><span class="ph">Search your pantry<small>24 items · 5 expiring</small></span></div>
+          <div class="chips"><span class="on">All</span><span>Produce</span><span>Dairy</span><span>Meat</span><span>Pantry</span></div>
+          <div class="bigcard">
+            <div class="img" style="background:linear-gradient(135deg,#d8f3c4,#a8e063)">🥬<span class="heart">🤍</span></div>
+            <div class="body">
+              <div class="r1"><span class="nm">Baby Spinach</span><span class="st" style="color:#ff385c">● Today</span></div>
+              <div class="mt">Produce · added 6 days ago</div>
+              <div class="px"><b>Use soon</b> · shelf life 7 days</div>
+            </div>
+          </div>
+          <div class="mini">
+            <div class="c"><div class="img" style="background:linear-gradient(135deg,#eaf4ff,#cfe4ff)">🥛</div><div class="body"><div class="nm">Whole Milk</div><div class="mt">2 days left</div></div></div>
+            <div class="c"><div class="img" style="background:linear-gradient(135deg,#ffe0ea,#ffc2d6)">🍓</div><div class="body"><div class="nm">Strawberries</div><div class="mt">3 days left</div></div></div>
+          </div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">🔍</span><span>🤍</span><span>📷</span><span>🔔</span><span>👤</span></div>
+      </div>
+    </div>
+
+    <!-- 6 LINEAR -->
+    <div class="show">
+      <div class="cap"><span class="ref">Modeled on · Linear / Vercel</span><b>Ultra-Clean Dark</b><small>Hairline borders, one violet accent, data-forward rows, keyboard hints.</small></div>
+      <div class="dev linear">
+        <div class="sb"><span>9:41</span><span class="r">📶 🔋</span></div>
+        <div class="scr">
+          <div class="top"><span class="logo">🧺 Larder</span><span class="kbd">⌘K</span><span class="ava"></span></div>
+          <div class="h">Pantry <span>· 24 items</span></div>
+          <div class="stats">
+            <div class="s"><b>24</b><span><span class="dot" style="background:#4cd497"></span>Fresh</span></div>
+            <div class="s"><b>5</b><span><span class="dot" style="background:#ffcb6b"></span>Expiring</span></div>
+            <div class="s"><b>2</b><span><span class="dot" style="background:#ff6b7a"></span>Expired</span></div>
+          </div>
+          <div class="lbl">Expiring soon</div>
+          <div class="item"><span class="pri" style="background:#ff6b7a"></span><span class="nm">Baby Spinach</span><span class="tag">produce</span><span class="rt">Today</span></div>
+          <div class="item"><span class="pri" style="background:#ffcb6b"></span><span class="nm">Whole Milk</span><span class="tag">dairy</span><span class="rt">2d</span></div>
+          <div class="item"><span class="pri" style="background:#ffcb6b"></span><span class="nm">Strawberries</span><span class="tag">produce</span><span class="rt">3d</span></div>
+          <div class="item" style="border:none"><span class="pri" style="background:#4cd497"></span><span class="nm">Chicken Breast</span><span class="tag">meat</span><span class="rt">5d</span></div>
+        </div>
+        <button class="fab">＋</button>
+        <div class="tabbar"><span class="on">▦</span><span>🔍</span><span>📷</span><span>🔔</span><span>⚙️</span></div>
+      </div>
+    </div>
+
+  </main>
+</body>
+</html>
