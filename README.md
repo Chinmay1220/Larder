@@ -45,7 +45,7 @@ A complete end-to-end product built solo — frontend, backend, database, auth, 
 | **Authentication & security** | Supabase JWT (ES256) verification with JWKS, key-rotation fallback, type-email-to-confirm flows for destructive actions |
 | **Database design** | Postgres schema with soft deletes, status state machine, re-purchase inference, indexed queries |
 | **AI / ML integration** | Claude vision API for receipt parsing, structured JSON extraction, shelf-life estimation |
-| **DevOps & deployment** | Three independent deploy targets (2× Vercel, 1× Render), CORS regex for preview URLs, env-var-driven config |
+| **DevOps & deployment** | Three independent deploy targets (2× Vercel, 1× Render), explicit CORS allowlist via `FRONTEND_URL`, env-var-driven config |
 | **CI/CD** | GitHub Actions: ruff lint, Next.js typecheck, auto-merge on green with retry loop |
 | **Product & UX design** | Warm earthy design system, Notion-style sidebar, Headspace-inspired marketing site, animated mockups |
 | **Compliance** | GDPR-friendly account deletion (cascades pantry + receipts + auth user), public privacy policy |
@@ -158,7 +158,7 @@ Code: [`backend/app/services/vision.py`](backend/app/services/vision.py) and [`b
 - **Two separate Next.js apps** — marketing site (statically generated, SEO-friendly) is fully independent from the web app (client-rendered, auth-gated). They share no code but use the same warm-earthy design tokens.
 - **JWT verification with key rotation support** — backend verifies Supabase JWTs using JWKS endpoint for ES256 keys, falls back to HS256 shared secret for older tokens. Handles Supabase's mid-2024 key format migration.
 - **Soft delete on pantry items** — every item has a `status` field (`active`, `consumed_manual`, `consumed_inferred`, `expired`, `deleted`) for full audit history. Re-purchase inference auto-marks duplicate active items as `consumed_inferred` when a new receipt adds the same canonical name.
-- **CORS with regex allowlist** — backend allows `*.vercel.app` so preview deployments work without redeploying the backend.
+- **CORS with an explicit allowlist** — the backend allows `localhost` plus the exact origins listed in `FRONTEND_URL` (comma-separated). There is deliberately **no** wildcard `*.vercel.app` regex, so arbitrary preview origins can't call the API; add a new front-end origin by setting the env var.
 - **Atomic quantity decrement** — the `/decrement` endpoint reads and updates quantity in one round-trip, marking the item consumed if it drops below 1.
 - **Optimistic UI throughout** — every action (mark used, decrement, edit, delete) updates local state immediately and only rolls back on API failure.
 
