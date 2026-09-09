@@ -1,0 +1,8 @@
+# Explicit lint rule selection so CI stays stable when ruff's defaults change.
+# Mirrors ruff's historical default set (pyflakes + core pycodestyle), which
+# this codebase is already clean under. An unpinned `pip install ruff` that
+# picks up newer default rules (e.g. import sorting) will no longer break CI.
+target-version = "py311"
+
+[lint]
+select = ["E4", "E7", "E9", "F"]
